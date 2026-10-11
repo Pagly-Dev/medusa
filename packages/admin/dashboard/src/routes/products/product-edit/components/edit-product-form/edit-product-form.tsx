@@ -1,10 +1,12 @@
-import { Button, Input, Select, Text, Textarea, toast } from "@medusajs/ui"
+import { Button, Input, Select, Text, toast } from "@medusajs/ui"
+import { useWatch } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import * as zod from "zod"
 
 import { HttpTypes } from "@medusajs/types"
 import { Form } from "../../../../../components/common/form"
 import { SwitchBox } from "../../../../../components/common/switch-box"
+import { RichTextInput } from "../../../../../components/inputs/rich-text-input"
 import { RouteDrawer, useRouteModal } from "../../../../../components/modals"
 import { useExtendableForm } from "../../../../../dashboard-app/forms/hooks"
 import { useUpdateProduct } from "../../../../../hooks/api/products"
@@ -53,6 +55,7 @@ export const EditProductForm = ({ product }: EditProductFormProps) => {
   })
 
   const { mutateAsync, isPending } = useUpdateProduct(product.id)
+  const productTitle = useWatch({ control: form.control, name: "title" })
 
   const handleSubmit = form.handleSubmit(async (data) => {
     const { title, discountable, handle, status, ...optional } = data
@@ -211,7 +214,7 @@ export const EditProductForm = ({ product }: EditProductFormProps) => {
                         {t("fields.description")}
                       </Form.Label>
                       <Form.Control>
-                        <Textarea {...field} />
+                        <RichTextInput {...field} title={productTitle} />
                       </Form.Control>
                       <Form.ErrorMessage />
                     </Form.Item>

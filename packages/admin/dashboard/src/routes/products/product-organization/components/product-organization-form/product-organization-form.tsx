@@ -16,6 +16,11 @@ import { useComboboxData } from "../../../../../hooks/use-combobox-data"
 import { sdk } from "../../../../../lib/client"
 import { useExtension } from "../../../../../providers/extension-provider"
 import { CategoryCombobox } from "../../../common/components/category-combobox"
+import {
+  createdLabel,
+  useCreateOrganizeOptions,
+  withCreated,
+} from "../../../common/hooks/use-create-organize-options"
 import { collectionsQueryKeys } from "../../../../../hooks/api/collections"
 import { productTypesQueryKeys } from "../../../../../hooks/api/product-types"
 import { productTagsQueryKeys } from "../../../../../hooks/api/tags"
@@ -84,6 +89,7 @@ export const ProductOrganizationForm = ({
   })
 
   const { mutateAsync, isPending } = useUpdateProduct(product.id)
+  const create = useCreateOrganizeOptions()
 
   const handleSubmit = form.handleSubmit(async (data) => {
     await mutateAsync(
@@ -133,6 +139,10 @@ export const ProductOrganizationForm = ({
                         onSearchValueChange={types.onSearchValueChange}
                         fetchNextPage={types.fetchNextPage}
                         allowClear
+                        onCreateOption={async (value) => {
+                          const id = await create.type(createdLabel(value))
+                          form.setValue("type_id", id ?? "", { shouldDirty: true })
+                        }}
                       />
                     </Form.Control>
                     <Form.ErrorMessage />
@@ -159,6 +169,10 @@ export const ProductOrganizationForm = ({
                         onSearchValueChange={collections.onSearchValueChange}
                         searchValue={collections.searchValue}
                         allowClear
+                        onCreateOption={async (value) => {
+                          const id = await create.collection(createdLabel(value))
+                          form.setValue("collection_id", id ?? "", { shouldDirty: true })
+                        }}
                       />
                     </Form.Control>
                     <Form.ErrorMessage />
@@ -176,7 +190,10 @@ export const ProductOrganizationForm = ({
                       {t("products.fields.categories.label")}
                     </Form.Label>
                     <Form.Control>
-                      <CategoryCombobox {...field} />
+                      <CategoryCombobox
+                        {...field}
+                        onCreateOption={create.category}
+                      />
                     </Form.Control>
                     <Form.ErrorMessage />
                   </Form.Item>
@@ -199,6 +216,15 @@ export const ProductOrganizationForm = ({
                         options={tags.options}
                         onSearchValueChange={tags.onSearchValueChange}
                         searchValue={tags.searchValue}
+                        onCreateOption={async (value) => {
+                          const label = createdLabel(value)
+                          const id = await create.tag(label)
+                          form.setValue(
+                            "tag_ids",
+                            withCreated(form.getValues("tag_ids"), label, id),
+                            { shouldDirty: true }
+                          )
+                        }}
                       />
                     </Form.Control>
                     <Form.ErrorMessage />

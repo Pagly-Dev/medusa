@@ -10,6 +10,11 @@ import { StackedFocusModal } from "../../../../../../../components/modals"
 import { useComboboxData } from "../../../../../../../hooks/use-combobox-data"
 import { sdk } from "../../../../../../../lib/client"
 import { CategoryCombobox } from "../../../../../common/components/category-combobox"
+import {
+  createdLabel,
+  useCreateOrganizeOptions,
+  withCreated,
+} from "../../../../../common/hooks/use-create-organize-options"
 import { ProductCreateSchemaType } from "../../../../types"
 import { collectionsQueryKeys } from "../../../../../../../hooks/api/collections"
 import { productTypesQueryKeys } from "../../../../../../../hooks/api/product-types"
@@ -24,6 +29,7 @@ export const ProductCreateOrganizationSection = ({
   form,
 }: ProductCreateOrganizationSectionProps) => {
   const { t } = useTranslation()
+  const create = useCreateOrganizeOptions()
 
   const collections = useComboboxData({
     queryKey: collectionsQueryKeys.lists(),
@@ -105,6 +111,10 @@ export const ProductCreateOrganizationSection = ({
                     onSearchValueChange={types.onSearchValueChange}
                     fetchNextPage={types.fetchNextPage}
                     allowClear
+                    onCreateOption={async (value) => {
+                      const id = await create.type(createdLabel(value))
+                      form.setValue("type_id", id ?? "", { shouldDirty: true })
+                    }}
                   />
                 </Form.Control>
                 <Form.ErrorMessage />
@@ -131,6 +141,10 @@ export const ProductCreateOrganizationSection = ({
                     onSearchValueChange={collections.onSearchValueChange}
                     fetchNextPage={collections.fetchNextPage}
                     allowClear
+                    onCreateOption={async (value) => {
+                      const id = await create.collection(createdLabel(value))
+                      form.setValue("collection_id", id ?? "", { shouldDirty: true })
+                    }}
                   />
                 </Form.Control>
                 <Form.ErrorMessage />
@@ -150,7 +164,10 @@ export const ProductCreateOrganizationSection = ({
                   {t("products.fields.categories.label")}
                 </Form.Label>
                 <Form.Control>
-                  <CategoryCombobox {...field} />
+                  <CategoryCombobox
+                    {...field}
+                    onCreateOption={create.category}
+                  />
                 </Form.Control>
                 <Form.ErrorMessage />
               </Form.Item>
@@ -173,6 +190,15 @@ export const ProductCreateOrganizationSection = ({
                     searchValue={tags.searchValue}
                     onSearchValueChange={tags.onSearchValueChange}
                     fetchNextPage={tags.fetchNextPage}
+                    onCreateOption={async (value) => {
+                      const label = createdLabel(value)
+                      const id = await create.tag(label)
+                      form.setValue(
+                        "tags",
+                        withCreated(form.getValues("tags"), label, id),
+                        { shouldDirty: true }
+                      )
+                    }}
                   />
                 </Form.Control>
                 <Form.ErrorMessage />

@@ -1,6 +1,7 @@
 import {
   ArrowUturnLeft,
   EllipseMiniSolid,
+  PlusMini,
   TriangleRightMini,
   TrianglesMini,
   XMarkMini,
@@ -33,6 +34,11 @@ interface CategoryComboboxProps
   > {
   value: string[]
   onChange: (value: string[]) => void
+  /**
+   * Pagly: creates a category named after the search text and resolves to its
+   * id, which is then selected.
+   */
+  onCreateOption?: (name: string) => Promise<string | undefined>
 }
 
 type Level = {
@@ -46,7 +52,7 @@ const TAG_BASE_WIDTH = 28
 export const CategoryCombobox = forwardRef<
   HTMLInputElement,
   CategoryComboboxProps
->(({ value, onChange, className, ...props }, ref) => {
+>(({ value, onChange, onCreateOption, className, ...props }, ref) => {
   const innerRef = useRef<HTMLInputElement>(null)
 
   useImperativeHandle<HTMLInputElement | null, HTMLInputElement | null>(
@@ -157,6 +163,38 @@ export const CategoryCombobox = forwardRef<
   }
 
   const options = getOptions(product_categories || [])
+
+  // Pagly: inline create, offered while searching for a name that isn't taken.
+  const [isCreating, setIsCreating] = useState(false)
+  const createName = searchValue.trim()
+  const canCreate =
+    !!onCreateOption &&
+    createName.length > 0 &&
+    !showLoading &&
+    !options.some(
+      (option) => option.label.toLowerCase() === createName.toLowerCase()
+    )
+
+  async function handleCreate(e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (!onCreateOption || isCreating) {
+      return
+    }
+
+    setIsCreating(true)
+    try {
+      const id = await onCreateOption(createName)
+      if (id) {
+        onChange([...value, id])
+        onSearchValueChange("")
+      }
+    } finally {
+      setIsCreating(false)
+      innerRef.current?.focus()
+    }
+  }
 
   const showTag = value.length > 0
   const showSelected = !open && value.length > 0
@@ -453,6 +491,28 @@ export const CategoryCombobox = forwardRef<
             </div>
           )}
         </div>
+        {canCreate && (
+          <Fragment>
+            <Divider />
+            <div className="p-1">
+              <button
+                type="button"
+                disabled={isCreating}
+                onClick={handleCreate}
+                tabIndex={-1}
+                className={clx(
+                  "transition-fg hover:bg-ui-bg-base-hover grid w-full appearance-none grid-cols-[20px_1fr] items-center gap-2 rounded-md px-2 py-1.5 text-start outline-none",
+                  "disabled:text-ui-fg-disabled disabled:cursor-not-allowed"
+                )}
+              >
+                <PlusMini className="text-ui-fg-subtle" />
+                <Text size="small" leading="compact" className="truncate">
+                  {t("actions.create")} &quot;{createName}&quot;
+                </Text>
+              </button>
+            </div>
+          </Fragment>
+        )}
       </RadixPopover.Content>
     </RadixPopover.Root>
   )
