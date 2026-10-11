@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom"
 
 import { ActionMenu } from "../../../../../components/common/action-menu"
 import { SectionRow } from "../../../../../components/common/section"
+import { richTextToPlain } from "../../../../../components/inputs/rich-text-input"
 import { useDeleteProduct } from "../../../../../hooks/api/products"
 import { useExtension } from "../../../../../providers/extension-provider"
 import { useFeatureFlag } from "../../../../../providers/feature-flag-provider"
@@ -114,7 +115,10 @@ export const ProductGeneralSection = ({
         </div>
       </div>
 
-      <SectionRow title={t("fields.description")} value={product.description} />
+      <SectionRow
+        title={t("fields.description")}
+        value={richTextToPlain(product.description)}
+      />
       <SectionRow title={t("fields.subtitle")} value={product.subtitle} />
       <SectionRow title={t("fields.handle")} value={`/${product.handle}`} />
       <SectionRow title={t("fields.material")} value={product.material} />

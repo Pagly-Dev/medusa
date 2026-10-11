@@ -1,9 +1,10 @@
-import { Input, Textarea } from "@medusajs/ui"
-import { UseFormReturn } from "react-hook-form"
+import { Input } from "@medusajs/ui"
+import { UseFormReturn, useWatch } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 
 import { Form } from "../../../../../../../components/common/form"
 import { HandleInput } from "../../../../../../../components/inputs/handle-input"
+import { RichTextInput } from "../../../../../../../components/inputs/rich-text-input"
 import { ProductCreateSchemaType } from "../../../../types"
 
 type ProductCreateGeneralSectionProps = {
@@ -14,6 +15,7 @@ export const ProductCreateGeneralSection = ({
   form,
 }: ProductCreateGeneralSectionProps) => {
   const { t } = useTranslation()
+  const productTitle = useWatch({ control: form.control, name: "title" })
 
   return (
     <div id="general" className="flex flex-col gap-y-6">
@@ -89,8 +91,9 @@ export const ProductCreateGeneralSection = ({
                 {t("products.fields.description.label")}
               </Form.Label>
               <Form.Control>
-                <Textarea
+                <RichTextInput
                   {...field}
+                  title={productTitle}
                   placeholder={t("products.fields.description.placeholder")}
                 />
               </Form.Control>
