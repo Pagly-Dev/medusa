@@ -36,7 +36,6 @@ export const ProductVariantDetail = () => {
         mainSections={2}
         sidebarSections={1}
         showJSON
-        showMetadata
       />
     )
   }
@@ -76,7 +75,8 @@ export const ProductVariantDetail = () => {
                 />
               )}
             </LayoutComposer.Entry>
-            {detailPageDefaultEntries(variant)}
+            {/* Pagly: metadata is edited through metaobjects, not as raw keys. */}
+            {detailPageDefaultEntries(variant, { metadata: false })}
           </>
         ),
         side: (

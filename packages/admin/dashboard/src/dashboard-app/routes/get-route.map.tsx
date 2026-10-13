@@ -150,11 +150,7 @@ export function getRouteMap({
                           lazy: () =>
                             import("../../routes/products/product-stock"),
                         },
-                        {
-                          path: "metadata/edit",
-                          lazy: () =>
-                            import("../../routes/products/product-metadata"),
-                        },
+                        // Pagly: no raw metadata editor; metadata is edited through metaobjects.
                         {
                           path: "options/manage",
                           lazy: () =>
@@ -211,13 +207,7 @@ export function getRouteMap({
                               "../../routes/product-variants/product-variant-media"
                             ),
                         },
-                        {
-                          path: "metadata/edit",
-                          lazy: () =>
-                            import(
-                              "../../routes/product-variants/product-variant-metadata"
-                            ),
-                        },
+                        // Pagly: no raw metadata editor; metadata is edited through metaobjects.
                       ],
                     },
                   ],
@@ -376,11 +366,7 @@ export function getRouteMap({
                       lazy: () =>
                         import("../../routes/categories/category-organize"),
                     },
-                    {
-                      path: "metadata/edit",
-                      lazy: () =>
-                        import("../../routes/categories/categories-metadata"),
-                    },
+                    // Pagly: no raw metadata editor; metadata is edited through metaobjects.
                   ],
                 },
               ],
@@ -490,10 +476,7 @@ export function getRouteMap({
                           "../../routes/orders/order-edit-billing-address"
                         ),
                     },
-                    {
-                      path: "metadata/edit",
-                      lazy: () => import("../../routes/orders/order-metadata"),
-                    },
+                    // Pagly: no raw metadata editor; metadata is edited through metaobjects.
                   ],
                 },
               ],
@@ -672,11 +655,7 @@ export function getRouteMap({
                           "../../routes/collections/collection-add-products"
                         ),
                     },
-                    {
-                      path: "metadata/edit",
-                      lazy: () =>
-                        import("../../routes/collections/collection-metadata"),
-                    },
+                    // Pagly: no raw metadata editor; metadata is edited through metaobjects.
                   ],
                 },
               ],
@@ -843,18 +822,7 @@ export function getRouteMap({
                       lazy: () =>
                         import("../../routes/orders/order-request-transfer"),
                     },
-                    {
-                      path: "metadata/edit",
-                      element: <RoutePermissionGuard />,
-                      handle: { permissions: "customer:update" },
-                      children: [
-                        {
-                          path: "",
-                          lazy: () =>
-                            import("../../routes/customers/customer-metadata"),
-                        },
-                      ],
-                    },
+                    // Pagly: no raw metadata editor; metadata is edited through metaobjects.
                   ],
                 },
               ],

@@ -31,7 +31,7 @@ export const CustomerDetail = () => {
   )
 
   if (isLoading || !customer) {
-    return <SingleColumnPageSkeleton sections={2} showJSON showMetadata />
+    return <SingleColumnPageSkeleton sections={2} showJSON />
   }
 
   if (isError) {
@@ -64,7 +64,8 @@ export const CustomerDetail = () => {
                   <CustomerGroupSection customer={customer} />
                 )}
               </LayoutComposer.Entry>
-              {detailPageDefaultEntries(customer)}
+              {/* Pagly: metadata is edited through metaobjects, not as raw keys. */}
+              {detailPageDefaultEntries(customer, { metadata: false })}
             </>
           ),
           side: (

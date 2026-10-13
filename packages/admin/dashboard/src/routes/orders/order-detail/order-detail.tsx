@@ -98,7 +98,8 @@ export const OrderDetail = () => {
             <LayoutComposer.Entry id="OrderFulfillmentSection">
               <OrderFulfillmentSection order={order as ExtendedOrder} />
             </LayoutComposer.Entry>
-            {detailPageDefaultEntries(order)}
+            {/* Pagly: metadata is edited through metaobjects, not as raw keys. */}
+            {detailPageDefaultEntries(order, { metadata: false })}
           </>
         ),
         side: (

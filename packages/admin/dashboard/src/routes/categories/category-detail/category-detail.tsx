@@ -36,7 +36,6 @@ export const CategoryDetail = () => {
         mainSections={2}
         sidebarSections={1}
         showJSON
-        showMetadata
       />
     )
   }
@@ -65,7 +64,8 @@ export const CategoryDetail = () => {
                 <CategoryProductSection category={product_category} />
               )}
             </LayoutComposer.Entry>
-            {detailPageDefaultEntries(product_category)}
+            {/* Pagly: metadata is edited through metaobjects, not as raw keys. */}
+            {detailPageDefaultEntries(product_category, { metadata: false })}
           </>
         ),
         side: (

@@ -25,7 +25,7 @@ export const CollectionDetail = () => {
   })
 
   if (isLoading || !collection) {
-    return <SingleColumnPageSkeleton sections={2} showJSON showMetadata />
+    return <SingleColumnPageSkeleton sections={2} showJSON />
   }
 
   if (isError) {
@@ -50,7 +50,11 @@ export const CollectionDetail = () => {
                 <CollectionProductSection collection={collection} />
               )}
             </LayoutComposer.Entry>
-            {detailPageDefaultEntries(collection, { permissions: false })}
+            {/* Pagly: metadata is edited through metaobjects, not as raw keys. */}
+            {detailPageDefaultEntries(collection, {
+              permissions: false,
+              metadata: false,
+            })}
           </>
         ),
       }}
