@@ -182,8 +182,11 @@ const toNavEntries = (items: INavItem[]) =>
     </LayoutComposer.Entry>
   ))
 
-// Pagly: plugin settings pages that merchants treat as store setup (Pagos) render under General, not Extensions.
-const GENERAL_EXTENSION_PATHS = new Set(["/settings/pagos"])
+// Pagly: plugin settings pages that merchants treat as store setup (Pagos, Checkout) render under General, not Extensions.
+const GENERAL_EXTENSION_PATHS = new Set([
+  "/settings/pagos",
+  "/settings/checkout",
+])
 
 const SettingsSidebar = () => {
   const { getMenu } = useExtension()
