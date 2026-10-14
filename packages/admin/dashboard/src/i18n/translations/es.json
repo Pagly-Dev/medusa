@@ -3841,5 +3841,8 @@
   },
   "onlineStore": {
     "domain": "Tienda online"
+  },
+  "home": {
+    "domain": "Inicio"
   }
 }
