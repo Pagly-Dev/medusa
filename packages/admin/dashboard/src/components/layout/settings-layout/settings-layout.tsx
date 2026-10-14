@@ -182,11 +182,8 @@ const toNavEntries = (items: INavItem[]) =>
     </LayoutComposer.Entry>
   ))
 
-// Pagly: plugin settings pages that merchants treat as store setup (Pagos, Checkout) render under General, not Extensions.
-const GENERAL_EXTENSION_PATHS = new Set([
-  "/settings/pagos",
-  "/settings/checkout",
-])
+// Pagly: plugin settings pages that merchants treat as store setup render under General, not Extensions, in this order: Pagos, then Checkout.
+const GENERAL_EXTENSION_PATHS = ["/settings/pagos", "/settings/checkout"]
 
 const SettingsSidebar = () => {
   const { getMenu } = useExtension()
@@ -196,11 +193,11 @@ const SettingsSidebar = () => {
   const myAccountRoutes = useMyAccountRoutes()
   const allExtensionRoutes = getMenu("settingsExtensions")
 
-  const generalExtensionRoutes = allExtensionRoutes.filter((route) =>
-    GENERAL_EXTENSION_PATHS.has(route.to)
+  const generalExtensionRoutes = GENERAL_EXTENSION_PATHS.flatMap((path) =>
+    allExtensionRoutes.filter((route) => route.to === path)
   )
   const extensionRoutes = allExtensionRoutes.filter(
-    (route) => !GENERAL_EXTENSION_PATHS.has(route.to)
+    (route) => !GENERAL_EXTENSION_PATHS.includes(route.to)
   )
   const routes = [
     ...coreGeneralRoutes.slice(0, 1),
