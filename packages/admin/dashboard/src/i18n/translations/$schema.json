@@ -14734,6 +14734,16 @@
       },
       "required": ["domain"],
       "additionalProperties": false
+    },
+    "home": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string"
+        }
+      },
+      "required": ["domain"],
+      "additionalProperties": false
     }
   },
   "required": [
@@ -14801,7 +14811,8 @@
     "views",
     "auth",
     "permissions",
-    "onlineStore"
+    "onlineStore",
+    "home"
   ],
   "additionalProperties": false
 }

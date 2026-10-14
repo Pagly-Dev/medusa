@@ -2,7 +2,13 @@ import { SidebarLeft, TriangleRightMini, XMark } from "@medusajs/icons"
 import { IconButton, clx } from "@medusajs/ui"
 import { AnimatePresence } from "motion/react"
 import { Dialog as RadixDialog } from "radix-ui"
-import { PropsWithChildren, ReactNode, useEffect, useState } from "react"
+import {
+  ComponentType,
+  PropsWithChildren,
+  ReactNode,
+  useEffect,
+  useState,
+} from "react"
 import { useTranslation } from "react-i18next"
 import {
   Link,
@@ -28,6 +34,24 @@ import {
   LAYOUT_CONTROLS_LOCATION,
 } from "../../layout-composer/constants"
 import { CORE_LAYOUT_IDS } from "@medusajs/admin-shared"
+
+/**
+ * Pagly: the global a plugin sets to a component that wraps every signed-in
+ * page, which is how the Pagly assistant is there wherever the merchant goes.
+ * Kept as a global so core takes no dependency on the plugin.
+ */
+const SHELL_ROOT_KEY = "__paglyAssistantRoot"
+
+/**
+ * Pagly: the plugin's wrapper when one is registered, and nothing otherwise.
+ */
+const PluginRoot = ({ children }: PropsWithChildren) => {
+  const Root = (globalThis as Record<string, unknown>)[SHELL_ROOT_KEY] as
+    | ComponentType<PropsWithChildren>
+    | undefined
+
+  return Root ? <Root>{children}</Root> : <>{children}</>
+}
 
 export const Shell = ({ children }: PropsWithChildren) => {
   const globalShortcuts = useGlobalShortcuts()
@@ -56,7 +80,10 @@ export const Shell = ({ children }: PropsWithChildren) => {
               )}
             >
               <Gutter>
-                <Outlet />
+                {/* Pagly: the page, inside the plugin's root if it registered one. */}
+                <PluginRoot>
+                  <Outlet />
+                </PluginRoot>
               </Gutter>
             </main>
           </div>

@@ -4,6 +4,7 @@ import {
   CogSixTooth,
   CurrencyDollar,
   EllipsisHorizontal,
+  House,
   MagnifyingGlass,
   OpenRectArrowOut,
   ReceiptPercent,
@@ -182,6 +183,13 @@ const useCoreRoutes = (): Omit<INavItem, "pathname">[] => {
   const { t } = useTranslation()
 
   return [
+    // Pagly: Home, where the merchant starts a conversation with the
+    // assistant. Rendered by the plugin's home page; see `routes/home`.
+    {
+      icon: <House />,
+      label: t("home.domain"),
+      to: "/",
+    },
     {
       icon: <ShoppingCart />,
       label: t("orders.domain"),
