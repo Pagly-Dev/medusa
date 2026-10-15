@@ -10,7 +10,9 @@ const root = path.resolve(import.meta.dirname, "..")
 for (const entry of paglyPublishPackages) {
   const cwd = path.join(root, entry.directory)
   console.log(`Publishing ${entry.directory}`)
-  const result = spawnSync("yarn", ["npm", "publish", "--access", "public"], {
+  // npm, not `yarn npm publish`: the renamed manifests no longer match the
+  // workspace yarn installed, and npm packs a directory as it is.
+  const result = spawnSync("npm", ["publish", "--access", "public"], {
     cwd,
     stdio: "inherit",
     env: process.env,

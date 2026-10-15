@@ -2,6 +2,11 @@ name: Publish Pagly npm packages
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish, <upstream version>-pagly.<n> (e.g. 2.21.2-pagly.1). Every run needs a new <n>."
+        required: true
+        type: string
 
 concurrency:
   group: publish-pagly-npm
@@ -26,17 +31,22 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
 
-      - name: Rewrite published names to @pagly
-        run: node scripts/prepare-pagly-npm-publish.mjs
-
       - name: Install
         run: yarn install --no-immutable
 
       - name: Build
         run: yarn build
 
+      # After the build: the rewrite renames the manifests only, and the
+      # workspace must still resolve every package by its @medusajs name
+      # while installing and building.
+      - name: Rewrite published names to @pagly
+        run: node scripts/prepare-pagly-npm-publish.mjs
+        env:
+          PAGLY_PUBLISH_VERSION: ${{ inputs.version }}
+
       - name: Publish predefined packages
         run: node scripts/publish-pagly-packages.mjs
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # setup-node's registry-url writes an .npmrc that reads this.
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
