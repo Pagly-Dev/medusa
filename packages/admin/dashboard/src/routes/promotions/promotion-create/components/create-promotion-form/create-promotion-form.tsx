@@ -5,7 +5,6 @@ import {
   ApplicationMethodTypeValues,
   PromotionRuleOperatorValues,
   PromotionStatusValues,
-  PromotionTypeValues,
 } from "@medusajs/types"
 import {
   Alert,
@@ -43,7 +42,7 @@ import { DEFAULT_CAMPAIGN_VALUES } from "../../../../campaigns/common/constants"
 import { RulesFormField } from "../../../common/edit-rules/components/rules-form-field"
 import { AddCampaignPromotionFields } from "../../../promotion-add-campaign/components/add-campaign-promotion-form"
 import { Tab } from "./constants"
-import { CreatePromotionSchema } from "./form-schema"
+import { CreatePromotionSchema, CreatePromotionSchemaType } from "./form-schema"
 import { templates } from "./templates"
 import { useDocumentDirection } from "../../../../../hooks/use-document-direction"
 
@@ -53,7 +52,9 @@ const defaultValues = {
   campaign_choice: "none" as "none",
   is_automatic: "false",
   code: "",
-  type: "standard" as PromotionTypeValues,
+  // This form only creates core promotions: PromotionTypeValues also holds
+  // "bank", which is created on /bank-promotions, so type against the schema.
+  type: "standard" as CreatePromotionSchemaType["type"],
   status: "draft" as PromotionStatusValues,
   rules: [],
   is_tax_inclusive: false,

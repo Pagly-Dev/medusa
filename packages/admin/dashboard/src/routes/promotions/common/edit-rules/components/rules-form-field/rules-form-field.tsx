@@ -85,7 +85,9 @@ export const RulesFormField = ({
   const promotionType = useWatch({
     control: form.control,
     name: "type",
-    defaultValue: promotion?.type,
+    // Bank promotions never reach this form (their detail page redirects to
+    // /bank-promotions/:id), so only the core types can seed the field.
+    defaultValue: promotion?.type === "bank" ? undefined : promotion?.type,
   })
 
   const applicationMethodType = useWatch({
