@@ -2,6 +2,11 @@ name: Publish Pagly npm packages
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish, <upstream version>-pagly.<n> (e.g. 2.21.2-pagly.1). Every run needs a new <n>."
+        required: true
+        type: string
 
 concurrency:
   group: publish-pagly-npm
@@ -28,6 +33,8 @@ jobs:
 
       - name: Rewrite published names to @pagly
         run: node scripts/prepare-pagly-npm-publish.mjs
+        env:
+          PAGLY_PUBLISH_VERSION: ${{ inputs.version }}
 
       - name: Install
         run: yarn install --no-immutable

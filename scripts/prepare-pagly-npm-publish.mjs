@@ -32,6 +32,20 @@ const textExtensions = new Set([
 ])
 
 const sourceNames = paglyPublishPackages.map((pkg) => pkg.name)
+
+// The version every predefined package publishes at: <source version>-pagly.<n>,
+// from the workflow's `version` input. npm never accepts the same version
+// twice, so each publish takes a new <n>; the source tree keeps the upstream
+// version so upstream merges stay merges. A prerelease of the upstream version
+// still satisfies a consumer's `>=<source version>-pagly.0` peer range.
+const publishVersion = process.env.PAGLY_PUBLISH_VERSION ?? ""
+const versionMatch = /^(\d+\.\d+\.\d+)-pagly\.(\d+)$/.exec(publishVersion)
+if (!versionMatch) {
+  console.error(
+    `PAGLY_PUBLISH_VERSION must look like 2.21.2-pagly.1, got "${publishVersion}"`
+  )
+  process.exit(1)
+}
 const namePattern = new RegExp(
   `(?:${sourceNames
     .slice()
@@ -51,8 +65,15 @@ function rewriteSpecifiers(contents) {
 
 function rewritePackageJson(file) {
   const pkg = JSON.parse(fs.readFileSync(file, "utf8"))
+  if (pkg.version !== versionMatch[1]) {
+    console.error(
+      `${pkg.name} is at ${pkg.version}; PAGLY_PUBLISH_VERSION must start with it`
+    )
+    process.exit(1)
+  }
   const published = publishedName(pkg.name)
   pkg.name = published
+  pkg.version = publishVersion
 
   for (const field of [
     "dependencies",
@@ -65,7 +86,8 @@ function rewritePackageJson(file) {
     }
     const next = {}
     for (const [key, value] of Object.entries(pkg[field])) {
-      next[toPublished(key)] = value
+      // Another predefined package: pin the exact version published with it.
+      next[toPublished(key)] = sourceNames.includes(key) ? publishVersion : value
     }
     pkg[field] = next
   }
