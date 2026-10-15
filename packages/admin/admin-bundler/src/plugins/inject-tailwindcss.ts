@@ -68,12 +68,13 @@ function createTailwindConfig(
 
   for (const plugin of plugins) {
     try {
-      const pluginPath = path.join(
-        path.dirname(require.resolve(plugin)),
-        "**/*.{js,ts,jsx,tsx}"
-      )
+      const pluginDir = path.dirname(require.resolve(plugin))
 
-      pluginExtensions.push(pluginPath)
+      pluginExtensions.push(
+        path.join(pluginDir, "**/*.{js,ts,jsx,tsx}"),
+        // Pagly: `plugin:build` names its chunks `_chunks/[name]-[hash]` with no extension, so the glob above missed every class only plugin code uses
+        path.join(pluginDir, "_chunks/*")
+      )
     } catch (_e) {
       // ignore
     }
