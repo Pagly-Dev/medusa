@@ -2280,6 +2280,13 @@
         "action": "Abrir promoción bancaria"
       }
     },
+    "offer": {
+      "notice": {
+        "heading": "Promoción de oferta",
+        "description": "Esta promoción pertenece a una oferta y se edita en Ofertas.",
+        "action": "Abrir oferta"
+      }
+    },
     "list": {
       "empty": {
         "heading": "No hay promociones",

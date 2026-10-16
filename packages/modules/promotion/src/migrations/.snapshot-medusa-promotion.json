@@ -522,7 +522,8 @@
           "enumItems": [
             "standard",
             "buyget",
-            "bank"
+            "bank",
+            "offer"
           ],
           "mappedType": "enum"
         },

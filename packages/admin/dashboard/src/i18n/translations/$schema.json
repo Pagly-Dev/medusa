@@ -8609,6 +8609,29 @@
           "required": ["notice"],
           "additionalProperties": false
         },
+        "offer": {
+          "type": "object",
+          "properties": {
+            "notice": {
+              "type": "object",
+              "properties": {
+                "heading": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "action": {
+                  "type": "string"
+                }
+              },
+              "required": ["heading", "description", "action"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["notice"],
+          "additionalProperties": false
+        },
         "list": {
           "type": "object",
           "properties": {
@@ -9414,6 +9437,7 @@
       "required": [
         "domain",
         "bank",
+        "offer",
         "list",
         "sections",
         "tabs",
