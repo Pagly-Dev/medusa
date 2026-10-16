@@ -1,4 +1,5 @@
 import {
+  BigNumberInput,
   CampaignBudgetTypeValues,
   CampaignBudgetUsageDTO,
   Context,
@@ -200,10 +201,14 @@ export default class PromotionModuleService
     )
   }
 
+  // Pagly: takes the amount to add (1 for use_by_attribute, the discount for
+  // spend_by_attribute) and checks the limit on the first usage too, since one
+  // spend can pass the cap on its own.
   @InjectTransactionManager()
   protected async registerCampaignBudgetUsageByAttribute_(
-    budgetId: string,
+    budget: { id: string; limit?: BigNumberInput | null },
     attributeValue: string,
+    amount: BigNumberInput,
     @MedusaContext() sharedContext: Context = {}
   ): Promise<void> {
     // Re-read the per-attribute usage row under the budget row lock held by the
@@ -214,36 +219,35 @@ export default class PromotionModuleService
     const [campaignBudgetUsagePerAttributeValue] =
       await this.campaignBudgetUsageService_.list(
         {
-          budget_id: budgetId,
+          budget_id: budget.id,
           attribute_value: attributeValue,
         },
-        { relations: ["budget"], options: { refresh: true } },
+        { options: { refresh: true } },
         sharedContext
       )
+
+    const newUsedValue = MathBN.add(
+      campaignBudgetUsagePerAttributeValue?.used ?? 0,
+      amount
+    )
+
+    if (budget.limit && MathBN.gt(newUsedValue, budget.limit)) {
+      throw new MedusaError(
+        MedusaError.Types.NOT_ALLOWED,
+        "Promotion usage exceeds the budget limit."
+      )
+    }
 
     if (!campaignBudgetUsagePerAttributeValue) {
       await this.campaignBudgetUsageService_.create(
         {
-          budget_id: budgetId,
+          budget_id: budget.id,
           attribute_value: attributeValue,
-          used: MathBN.convert(1),
+          used: newUsedValue,
         },
         sharedContext
       )
     } else {
-      const limit = campaignBudgetUsagePerAttributeValue.budget.limit
-      const newUsedValue = MathBN.add(
-        campaignBudgetUsagePerAttributeValue.used ?? 0,
-        1
-      )
-
-      if (limit && MathBN.gt(newUsedValue, limit)) {
-        throw new MedusaError(
-          MedusaError.Types.NOT_ALLOWED,
-          "Promotion usage exceeds the budget limit."
-        )
-      }
-
       await this.campaignBudgetUsageService_.update(
         {
           id: campaignBudgetUsagePerAttributeValue.id,
@@ -254,10 +258,12 @@ export default class PromotionModuleService
     }
   }
 
+  // Pagly: takes the amount to subtract, like registerCampaignBudgetUsageByAttribute_.
   @InjectTransactionManager()
   protected async revertCampaignBudgetUsageByAttribute_(
     budgetId: string,
     attributeValue: string,
+    amount: BigNumberInput,
     @MedusaContext() sharedContext: Context = {}
   ): Promise<void> {
     const [campaignBudgetUsagePerAttributeValue] =
@@ -274,7 +280,7 @@ export default class PromotionModuleService
       return
     }
 
-    if (MathBN.lte(campaignBudgetUsagePerAttributeValue.used ?? 0, 1)) {
+    if (MathBN.lte(campaignBudgetUsagePerAttributeValue.used ?? 0, amount)) {
       await this.campaignBudgetUsageService_.delete(
         campaignBudgetUsagePerAttributeValue.id,
         sharedContext
@@ -283,7 +289,10 @@ export default class PromotionModuleService
       await this.campaignBudgetUsageService_.update(
         {
           id: campaignBudgetUsagePerAttributeValue.id,
-          used: MathBN.sub(campaignBudgetUsagePerAttributeValue.used ?? 0, 1),
+          used: MathBN.sub(
+            campaignBudgetUsagePerAttributeValue.used ?? 0,
+            amount
+          ),
         },
         sharedContext
       )
@@ -496,8 +505,9 @@ export default class PromotionModuleService
         }
 
         await this.registerCampaignBudgetUsageByAttribute_(
-          campaignBudget.id,
+          campaignBudget,
           attributeValue,
+          1,
           sharedContext
         )
 
@@ -510,6 +520,33 @@ export default class PromotionModuleService
         })
 
         promotionCodeUsageMap.set(promotion.code!, true)
+      }
+
+      // Pagly: spend_by_attribute adds each discounted amount to the attribute
+      // value's spend and fails past the cap, like spend does for the budget.
+      if (campaignBudget.type === CampaignBudgetType.SPEND_BY_ATTRIBUTE) {
+        const attributeValue = registrationContext[campaignBudget.attribute!]
+
+        if (!attributeValue) {
+          continue
+        }
+
+        await this.registerCampaignBudgetUsageByAttribute_(
+          campaignBudget,
+          attributeValue,
+          computedAction.amount,
+          sharedContext
+        )
+
+        const campaignBudgetData = campaignBudgetMap.get(campaignBudget.id)
+
+        if (campaignBudgetData) {
+          // The total across attribute values, kept for reporting only.
+          campaignBudgetData.used = MathBN.add(
+            campaignBudgetData.used ?? 0,
+            computedAction.amount
+          )
+        }
       }
     }
 
@@ -652,6 +689,7 @@ export default class PromotionModuleService
         await this.revertCampaignBudgetUsageByAttribute_(
           campaignBudget.id,
           attributeValue,
+          1,
           sharedContext
         )
         const newUsedValue = MathBN.sub(campaignBudget.used ?? 0, 1)
@@ -664,6 +702,35 @@ export default class PromotionModuleService
         })
 
         promotionCodeUsageMap.set(promotion.code!, true)
+      }
+
+      // Pagly: give the discounted amount back to the attribute value's spend.
+      if (campaignBudget.type === CampaignBudgetType.SPEND_BY_ATTRIBUTE) {
+        const attributeValue = registrationContext[campaignBudget.attribute!]
+
+        if (!attributeValue) {
+          continue
+        }
+
+        await this.revertCampaignBudgetUsageByAttribute_(
+          campaignBudget.id,
+          attributeValue,
+          computedAction.amount,
+          sharedContext
+        )
+
+        const campaignBudgetData = campaignBudgetMap.get(campaignBudget.id)
+
+        if (campaignBudgetData) {
+          const newUsedValue = MathBN.sub(
+            campaignBudgetData.used ?? 0,
+            computedAction.amount
+          )
+
+          campaignBudgetData.used = MathBN.lt(newUsedValue, 0)
+            ? 0
+            : newUsedValue
+        }
       }
     }
 
@@ -883,9 +950,18 @@ export default class PromotionModuleService
         rules: promotionRules = [],
       } = promotion
 
+      // Pagly: spend_by_attribute caps the discount each attribute value gets.
+      // Upstream accepted the type but never enforced it.
+      let attributeBudgetSpend:
+        | ComputeActionUtils.AttributeBudgetSpend
+        | undefined
+
       if (
         !skipUsageLimitChecks &&
-        promotion.campaign?.budget?.type === CampaignBudgetType.USE_BY_ATTRIBUTE
+        (promotion.campaign?.budget?.type ===
+          CampaignBudgetType.USE_BY_ATTRIBUTE ||
+          promotion.campaign?.budget?.type ===
+            CampaignBudgetType.SPEND_BY_ATTRIBUTE)
       ) {
         const attribute = promotion.campaign?.budget?.attribute!
         const budgetUsageContext =
@@ -916,7 +992,15 @@ export default class PromotionModuleService
             sharedContext
           )) as unknown as CampaignBudgetUsageDTO[]
 
-        if (campaignBudgetUsagePerAttribute) {
+        if (
+          promotion.campaign?.budget?.type ===
+          CampaignBudgetType.SPEND_BY_ATTRIBUTE
+        ) {
+          // The spend is checked per adjustment, once the amounts are known.
+          attributeBudgetSpend = {
+            used: campaignBudgetUsagePerAttribute?.used ?? 0,
+          }
+        } else if (campaignBudgetUsagePerAttribute) {
           const action = ComputeActionUtils.computeActionForBudgetExceeded(
             promotion,
             1,
@@ -962,7 +1046,8 @@ export default class PromotionModuleService
             applicationContext[ApplicationMethodTargetType.ITEMS]!,
             methodIdPromoValueMap,
             eligibleBuyItemMap,
-            eligibleTargetItemMap
+            eligibleTargetItemMap,
+            attributeBudgetSpend
           )
 
         computedActions.push(...computedActionsForItems)
@@ -1000,7 +1085,8 @@ export default class PromotionModuleService
               promotion,
               applicationContext[ApplicationMethodTargetType.ITEMS],
               methodIdPromoValueMap,
-              allocationOverride
+              allocationOverride,
+              attributeBudgetSpend
             )
 
           if (bankCap) {
@@ -1019,7 +1105,8 @@ export default class PromotionModuleService
             ComputeActionUtils.getComputedActionsForShippingMethods(
               promotion,
               applicationContext[ApplicationMethodTargetType.SHIPPING_METHODS],
-              methodIdPromoValueMap
+              methodIdPromoValueMap,
+              attributeBudgetSpend
             )
 
           computedActions.push(...computedActionsForShippingMethods)
@@ -1168,7 +1255,7 @@ export default class PromotionModuleService
           ?.currency_code
 
       if (
-        campaignData?.budget?.type === CampaignBudgetType.SPEND &&
+        isSpendBudgetType(campaignData?.budget?.type) &&
         campaignCurrency !== applicationMethodData?.currency_code
       ) {
         throw new MedusaError(
@@ -1422,8 +1509,8 @@ export default class PromotionModuleService
 
       if (
         campaignId &&
-        existingCampaign?.budget?.type === CampaignBudgetType.SPEND &&
-        existingCampaign.budget.currency_code !== promotionCurrencyCode
+        isSpendBudgetType(existingCampaign?.budget?.type) &&
+        existingCampaign?.budget?.currency_code !== promotionCurrencyCode
       ) {
         throw new MedusaError(
           MedusaError.Types.INVALID_DATA,
@@ -1912,10 +1999,7 @@ export default class PromotionModuleService
       )
     }
 
-    if (
-      data.type === CampaignBudgetType.SPEND &&
-      !isPresent(data.currency_code)
-    ) {
+    if (isSpendBudgetType(data.type) && !isPresent(data.currency_code)) {
       throw new MedusaError(
         MedusaError.Types.INVALID_DATA,
         `Campaign Budget type is a required field`
@@ -2074,7 +2158,7 @@ export default class PromotionModuleService
 
     const promotionsWithInvalidCurrency = promotionsToAdd.filter(
       (promotion) =>
-        campaign.budget?.type === CampaignBudgetType.SPEND &&
+        isSpendBudgetType(campaign.budget?.type) &&
         promotion.application_method?.currency_code !==
           campaign?.budget?.currency_code
     )
@@ -2144,6 +2228,15 @@ export default class PromotionModuleService
 
     return promotionsToRemove.map((promo) => promo.id)
   }
+}
+
+// Pagly: spend_by_attribute caps a discounted amount too, so it takes the same
+// currency rules as spend.
+function isSpendBudgetType(type?: CampaignBudgetTypeValues | null): boolean {
+  return (
+    type === CampaignBudgetType.SPEND ||
+    type === CampaignBudgetType.SPEND_BY_ATTRIBUTE
+  )
 }
 
 // Pagly: @pagly/storefront writes bank_max_amount and bank_currency_code on bank promotions that have a cap.
