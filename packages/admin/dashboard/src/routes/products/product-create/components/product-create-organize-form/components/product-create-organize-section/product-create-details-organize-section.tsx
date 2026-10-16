@@ -16,7 +16,6 @@ import {
   withCreated,
 } from "../../../../../common/hooks/use-create-organize-options"
 import { ProductCreateSchemaType } from "../../../../types"
-import { collectionsQueryKeys } from "../../../../../../../hooks/api/collections"
 import { productTypesQueryKeys } from "../../../../../../../hooks/api/product-types"
 import { productTagsQueryKeys } from "../../../../../../../hooks/api/tags"
 import { shippingProfileQueryKeys } from "../../../../../../../hooks/api/shipping-profiles"
@@ -30,16 +29,6 @@ export const ProductCreateOrganizationSection = ({
 }: ProductCreateOrganizationSectionProps) => {
   const { t } = useTranslation()
   const create = useCreateOrganizeOptions()
-
-  const collections = useComboboxData({
-    queryKey: collectionsQueryKeys.lists(),
-    queryFn: (params) => sdk.admin.productCollection.list(params),
-    getOptions: (data) =>
-      data.collections.map((collection) => ({
-        label: collection.title!,
-        value: collection.id!,
-      })),
-  })
 
   const types = useComboboxData({
     queryKey: productTypesQueryKeys.lists(),
@@ -122,36 +111,7 @@ export const ProductCreateOrganizationSection = ({
             )
           }}
         />
-        <Form.Field
-          control={form.control}
-          name="collection_id"
-          render={({ field }) => {
-            return (
-              <Form.Item>
-                <Form.Label optional>
-                  {t("products.fields.collection.label")}
-                </Form.Label>
-                <Form.Control>
-                  <Combobox
-                    {...field}
-                    value={field.value || ""}
-                    onChange={(value) => field.onChange(value || "")}
-                    options={collections.options}
-                    searchValue={collections.searchValue}
-                    onSearchValueChange={collections.onSearchValueChange}
-                    fetchNextPage={collections.fetchNextPage}
-                    allowClear
-                    onCreateOption={async (value) => {
-                      const id = await create.collection(createdLabel(value))
-                      form.setValue("collection_id", id ?? "", { shouldDirty: true })
-                    }}
-                  />
-                </Form.Control>
-                <Form.ErrorMessage />
-              </Form.Item>
-            )
-          }}
-        />
+        {/* Pagly: no collection field. Collections are assigned through the collection-sources plugin. */}
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Form.Field

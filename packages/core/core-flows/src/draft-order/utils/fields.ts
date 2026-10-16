@@ -11,7 +11,8 @@ export const draftOrderFieldsForRefreshSteps = [
   "region.*",
   "items.*",
   "items.product.id",
-  "items.product.collection_id",
+  // Pagly: collection-sources membership, for product_collection promotion rules.
+  "items.product.collection_memberships.collection_id",
   "items.product.categories.id",
   "items.product.tags.id",
   "items.variant.id",

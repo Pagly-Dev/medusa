@@ -27,7 +27,8 @@ export const cartFieldsForRefreshSteps = [
   "items.*",
   "items.product.id",
   "items.product.is_giftcard",
-  "items.product.collection_id",
+  // Pagly: collection-sources membership, for product_collection promotion rules.
+  "items.product.collection_memberships.collection_id",
   "items.product.categories.id",
   "items.product.tags.id",
   "items.product.type_id",
@@ -235,7 +236,8 @@ export const cartFieldsForCalculateShippingOptionsPrices = [
   "items.variant.width",
   "items.variant.material",
   "items.product.id",
-  "items.product.collection_id",
+  // Pagly: collection-sources membership, kept a subset of cartFieldsForRefreshSteps.
+  "items.product.collection_memberships.collection_id",
   "items.product.categories.id",
   "items.product.tags.id",
   "items.product.weight",

@@ -7,17 +7,13 @@ import {
   detailPageDefaultEntries,
 } from "../../../components/layout-composer"
 import { useCollection } from "../../../hooks/api/collections"
-import { useFeatureFlag } from "../../../providers/feature-flag-provider"
 import { CollectionGeneralSection } from "./components/collection-general-section"
-import { CollectionProductSection } from "./components/collection-product-section"
-import { ConfigurableCollectionProductSection } from "./components/collection-product-section/configurable-collection-product-section"
 import { collectionLoader } from "./loader"
 
 export const CollectionDetail = () => {
   const initialData = useLoaderData() as Awaited<
     ReturnType<typeof collectionLoader>
   >
-  const isViewConfigEnabled = useFeatureFlag("view_configurations")
 
   const { id } = useParams()
   const { collection, isLoading, isError, error } = useCollection(id!, {
@@ -43,13 +39,7 @@ export const CollectionDetail = () => {
             <LayoutComposer.Entry id="CollectionGeneralSection">
               <CollectionGeneralSection collection={collection} />
             </LayoutComposer.Entry>
-            <LayoutComposer.Entry id="CollectionProductSection">
-              {isViewConfigEnabled ? (
-                <ConfigurableCollectionProductSection collection={collection} />
-              ) : (
-                <CollectionProductSection collection={collection} />
-              )}
-            </LayoutComposer.Entry>
+            {/* Pagly: membership lives in the collection-sources plugin, which renders its own products card. */}
             {/* Pagly: metadata is edited through metaobjects, not as raw keys. */}
             {detailPageDefaultEntries(collection, {
               permissions: false,
