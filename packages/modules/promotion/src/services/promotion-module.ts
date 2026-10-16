@@ -1054,7 +1054,9 @@ export default class PromotionModuleService
       } else if (
         promotion.type === PromotionType.STANDARD ||
         // Pagly: an applied bank code discounts the same way as a standard promotion.
-        promotion.type === PromotionType.BANK
+        promotion.type === PromotionType.BANK ||
+        // Pagly: an offer promotion (quantity breaks, bundles) is a standard promotion owned by a Pagly offer.
+        promotion.type === PromotionType.OFFER
       ) {
         const isTargetOrder =
           applicationMethod.target_type === ApplicationMethodTargetType.ORDER
@@ -1764,11 +1766,15 @@ export default class PromotionModuleService
 
     if (
       relationName === "method_buy_rules" &&
-      promotion.type === PromotionType.STANDARD
+      // Pagly: offer promotions are standard promotions, so they take no buy rules either.
+      (promotion.type === PromotionType.STANDARD ||
+        promotion.type === PromotionType.OFFER)
     ) {
       throw new MedusaError(
         MedusaError.Types.INVALID_DATA,
-        `Can't add buy rules to a ${PromotionType.STANDARD} promotion`
+        promotion.type === PromotionType.OFFER
+          ? `Can't add buy rules to an ${PromotionType.OFFER} promotion`
+          : `Can't add buy rules to a ${PromotionType.STANDARD} promotion`
       )
     }
 

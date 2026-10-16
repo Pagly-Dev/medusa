@@ -3,6 +3,8 @@ export enum PromotionType {
   BUYGET = "buyget",
   // Pagly: bank promotions are a separate admin type and are not applied at checkout yet.
   BANK = "bank",
+  // Pagly: offer promotions belong to a Pagly offer (quantity breaks, bundles). They are calculated like standard ones.
+  OFFER = "offer",
 }
 
 export enum PromotionStatus {

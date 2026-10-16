@@ -2222,6 +2222,13 @@
         "action": "Open bank promotion"
       }
     },
+    "offer": {
+      "notice": {
+        "heading": "Offer promotion",
+        "description": "This promotion belongs to an offer and is edited in Offers.",
+        "action": "Open offer"
+      }
+    },
     "list": {
       "empty": {
         "heading": "No promotions",
