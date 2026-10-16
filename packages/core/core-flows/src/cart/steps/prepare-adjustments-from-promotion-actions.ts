@@ -1,6 +1,7 @@
 import {
   AddItemAdjustmentAction,
   AddShippingMethodAdjustment,
+  CampaignBudgetAttributeMissingAction,
   CampaignBudgetExceededAction,
   ComputeActions,
   PromotionDTO,
@@ -94,8 +95,12 @@ export interface PrepareAdjustmentsFromPromotionActionsStepOutput {
      * The reason the promotion code was skipped.
      * - `promotion_limit_exceeded`: the promotion's usage limit has been reached.
      * - `campaign_budget_exceeded`: the promotion's campaign budget has been exhausted.
+     * - `campaign_budget_attribute_missing`: the cart lacks the attribute (for example, the email) that the campaign budget counts usage by.
      */
-    reason: "promotion_limit_exceeded" | "campaign_budget_exceeded"
+    reason:
+      | "promotion_limit_exceeded"
+      | "campaign_budget_exceeded"
+      | "campaign_budget_attribute_missing"
   }[]
 }
 
@@ -199,6 +204,13 @@ export const prepareAdjustmentsFromPromotionActionsStep = createStep(
           skippedPromoCodes.push({
             code: (action as CampaignBudgetExceededAction).code,
             reason: "campaign_budget_exceeded",
+          })
+          break
+        // Pagly: the promotion stays off the cart until it has the budget attribute.
+        case ComputedActions.CAMPAIGN_BUDGET_ATTRIBUTE_MISSING:
+          skippedPromoCodes.push({
+            code: (action as CampaignBudgetAttributeMissingAction).code,
+            reason: "campaign_budget_attribute_missing",
           })
           break
       }

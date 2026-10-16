@@ -52,6 +52,8 @@ export enum ComputedActions {
   REMOVE_SHIPPING_METHOD_ADJUSTMENT = "removeShippingMethodAdjustment",
   CAMPAIGN_BUDGET_EXCEEDED = "campaignBudgetExceeded",
   PROMOTION_LIMIT_EXCEEDED = "promotionLimitExceeded",
+  // Pagly: the cart lacks the attribute a use_by_attribute budget counts by.
+  CAMPAIGN_BUDGET_ATTRIBUTE_MISSING = "campaignBudgetAttributeMissing",
 }
 
 export enum PromotionActions {

@@ -894,11 +894,16 @@ export default class PromotionModuleService
           )
         const attributeValue = budgetUsageContext[attribute]
 
+        // Pagly: a cart without the budget attribute (a guest cart with no email
+        // yet) skips the promotion instead of failing. It applies once the cart
+        // has the attribute, and the per-attribute limit is checked then.
         if (!attributeValue) {
-          throw new MedusaError(
-            MedusaError.Types.INVALID_DATA,
-            `Attribute value for "${attribute}" is required by promotion campaing budget`
-          )
+          computedActions.push({
+            action: ComputedActions.CAMPAIGN_BUDGET_ATTRIBUTE_MISSING,
+            code: promotion.code!,
+            attribute,
+          })
+          continue
         }
 
         const [campaignBudgetUsagePerAttribute] =
