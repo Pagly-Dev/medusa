@@ -20,10 +20,8 @@ export const CollectionListTable = () => {
   const { t } = useTranslation()
   const { searchParams, raw } = useCollectionTableQuery({ pageSize: PAGE_SIZE })
   const { collections, count, isError, error, isLoading } = useCollections(
-    {
-      ...searchParams,
-      fields: "+products.id",
-    },
+    // Pagly: no `+products.id`. `product.collection_id` is retired, so core's product count is wrong.
+    searchParams,
     {
       placeholderData: keepPreviousData,
     }

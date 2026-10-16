@@ -1,6 +1,5 @@
 import { toast } from "@medusajs/ui"
 import { useCreateProductCategory } from "../../../../hooks/api/categories"
-import { useCreateCollection } from "../../../../hooks/api/collections"
 import { useCreateProductType } from "../../../../hooks/api/product-types"
 import { useCreateProductTag } from "../../../../hooks/api/tags"
 
@@ -34,14 +33,13 @@ export const withCreated = (
 ) => [...(current ?? []).filter((v) => v !== label), ...(id ? [id] : [])]
 
 /**
- * Pagly: creates product types, tags, collections and categories from the
+ * Pagly: creates product types, tags and categories from the
  * product forms' comboboxes. Each creator resolves to the new id, or to
  * undefined after showing the error.
  */
 export const useCreateOrganizeOptions = () => {
   const { mutateAsync: createType } = useCreateProductType()
   const { mutateAsync: createTag } = useCreateProductTag()
-  const { mutateAsync: createCollection } = useCreateCollection()
   const { mutateAsync: createCategory } = useCreateProductCategory()
 
   const run = async (create: () => Promise<string>) => {
@@ -61,16 +59,6 @@ export const useCreateOrganizeOptions = () => {
     tag: (value: string) =>
       run(
         async () => (await createTag({ value: value.trim() })).product_tag.id
-      ),
-    collection: (title: string) =>
-      run(
-        async () =>
-          (
-            await createCollection({
-              title: title.trim(),
-              handle: toHandle(title),
-            })
-          ).collection.id
       ),
     category: (name: string) =>
       run(

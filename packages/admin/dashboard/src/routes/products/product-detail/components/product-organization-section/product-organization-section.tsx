@@ -62,17 +62,7 @@ export const ProductOrganizationSection = ({
         }
       />
 
-      <SectionRow
-        title={t("fields.collection")}
-        value={
-          product.collection ? (
-            <OrganizationTag
-              label={product.collection.title}
-              to={`/collections/${product.collection.id}`}
-            />
-          ) : undefined
-        }
-      />
+      {/* Pagly: no collection row. The collection-sources plugin shows a product's collections. */}
 
       <SectionRow
         title={t("fields.categories")}
