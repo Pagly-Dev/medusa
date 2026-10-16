@@ -907,6 +907,144 @@ moduleIntegrationTestRunner({
         expect(result).toEqual([])
       })
 
+      // Pagly: the automatic promotion prefilter used to drop a promotion when
+      // a rule's attribute was missing from the context, even for `ne` rules,
+      // which a missing attribute satisfies.
+      describe("when an automatic promotion has an ne rule on an attribute missing from the context", () => {
+        const item = (id: string, extra: Record<string, unknown> = {}) => ({
+          id,
+          quantity: 1,
+          subtotal: 100,
+          original_total: 100,
+          is_discountable: true,
+          product: { id: `prod_${id}` },
+          ...extra,
+        })
+
+        const createAutomatic = (data: Partial<CreatePromotionDTO>) =>
+          createDefaultPromotion(service, {
+            code: "AUTO_NE",
+            is_automatic: true,
+            ...data,
+            application_method: {
+              type: "fixed",
+              target_type: "items",
+              allocation: "each",
+              value: 10,
+              max_quantity: 1,
+              ...data.application_method,
+            } as any,
+          })
+
+        it("should apply a promotion rule excluding a customer group to a guest", async () => {
+          await createAutomatic({
+            rules: [
+              {
+                attribute: "customer.groups.id",
+                operator: "ne",
+                values: ["cusgroup_wholesale"],
+              },
+            ],
+          })
+
+          const guest = await service.computeActions([], {
+            currency_code: "usd",
+            items: [item("tshirt")],
+          })
+
+          expect(JSON.parse(JSON.stringify(guest))).toEqual([
+            {
+              action: "addItemAdjustment",
+              item_id: "tshirt",
+              amount: 10,
+              code: "AUTO_NE",
+              is_tax_inclusive: false,
+            },
+          ])
+
+          const excluded = await service.computeActions([], {
+            currency_code: "usd",
+            customer: { groups: [{ id: "cusgroup_wholesale" }] },
+            items: [item("tshirt")],
+          } as any)
+
+          expect(excluded).toEqual([])
+        })
+
+        it("should apply a target rule excluding a category to items without categories", async () => {
+          await createAutomatic({
+            application_method: {
+              target_rules: [
+                {
+                  attribute: "items.product.categories.id",
+                  operator: "ne",
+                  values: ["pcat_sale"],
+                },
+              ],
+            } as any,
+          })
+
+          const result = await service.computeActions([], {
+            currency_code: "usd",
+            items: [item("tshirt")],
+          })
+
+          expect(JSON.parse(JSON.stringify(result))).toEqual([
+            {
+              action: "addItemAdjustment",
+              item_id: "tshirt",
+              amount: 10,
+              code: "AUTO_NE",
+              is_tax_inclusive: false,
+            },
+          ])
+
+          const mixed = await service.computeActions([], {
+            currency_code: "usd",
+            items: [
+              item("tshirt"),
+              item("sale_mug", {
+                product: { id: "prod_mug", categories: [{ id: "pcat_sale" }] },
+              }),
+            ],
+          } as any)
+
+          expect(JSON.parse(JSON.stringify(mixed))).toEqual([
+            {
+              action: "addItemAdjustment",
+              item_id: "tshirt",
+              amount: 10,
+              code: "AUTO_NE",
+              is_tax_inclusive: false,
+            },
+          ])
+        })
+
+        it("should still skip a promotion whose eq rule reads a missing attribute", async () => {
+          await createAutomatic({
+            rules: [
+              {
+                attribute: "customer.groups.id",
+                operator: "ne",
+                values: ["cusgroup_wholesale"],
+              },
+              {
+                attribute: "customer.id",
+                operator: "eq",
+                values: ["cus_1"],
+              },
+            ],
+          })
+
+          const result = await service.computeActions([], {
+            currency_code: "usd",
+            items: [item("tshirt")],
+          })
+
+          expect(result).toEqual([])
+        })
+      })
+
       describe("when code is not present in database", () => {
         it("should return empty array when promotion does not exist", async () => {
           const response = await service.computeActions(["DOES_NOT_EXIST"], {
