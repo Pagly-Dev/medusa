@@ -648,13 +648,7 @@ export function getRouteMap({
                       lazy: () =>
                         import("../../routes/collections/collection-edit"),
                     },
-                    {
-                      path: "products",
-                      lazy: () =>
-                        import(
-                          "../../routes/collections/collection-add-products"
-                        ),
-                    },
+                    // Pagly: no `products` route. It wrote `product.collection_id`, which is retired for collection-sources.
                     // Pagly: no raw metadata editor; metadata is edited through metaobjects.
                   ],
                 },

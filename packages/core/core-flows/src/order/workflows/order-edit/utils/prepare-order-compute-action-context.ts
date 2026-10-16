@@ -22,10 +22,10 @@ export interface PrepareOrderComputeActionContextStepInput {
   previewedOrder: OrderPreviewDTO
 }
 
-type ProductContext = Pick<
-  ProductDTO,
-  "id" | "collection_id" | "tags" | "categories" | "type_id"
->
+// Pagly: `collection_memberships` is the collection-sources plugin's read-only link, which replaces `collection_id`.
+type ProductContext = Pick<ProductDTO, "id" | "tags" | "categories" | "type_id"> & {
+  collection_memberships?: { collection_id: string }[]
+}
 
 type ShippingOptionContext = Pick<
   ShippingOptionDTO,
@@ -48,7 +48,7 @@ const normalizeProductContext = (
 
   return {
     id: product.id,
-    collection_id: data.collection_id ?? undefined,
+    collection_memberships: data.collection_memberships ?? undefined,
     tags: data.tags ?? undefined,
     categories: data.categories ?? undefined,
     type_id: data.type_id ?? undefined,
@@ -104,7 +104,7 @@ export const prepareOrderComputeActionContextStep = createStep(
           entity: "product",
           fields: [
             "id",
-            "collection_id",
+            "collection_memberships.collection_id",
             "tags.id",
             "categories.id",
             "type_id",
