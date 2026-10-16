@@ -19,14 +19,7 @@ export const useCollectionTableColumns = () => {
         header: t("fields.handle"),
         cell: ({ getValue }) => <TextCell text={`/${getValue()}`} />,
       }),
-      columnHelper.accessor("products", {
-        header: t("fields.products"),
-        cell: ({ getValue }) => {
-          const count = getValue()?.length || undefined
-
-          return <TextCell text={count} />
-        },
-      }),
+      // Pagly: no product count column. Membership lives in the collection-sources plugin.
     ],
     [t]
   )

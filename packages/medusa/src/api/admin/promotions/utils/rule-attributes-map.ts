@@ -71,7 +71,8 @@ const itemsAttributes = [
   },
   {
     id: "product_collection",
-    value: "items.product.collection_id",
+    // Pagly: collection membership comes from the collection-sources plugin's read-only link, a list per product.
+    value: "items.product.collection_memberships.collection_id",
     label: "Product Collection",
     required: false,
     field_type: "multiselect",
