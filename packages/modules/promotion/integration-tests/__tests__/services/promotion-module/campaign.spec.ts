@@ -113,6 +113,27 @@ moduleIntegrationTestRunner<IPromotionModuleService>({
           )
         })
 
+        // Pagly: spend_by_attribute caps an amount, so it needs a currency like spend.
+        it("should throw an error when a spend_by_attribute budget has no currency", async () => {
+          const error = await service
+            .createCampaigns([
+              {
+                name: "test",
+                campaign_identifier: "test",
+                budget: {
+                  limit: 1000,
+                  type: "spend_by_attribute",
+                  attribute: "customer_email",
+                },
+              },
+            ])
+            .catch((e) => e)
+
+          expect(error.message).toContain(
+            "Campaign Budget type is a required field"
+          )
+        })
+
         it("should create a basic campaign successfully", async () => {
           const startsAt = new Date("01/01/2024")
           const endsAt = new Date("01/01/2025")

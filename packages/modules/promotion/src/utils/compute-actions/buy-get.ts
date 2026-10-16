@@ -13,7 +13,11 @@ import {
   PromotionType,
 } from "@medusajs/framework/utils"
 import { areRulesValidForContext } from "../validations"
-import { computeActionForBudgetExceeded } from "./usage"
+import {
+  AttributeBudgetSpend,
+  computeActionForBudgetExceeded,
+  recordAttributeBudgetSpend,
+} from "./usage"
 import { Promotion } from "@models"
 
 export type EligibleItem = {
@@ -311,7 +315,8 @@ function applyPromotionToTargetItems(
   methodIdPromoValueMap: Map<string, BigNumberInput>,
   promotion: PromotionTypes.PromotionDTO | InferEntityType<typeof Promotion>,
   itemsMap: Map<string, ComputeActionItemLine>,
-  applicationConfig: PromotionConfig
+  applicationConfig: PromotionConfig,
+  attributeBudgetSpend?: AttributeBudgetSpend
 ): {
   computedActions: PromotionTypes.ComputeActions[]
   appliedPromotionQuantity: BigNumberInput
@@ -356,13 +361,16 @@ function applyPromotionToTargetItems(
 
     const budgetExceededAction = computeActionForBudgetExceeded(
       promotion,
-      amount
+      amount,
+      attributeBudgetSpend
     )
 
     if (budgetExceededAction) {
       computedActions.push(budgetExceededAction)
       continue
     }
+
+    recordAttributeBudgetSpend(attributeBudgetSpend, amount)
 
     methodIdPromoValueMap.set(
       item.id,
@@ -504,7 +512,9 @@ export function getComputedActionsForBuyGet(
   itemsContext: ComputeActionItemLine[],
   methodIdPromoValueMap: Map<string, BigNumberInput>,
   eligibleBuyItemMap: Map<string, EligibleItem[]>,
-  eligibleTargetItemMap: Map<string, EligibleItem[]>
+  eligibleTargetItemMap: Map<string, EligibleItem[]>,
+  // Pagly: set when the campaign budget is spend_by_attribute.
+  attributeBudgetSpend?: AttributeBudgetSpend
 ): PromotionTypes.ComputeActions[] {
   if (!isValidPromotionContext(promotion, itemsContext)) {
     return []
@@ -598,7 +608,8 @@ export function getComputedActionsForBuyGet(
       methodIdPromoValueMap,
       promotion,
       itemsMap,
-      applicationConfig
+      applicationConfig,
+      attributeBudgetSpend
     )
 
     computedActions.push(...application.computedActions)
