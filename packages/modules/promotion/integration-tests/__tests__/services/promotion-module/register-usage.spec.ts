@@ -529,6 +529,105 @@ moduleIntegrationTestRunner({
             })
           )
         })
+
+        // Pagly: spend_by_attribute tracks the discounted amount per attribute value.
+        it("should register and revert spend per attribute value for type spend_by_attribute", async () => {
+          const [createdCampaign] = await service.createCampaigns([
+            {
+              name: "per customer spend",
+              campaign_identifier: "per-customer-spend",
+              budget: {
+                type: CampaignBudgetType.SPEND_BY_ATTRIBUTE,
+                attribute: "customer_email",
+                currency_code: "usd",
+                limit: 1000,
+              },
+            },
+          ])
+
+          const createdPromotion = await createDefaultPromotion(service, {
+            campaign_id: createdCampaign.id,
+          })
+
+          const buyer = { customer_id: null, customer_email: "buyer@test.com" }
+          const other = { customer_id: null, customer_email: "other@test.com" }
+
+          // One order with two adjustments of the same promotion.
+          await service.registerUsage(
+            [
+              { amount: 300, code: createdPromotion.code! },
+              { amount: 300, code: createdPromotion.code! },
+            ],
+            buyer
+          )
+          await service.registerUsage(
+            [{ amount: 800, code: createdPromotion.code! }],
+            other
+          )
+
+          let campaign = await service.retrieveCampaign(createdCampaign.id, {
+            relations: ["budget", "budget.usages"],
+          })
+
+          expect(campaign.budget).toEqual(
+            expect.objectContaining({
+              used: 1400,
+              usages: expect.arrayContaining([
+                expect.objectContaining({
+                  attribute_value: "buyer@test.com",
+                  used: 600,
+                }),
+                expect.objectContaining({
+                  attribute_value: "other@test.com",
+                  used: 800,
+                }),
+              ]),
+            })
+          )
+
+          // 600 + 500 passes the buyer's 1000 cap.
+          await expect(
+            service.registerUsage(
+              [{ amount: 500, code: createdPromotion.code! }],
+              buyer
+            )
+          ).rejects.toThrow("Promotion usage exceeds the budget limit.")
+
+          // A first spend over the cap fails too.
+          await expect(
+            service.registerUsage(
+              [{ amount: 1200, code: createdPromotion.code! }],
+              { customer_id: null, customer_email: "new@test.com" }
+            )
+          ).rejects.toThrow("Promotion usage exceeds the budget limit.")
+
+          await service.revertUsage(
+            [{ amount: 300, code: createdPromotion.code! }],
+            buyer
+          )
+          await service.revertUsage(
+            [{ amount: 800, code: createdPromotion.code! }],
+            other
+          )
+
+          campaign = await service.retrieveCampaign(createdCampaign.id, {
+            relations: ["budget", "budget.usages"],
+          })
+
+          expect(campaign.budget!.used).toEqual(300)
+          expect(campaign.budget!.usages).toEqual([
+            expect.objectContaining({
+              attribute_value: "buyer@test.com",
+              used: 300,
+            }),
+          ])
+
+          // The reverted spend is available to the buyer again.
+          await service.registerUsage(
+            [{ amount: 700, code: createdPromotion.code! }],
+            buyer
+          )
+        })
       })
     })
   },

@@ -39,12 +39,16 @@ const CreateCampaignBudget = z
     attribute: z.string().nullish(),
   })
   .strict()
+  // Pagly: spend_by_attribute caps an amount too, so it needs a currency.
   .refine(
     (data) =>
-      data.type !== CampaignBudgetType.SPEND || isPresent(data.currency_code),
+      ![
+        CampaignBudgetType.SPEND,
+        CampaignBudgetType.SPEND_BY_ATTRIBUTE,
+      ].includes(data.type) || isPresent(data.currency_code),
     {
       path: ["currency_code"],
-      message: `currency_code is required when budget type is ${CampaignBudgetType.SPEND}`,
+      message: `currency_code is required when budget type is ${CampaignBudgetType.SPEND} or ${CampaignBudgetType.SPEND_BY_ATTRIBUTE}`,
     }
   )
   .refine(

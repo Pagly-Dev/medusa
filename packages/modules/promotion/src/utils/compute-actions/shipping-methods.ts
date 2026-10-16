@@ -14,12 +14,18 @@ import {
 import { Promotion } from "@models"
 import { areRulesValidForContext } from "../validations"
 import { sortShippingLineByPriceAscending } from "./sort-by-price"
-import { computeActionForBudgetExceeded } from "./usage"
+import {
+  AttributeBudgetSpend,
+  computeActionForBudgetExceeded,
+  recordAttributeBudgetSpend,
+} from "./usage"
 
 export function getComputedActionsForShippingMethods(
   promotion: PromotionTypes.PromotionDTO | InferEntityType<typeof Promotion>,
   shippingMethodApplicationContext: PromotionTypes.ComputeActionContext[ApplicationMethodTargetType.SHIPPING_METHODS],
-  methodIdPromoValueMap: Map<string, number>
+  methodIdPromoValueMap: Map<string, number>,
+  // Pagly: set when the campaign budget is spend_by_attribute.
+  attributeBudgetSpend?: AttributeBudgetSpend
 ): PromotionTypes.ComputeActions[] {
   let applicableShippingItems: PromotionTypes.ComputeActionContext[ApplicationMethodTargetType.SHIPPING_METHODS] =
     []
@@ -55,14 +61,16 @@ export function getComputedActionsForShippingMethods(
   return applyPromotionToShippingMethods(
     promotion,
     applicableShippingItems,
-    methodIdPromoValueMap
+    methodIdPromoValueMap,
+    attributeBudgetSpend
   )
 }
 
 export function applyPromotionToShippingMethods(
   promotion: PromotionTypes.PromotionDTO | InferEntityType<typeof Promotion>,
   shippingMethods: PromotionTypes.ComputeActionContext[ApplicationMethodTargetType.SHIPPING_METHODS],
-  methodIdPromoValueMap: Map<string, BigNumberInput>
+  methodIdPromoValueMap: Map<string, BigNumberInput>,
+  attributeBudgetSpend?: AttributeBudgetSpend
 ): PromotionTypes.ComputeActions[] {
   const { application_method: applicationMethod } = promotion
   const allocation = applicationMethod?.allocation!
@@ -104,7 +112,8 @@ export function applyPromotionToShippingMethods(
 
       const budgetExceededAction = computeActionForBudgetExceeded(
         promotion,
-        amount
+        amount,
+        attributeBudgetSpend
       )
 
       if (budgetExceededAction) {
@@ -112,6 +121,8 @@ export function applyPromotionToShippingMethods(
 
         continue
       }
+
+      recordAttributeBudgetSpend(attributeBudgetSpend, amount)
 
       methodIdPromoValueMap.set(
         method.id,
@@ -174,7 +185,8 @@ export function applyPromotionToShippingMethods(
 
       const budgetExceededAction = computeActionForBudgetExceeded(
         promotion,
-        amount
+        amount,
+        attributeBudgetSpend
       )
 
       if (budgetExceededAction) {
@@ -182,6 +194,8 @@ export function applyPromotionToShippingMethods(
 
         continue
       }
+
+      recordAttributeBudgetSpend(attributeBudgetSpend, amount)
 
       methodIdPromoValueMap.set(
         method.id,

@@ -3243,6 +3243,349 @@ moduleIntegrationTestRunner({
               },
             ])
           })
+          // Pagly: a guest cart has no email yet, so a use_by_attribute budget
+          // can't count its usage. The promotion is skipped, not an error.
+          describe("when the context lacks the use_by_attribute budget attribute", () => {
+            const cottonItems = [
+              {
+                id: "item_cotton_tshirt",
+                quantity: 1,
+                subtotal: 100,
+                original_total: 100,
+                is_discountable: true,
+                product_category: {
+                  id: "catg_cotton",
+                },
+                product: {
+                  id: "prod_tshirt",
+                },
+              },
+            ]
+
+            const createPromotionInAttributeCampaign = async (
+              attribute: string,
+              promotion: Partial<CreatePromotionDTO> = {}
+            ) => {
+              const campaign = await service.createCampaigns({
+                name: "per customer",
+                campaign_identifier: "per-customer",
+                budget: {
+                  type: CampaignBudgetType.USE_BY_ATTRIBUTE,
+                  attribute,
+                  limit: 1,
+                },
+              })
+
+              await createDefaultPromotion(service, {
+                campaign_id: campaign.id,
+                ...promotion,
+                application_method: {
+                  type: ApplicationMethodType.PERCENTAGE,
+                  target_type: "items",
+                  allocation: "across",
+                  value: 10,
+                  target_rules: [],
+                } as any,
+              })
+            }
+
+            it("should skip an automatic promotion until the email is known, then enforce the per-email limit", async () => {
+              await createPromotionInAttributeCampaign("customer_email", {
+                is_automatic: true,
+              })
+
+              let result = await service.computeActions([], {
+                currency_code: "usd",
+                items: cottonItems,
+              })
+
+              expect(JSON.parse(JSON.stringify(result))).toEqual([
+                {
+                  action: "campaignBudgetAttributeMissing",
+                  code: "PROMOTION_TEST",
+                  attribute: "customer_email",
+                },
+              ])
+
+              result = await service.computeActions([], {
+                currency_code: "usd",
+                email: "guest@test.com",
+                items: cottonItems,
+              })
+
+              expect(JSON.parse(JSON.stringify(result))).toEqual([
+                {
+                  action: "addItemAdjustment",
+                  code: "PROMOTION_TEST",
+                  amount: 10,
+                  is_tax_inclusive: false,
+                  item_id: "item_cotton_tshirt",
+                },
+              ])
+
+              await service.registerUsage(
+                [{ amount: 10, code: "PROMOTION_TEST" }],
+                {
+                  customer_id: null,
+                  customer_email: "guest@test.com",
+                }
+              )
+
+              result = await service.computeActions([], {
+                currency_code: "usd",
+                email: "guest@test.com",
+                items: cottonItems,
+              })
+
+              expect(JSON.parse(JSON.stringify(result))).toEqual([
+                {
+                  action: "campaignBudgetExceeded",
+                  code: "PROMOTION_TEST",
+                },
+              ])
+            })
+
+            it("should skip a promotion code when the customer is not known", async () => {
+              await createPromotionInAttributeCampaign("customer_id")
+
+              let result = await service.computeActions(["PROMOTION_TEST"], {
+                currency_code: "usd",
+                email: "guest@test.com",
+                items: cottonItems,
+              })
+
+              expect(JSON.parse(JSON.stringify(result))).toEqual([
+                {
+                  action: "campaignBudgetAttributeMissing",
+                  code: "PROMOTION_TEST",
+                  attribute: "customer_id",
+                },
+              ])
+
+              result = await service.computeActions(["PROMOTION_TEST"], {
+                currency_code: "usd",
+                customer: { id: "cus_1" } as any,
+                items: cottonItems,
+              })
+
+              expect(JSON.parse(JSON.stringify(result))).toEqual([
+                {
+                  action: "addItemAdjustment",
+                  code: "PROMOTION_TEST",
+                  amount: 10,
+                  is_tax_inclusive: false,
+                  item_id: "item_cotton_tshirt",
+                },
+              ])
+            })
+          })
+
+          // Pagly: a spend_by_attribute budget caps the discount each attribute
+          // value (for example, each customer email) can receive in total.
+          describe("when the campaign budget is spend_by_attribute", () => {
+            const itemsWorth = (subtotal: number) => [
+              {
+                id: "item_cotton_tshirt",
+                quantity: 1,
+                subtotal,
+                original_total: subtotal,
+                is_discountable: true,
+                product_category: {
+                  id: "catg_cotton",
+                },
+                product: {
+                  id: "prod_tshirt",
+                },
+              },
+            ]
+
+            const createPromotionInSpendByAttributeCampaign = async () => {
+              const campaign = await service.createCampaigns({
+                name: "per customer spend",
+                campaign_identifier: "per-customer-spend",
+                budget: {
+                  type: CampaignBudgetType.SPEND_BY_ATTRIBUTE,
+                  attribute: "customer_email",
+                  currency_code: "usd",
+                  limit: 1000,
+                },
+              })
+
+              await createDefaultPromotion(service, {
+                campaign_id: campaign.id,
+                is_automatic: true,
+                application_method: {
+                  type: ApplicationMethodType.FIXED,
+                  target_type: "items",
+                  allocation: "across",
+                  value: 600,
+                  currency_code: "usd",
+                  target_rules: [],
+                } as any,
+              })
+
+              return campaign
+            }
+
+            it("should give no discount to a second purchase over the per-email cap", async () => {
+              const campaign = await createPromotionInSpendByAttributeCampaign()
+
+              let result = await service.computeActions([], {
+                currency_code: "usd",
+                email: "buyer@test.com",
+                items: itemsWorth(1000),
+              })
+
+              expect(JSON.parse(JSON.stringify(result))).toEqual([
+                {
+                  action: "addItemAdjustment",
+                  code: "PROMOTION_TEST",
+                  amount: 600,
+                  is_tax_inclusive: false,
+                  item_id: "item_cotton_tshirt",
+                },
+              ])
+
+              await service.registerUsage(
+                [{ amount: 600, code: "PROMOTION_TEST" }],
+                {
+                  customer_id: null,
+                  customer_email: "buyer@test.com",
+                }
+              )
+
+              // 600 already discounted + 600 more would pass the 1000 cap.
+              result = await service.computeActions([], {
+                currency_code: "usd",
+                email: "buyer@test.com",
+                items: itemsWorth(1000),
+              })
+
+              expect(JSON.parse(JSON.stringify(result))).toEqual([
+                {
+                  action: "campaignBudgetExceeded",
+                  code: "PROMOTION_TEST",
+                },
+              ])
+
+              // Another email still has its whole cap.
+              result = await service.computeActions([], {
+                currency_code: "usd",
+                email: "another@test.com",
+                items: itemsWorth(1000),
+              })
+
+              expect(JSON.parse(JSON.stringify(result))).toEqual([
+                {
+                  action: "addItemAdjustment",
+                  code: "PROMOTION_TEST",
+                  amount: 600,
+                  is_tax_inclusive: false,
+                  item_id: "item_cotton_tshirt",
+                },
+              ])
+
+              const updatedCampaign = await service.retrieveCampaign(
+                campaign.id,
+                { relations: ["budget", "budget.usages"] }
+              )
+
+              expect(updatedCampaign.budget?.usages).toEqual([
+                expect.objectContaining({
+                  attribute_value: "buyer@test.com",
+                  used: 600,
+                }),
+              ])
+            })
+
+            it("should still discount a second purchase that fits under the cap", async () => {
+              await createPromotionInSpendByAttributeCampaign()
+
+              await service.registerUsage(
+                [{ amount: 300, code: "PROMOTION_TEST" }],
+                {
+                  customer_id: null,
+                  customer_email: "buyer@test.com",
+                }
+              )
+
+              const result = await service.computeActions([], {
+                currency_code: "usd",
+                email: "buyer@test.com",
+                items: itemsWorth(1000),
+              })
+
+              expect(JSON.parse(JSON.stringify(result))).toEqual([
+                {
+                  action: "addItemAdjustment",
+                  code: "PROMOTION_TEST",
+                  amount: 600,
+                  is_tax_inclusive: false,
+                  item_id: "item_cotton_tshirt",
+                },
+              ])
+            })
+
+            it("should count every line of the cart against the cap", async () => {
+              const campaign = await createPromotionInSpendByAttributeCampaign()
+
+              await service.registerUsage(
+                [{ amount: 700, code: "PROMOTION_TEST" }],
+                {
+                  customer_id: null,
+                  customer_email: "buyer@test.com",
+                }
+              )
+
+              await service.updatePromotions({
+                id: (
+                  await service.listPromotions({ campaign_id: campaign.id })
+                )[0].id,
+                application_method: { allocation: "each", value: 200 } as any,
+              })
+
+              const result = await service.computeActions([], {
+                currency_code: "usd",
+                email: "buyer@test.com",
+                items: [
+                  { ...itemsWorth(1000)[0], id: "item_1" },
+                  { ...itemsWorth(1000)[0], id: "item_2" },
+                ],
+              })
+
+              // 700 + 200 fits, a further 200 would not.
+              expect(JSON.parse(JSON.stringify(result))).toEqual([
+                {
+                  action: "addItemAdjustment",
+                  code: "PROMOTION_TEST",
+                  amount: 200,
+                  is_tax_inclusive: false,
+                  item_id: "item_1",
+                },
+                {
+                  action: "campaignBudgetExceeded",
+                  code: "PROMOTION_TEST",
+                },
+              ])
+            })
+
+            it("should skip the promotion until the email is known", async () => {
+              await createPromotionInSpendByAttributeCampaign()
+
+              const result = await service.computeActions([], {
+                currency_code: "usd",
+                items: itemsWorth(1000),
+              })
+
+              expect(JSON.parse(JSON.stringify(result))).toEqual([
+                {
+                  action: "campaignBudgetAttributeMissing",
+                  code: "PROMOTION_TEST",
+                  attribute: "customer_email",
+                },
+              ])
+            })
+          })
         })
       })
 

@@ -25,7 +25,7 @@ export const normalizeProductFormValues = (
       ? values.sales_channels?.map((sc) => ({ id: sc.id }))
       : undefined,
     images,
-    collection_id: values.collection_id || undefined,
+    // Pagly: collection_id is never sent. Membership lives in the collection-sources plugin.
     shipping_profile_id: values.shipping_profile_id || undefined,
     categories: values.categories.map((id) => ({ id })),
     type_id: values.type_id || undefined,
