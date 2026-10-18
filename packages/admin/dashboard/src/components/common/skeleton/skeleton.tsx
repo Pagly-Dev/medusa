@@ -277,7 +277,7 @@ export const TwoColumnPageSkeleton = ({
   showJSON = false,
   showMetadata = true,
 }: TwoColumnPageSkeletonProps) => {
-  const showExtraData = showJSON || showMetadata
+  const showExtraData = (showJSON && SHOW_DETAIL_PAGE_JSON_VIEW) || showMetadata
 
   return (
     <div className="flex flex-col gap-y-3">
