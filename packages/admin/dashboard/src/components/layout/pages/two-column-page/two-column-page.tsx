@@ -1,7 +1,10 @@
 import { clx } from "@medusajs/ui"
 import { Children, ComponentPropsWithoutRef, ComponentType } from "react"
 import { Outlet } from "react-router-dom"
-import { JsonViewSection } from "../../../common/json-view-section"
+import {
+  JsonViewSection,
+  SHOW_DETAIL_PAGE_JSON_VIEW,
+} from "../../../common/json-view-section"
 import { MetadataSection } from "../../../common/metadata-section"
 import { PageProps, WidgetProps } from "../types"
 import { RequiredPermissionsSection } from "../../../common/required-permissions-section"
@@ -92,7 +95,9 @@ const Root = <TData,>({
           {showExtraData && (
             <div className="hidden flex-col gap-y-3 xl:flex">
               {showMetadata && <MetadataSection data={data!} />}
-              {showJSON && <JsonViewSection data={data!} />}
+              {showJSON && SHOW_DETAIL_PAGE_JSON_VIEW && (
+                <JsonViewSection data={data!} />
+              )}
               {showJSON && requiredPermissionsSection}
             </div>
           )}
@@ -108,7 +113,9 @@ const Root = <TData,>({
           {showExtraData && (
             <div className="flex flex-col gap-y-3 xl:hidden">
               {showMetadata && <MetadataSection data={data!} />}
-              {showJSON && <JsonViewSection data={data!} />}
+              {showJSON && SHOW_DETAIL_PAGE_JSON_VIEW && (
+                <JsonViewSection data={data!} />
+              )}
               {showJSON && requiredPermissionsSection}
             </div>
           )}
