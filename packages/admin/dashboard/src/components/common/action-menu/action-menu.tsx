@@ -18,10 +18,18 @@ export type Action = {
   | {
       to: string
       onClick?: never
+      href?: never
     }
   | {
       onClick: () => void
       to?: never
+      href?: never
+    }
+  // Pagly: a page outside the admin, such as the online store, in a new tab.
+  | {
+      href: string
+      to?: never
+      onClick?: never
     }
 )
 
@@ -95,6 +103,33 @@ export const ActionMenu = ({
                   )
                 }
 
+                if (action.href) {
+                  return (
+                    <Wrapper key={index}>
+                      <DropdownMenu.Item
+                        className={clx(
+                          "[&_svg]:text-ui-fg-subtle flex items-center gap-x-2",
+                          {
+                            "[&_svg]:text-ui-fg-disabled": action.disabled,
+                          }
+                        )}
+                        asChild
+                        disabled={action.disabled}
+                      >
+                        <a
+                          href={action.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {action.icon}
+                          <span>{action.label}</span>
+                        </a>
+                      </DropdownMenu.Item>
+                    </Wrapper>
+                  )
+                }
+
                 return (
                   <Wrapper key={index}>
                     <DropdownMenu.Item
@@ -107,7 +142,7 @@ export const ActionMenu = ({
                       asChild
                       disabled={action.disabled}
                     >
-                      <Link to={action.to} onClick={(e) => e.stopPropagation()}>
+                      <Link to={action.to!} onClick={(e) => e.stopPropagation()}>
                         {action.icon}
                         <span>{action.label}</span>
                       </Link>

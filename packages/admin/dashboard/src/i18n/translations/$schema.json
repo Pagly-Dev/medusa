@@ -14754,9 +14754,28 @@
       "properties": {
         "domain": {
           "type": "string"
+        },
+        "view": {
+          "type": "string"
+        },
+        "unavailable": {
+          "type": "object",
+          "properties": {
+            "product": {
+              "type": "string"
+            },
+            "noSalesChannel": {
+              "type": "string"
+            },
+            "category": {
+              "type": "string"
+            }
+          },
+          "required": ["product", "noSalesChannel", "category"],
+          "additionalProperties": false
         }
       },
-      "required": ["domain"],
+      "required": ["domain", "view", "unavailable"],
       "additionalProperties": false
     },
     "home": {

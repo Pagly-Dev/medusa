@@ -1,8 +1,14 @@
-import { GlobeEurope, PencilSquare, Trash } from "@medusajs/icons"
+import {
+  ArrowUpRightOnBox,
+  GlobeEurope,
+  PencilSquare,
+  Trash,
+} from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import { Container, Heading, StatusBadge, Text } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
 import { ActionMenu } from "../../../../../components/common/action-menu"
+import { storefrontUrl } from "../../../../../lib/storefront"
 import { useDeleteProductCategoryAction } from "../../../common/hooks/use-delete-product-category-action"
 import { getIsActiveProps, getIsInternalProps } from "../../../common/utils"
 import { useFeatureFlag } from "../../../../../providers/feature-flag-provider"
@@ -43,6 +49,17 @@ export const CategoryGeneralSection = ({
                     label: t("actions.edit"),
                     icon: <PencilSquare />,
                     to: "edit",
+                  },
+                  // Pagly: open the category's page in the online store,
+                  // which hides inactive and internal categories.
+                  {
+                    label: t("onlineStore.view"),
+                    icon: <ArrowUpRightOnBox />,
+                    href: storefrontUrl(
+                      `/categories/${encodeURIComponent(category.handle)}`
+                    ),
+                    disabled: !category.is_active || category.is_internal,
+                    disabledTooltip: t("onlineStore.unavailable.category"),
                   },
                 ],
               },
