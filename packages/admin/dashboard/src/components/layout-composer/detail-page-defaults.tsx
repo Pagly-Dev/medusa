@@ -1,5 +1,8 @@
 import { ReactNode } from "react"
-import { JsonViewSection } from "../common/json-view-section"
+import {
+  JsonViewSection,
+  SHOW_DETAIL_PAGE_JSON_VIEW,
+} from "../common/json-view-section"
 import { MetadataSection } from "../common/metadata-section"
 import { RequiredPermissionsSection } from "../common/required-permissions-section"
 import { LayoutComposer } from "./layout-composer"
@@ -42,7 +45,7 @@ export function detailPageDefaultEntries(
           <MetadataSection data={data} />
         </LayoutComposer.Entry>
       )}
-      {jsonView && (
+      {jsonView && SHOW_DETAIL_PAGE_JSON_VIEW && (
         <LayoutComposer.Entry id="JsonViewSection">
           <JsonViewSection data={data} />
         </LayoutComposer.Entry>

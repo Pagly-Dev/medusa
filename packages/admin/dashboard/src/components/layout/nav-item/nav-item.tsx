@@ -326,9 +326,14 @@ export const NavItem = ({
     setOpen(getIsOpen(to, items, pathname))
   }, [pathname, to, items])
 
+  // Pagly: while one of its nested items is active, the parent is not.
+  const isNestedItemActive = !!items?.some((item) =>
+    isPathActive(pathname, item.to)
+  )
+
   const navLinkClassNames = useCallback(
     ({
-      to,
+      to: linkTo,
       isActive,
       isNested = false,
       isSetting = false,
@@ -338,8 +343,15 @@ export const NavItem = ({
       isNested?: boolean
       isSetting?: boolean
     }) => {
-      if (["core", "setting"].includes(type)) {
-        isActive = isPathActive(pathname, to)
+      // Pagly: a nested item stays active on its own detail routes
+      // (e.g. "/content/metaobjects/123" keeps "Metaobjects" active) for
+      // extensions too, whose NavLinks match exactly.
+      if (["core", "setting"].includes(type) || isNested) {
+        isActive = isPathActive(pathname, linkTo)
+      }
+
+      if (linkTo === to && isNestedItemActive) {
+        isActive = false
       }
 
       return clx(BASE_NAV_LINK_CLASSES, {
@@ -348,7 +360,7 @@ export const NavItem = ({
         [SETTING_NAV_LINK_CLASSES]: isSetting,
       })
     },
-    [type, pathname, editMode]
+    [type, pathname, editMode, to, isNestedItemActive]
   )
 
   const getLinkTarget = useCallback(

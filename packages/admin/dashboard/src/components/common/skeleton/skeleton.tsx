@@ -1,5 +1,6 @@
 import { Container, Heading, Text, clx } from "@medusajs/ui"
 import { CSSProperties, ComponentPropsWithoutRef } from "react"
+import { SHOW_DETAIL_PAGE_JSON_VIEW } from "../json-view-section/show-detail-page-json-view"
 
 type SkeletonProps = {
   className?: string
@@ -256,7 +257,9 @@ export const SingleColumnPageSkeleton = ({
         )
       })}
       {showMetadata && <Skeleton className="h-[60px] w-full rounded-lg" />}
-      {showJSON && <Skeleton className="h-[60px] w-full rounded-lg" />}
+      {showJSON && SHOW_DETAIL_PAGE_JSON_VIEW && (
+        <Skeleton className="h-[60px] w-full rounded-lg" />
+      )}
     </div>
   )
 }
@@ -274,7 +277,7 @@ export const TwoColumnPageSkeleton = ({
   showJSON = false,
   showMetadata = true,
 }: TwoColumnPageSkeletonProps) => {
-  const showExtraData = showJSON || showMetadata
+  const showExtraData = (showJSON && SHOW_DETAIL_PAGE_JSON_VIEW) || showMetadata
 
   return (
     <div className="flex flex-col gap-y-3">
@@ -295,7 +298,9 @@ export const TwoColumnPageSkeleton = ({
               {showMetadata && (
                 <Skeleton className="h-[60px] w-full rounded-lg" />
               )}
-              {showJSON && <Skeleton className="h-[60px] w-full rounded-lg" />}
+              {showJSON && SHOW_DETAIL_PAGE_JSON_VIEW && (
+                <Skeleton className="h-[60px] w-full rounded-lg" />
+              )}
             </div>
           )}
         </div>
@@ -317,7 +322,9 @@ export const TwoColumnPageSkeleton = ({
               {showMetadata && (
                 <Skeleton className="h-[60px] w-full rounded-lg" />
               )}
-              {showJSON && <Skeleton className="h-[60px] w-full rounded-lg" />}
+              {showJSON && SHOW_DETAIL_PAGE_JSON_VIEW && (
+                <Skeleton className="h-[60px] w-full rounded-lg" />
+              )}
             </div>
           )}
         </div>

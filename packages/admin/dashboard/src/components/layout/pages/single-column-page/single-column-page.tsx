@@ -1,5 +1,8 @@
 import { Outlet } from "react-router-dom"
-import { JsonViewSection } from "../../../common/json-view-section"
+import {
+  JsonViewSection,
+  SHOW_DETAIL_PAGE_JSON_VIEW,
+} from "../../../common/json-view-section"
 import { MetadataSection } from "../../../common/metadata-section"
 import { PageProps } from "../types"
 
@@ -56,7 +59,9 @@ export const SingleColumnPage = <TData,>({
         return <Component {...widgetProps} key={i} />
       })}
       {showMetadata && <MetadataSection data={data!} />}
-      {showJSON && <JsonViewSection data={data!} />}
+      {showJSON && SHOW_DETAIL_PAGE_JSON_VIEW && (
+        <JsonViewSection data={data!} />
+      )}
       {hasOutlet && <Outlet />}
     </div>
   )
