@@ -16,7 +16,10 @@ import {
   PRODUCT_CREATE_FORM_DEFAULTS,
   ProductCreateSchema,
 } from "../../constants"
-import { normalizeProductFormValues } from "../../utils"
+import {
+  normalizeProductFormValues,
+  partitionMediaForUpload,
+} from "../../utils"
 import { ProductCreateDetailsForm } from "../product-create-details-form"
 import { ProductCreateInventoryKitForm } from "../product-create-inventory-kit-form"
 import { ProductCreateOrganizeForm } from "../product-create-organize-form"
@@ -113,12 +116,17 @@ export const ProductCreateForm = ({
       id?: string
       url: string
       isThumbnail: boolean
-      file: File
+      file: File | null
     }[] = []
     try {
       if (media.length) {
-        const thumbnailReq = media.find((m) => m.isThumbnail)
-        const otherMediaReq = media.filter((m) => !m.isThumbnail)
+        // Pagly: media picked from the library is already stored; only
+        // entries with a file are uploaded.
+        const {
+          thumbnail: thumbnailReq,
+          others: otherMediaReq,
+          stored,
+        } = partitionMediaForUpload(media)
 
         const fileReqs = [] as Promise<
           (AdminFile & {
@@ -142,12 +150,15 @@ export const ProductCreateForm = ({
           )
         }
 
-        uploadedMedia = (await Promise.all(fileReqs)).flat() as {
-          id?: string
-          url: string
-          isThumbnail: boolean
-          file: File
-        }[]
+        uploadedMedia = [
+          ...stored.map((m) => ({ ...m, file: null })),
+          ...((await Promise.all(fileReqs)).flat() as {
+            id?: string
+            url: string
+            isThumbnail: boolean
+            file: File
+          }[]),
+        ]
       }
     } catch (error) {
       if (error instanceof Error) {

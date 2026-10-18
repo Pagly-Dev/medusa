@@ -1,5 +1,5 @@
-import type { FileDTO } from "@medusajs/framework/types"
 import {
+  createHook,
   createWorkflow,
   WorkflowData,
   WorkflowResponse,
@@ -68,12 +68,16 @@ export const uploadFilesWorkflowId = "upload-files"
  * @summary
  *
  * Upload files using the installed File Module Provider.
+ *
+ * @property hooks.filesUploaded - This hook is executed after the files are uploaded. You can consume this hook to record the uploaded files, for example in a media library.
  */
 export const uploadFilesWorkflow = createWorkflow(
   uploadFilesWorkflowId,
-  (
-    input: WorkflowData<UploadFilesWorkflowInput>
-  ): WorkflowResponse<FileDTO[]> => {
-    return new WorkflowResponse(uploadFilesStep(input))
+  (input: WorkflowData<UploadFilesWorkflowInput>) => {
+    const files = uploadFilesStep(input)
+    // Pagly: lets a plugin record every upload (the media library) without core depending on it.
+    const filesUploaded = createHook("filesUploaded", { files, input })
+
+    return new WorkflowResponse(files, { hooks: [filesUploaded] })
   }
 )
