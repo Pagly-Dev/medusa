@@ -3847,7 +3847,13 @@
     }
   },
   "onlineStore": {
-    "domain": "Tienda online"
+    "domain": "Tienda online",
+    "view": "Ver en tienda online",
+    "unavailable": {
+      "product": "Publicá el producto para verlo en tu tienda online.",
+      "noSalesChannel": "Agregá el producto a un canal de venta para verlo en tu tienda online.",
+      "category": "Activá la categoría y hacela pública para verla en tu tienda online."
+    }
   },
   "home": {
     "domain": "Inicio"

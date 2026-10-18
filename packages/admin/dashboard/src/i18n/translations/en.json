@@ -3830,7 +3830,13 @@
     }
   },
   "onlineStore": {
-    "domain": "Online store"
+    "domain": "Online store",
+    "view": "View in online store",
+    "unavailable": {
+      "product": "Publish the product to see it in your online store.",
+      "noSalesChannel": "Add the product to a sales channel to see it in your online store.",
+      "category": "Make the category active and public to see it in your online store."
+    }
   },
   "home": {
     "domain": "Home"

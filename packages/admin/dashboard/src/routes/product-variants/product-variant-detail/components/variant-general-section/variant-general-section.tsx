@@ -1,4 +1,10 @@
-import { Component, GlobeEurope, PencilSquare, Trash } from "@medusajs/icons"
+import {
+  ArrowUpRightOnBox,
+  Component,
+  GlobeEurope,
+  PencilSquare,
+  Trash,
+} from "@medusajs/icons"
 import { Badge, Container, Heading, usePrompt } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "react-router-dom"
@@ -6,6 +12,7 @@ import { useNavigate } from "react-router-dom"
 import { ActionMenu } from "../../../../../components/common/action-menu"
 import { SectionRow } from "../../../../../components/common/section"
 import { useDeleteVariant } from "../../../../../hooks/api/products"
+import { storefrontUrl } from "../../../../../lib/storefront"
 import { useFeatureFlag } from "../../../../../providers/feature-flag-provider"
 import { ExtendedVariant } from "../../constants"
 
@@ -70,6 +77,22 @@ export function VariantGeneralSection({ variant }: VariantGeneralSectionProps) {
                     to: "edit",
                     icon: <PencilSquare />,
                   },
+                  // Pagly: open the product page with this variant selected.
+                  ...(variant.product?.handle
+                    ? [
+                        {
+                          label: t("onlineStore.view"),
+                          href: storefrontUrl(
+                            `/products/${encodeURIComponent(
+                              variant.product.handle
+                            )}?v_id=${variant.id}`
+                          ),
+                          icon: <ArrowUpRightOnBox />,
+                          disabled: variant.product.status !== "published",
+                          disabledTooltip: t("onlineStore.unavailable.product"),
+                        },
+                      ]
+                    : []),
                 ],
               },
               ...(isTranslationsEnabled

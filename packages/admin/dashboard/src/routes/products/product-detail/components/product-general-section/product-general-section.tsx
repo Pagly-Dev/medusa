@@ -1,4 +1,9 @@
-import { GlobeEurope, PencilSquare, Trash } from "@medusajs/icons"
+import {
+  ArrowUpRightOnBox,
+  GlobeEurope,
+  PencilSquare,
+  Trash,
+} from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import { Container, Heading, StatusBadge, toast, usePrompt } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
@@ -8,6 +13,7 @@ import { ActionMenu } from "../../../../../components/common/action-menu"
 import { SectionRow } from "../../../../../components/common/section"
 import { richTextToPlain } from "../../../../../components/inputs/rich-text-input"
 import { useDeleteProduct } from "../../../../../hooks/api/products"
+import { storefrontUrl } from "../../../../../lib/storefront"
 import { useExtension } from "../../../../../providers/extension-provider"
 import { useFeatureFlag } from "../../../../../providers/feature-flag-provider"
 
@@ -25,6 +31,18 @@ const productStatusColor = (status: string) => {
       return "grey"
   }
 }
+
+/**
+ * Pagly: the store only shows published products that are in a sales channel.
+ * A product fetched without its channels is given the benefit of the doubt.
+ */
+const isInStore = (
+  product: Pick<HttpTypes.AdminProduct, "status" | "sales_channels">
+) =>
+  product.status === "published" &&
+  (product.sales_channels === undefined ||
+    product.sales_channels === null ||
+    product.sales_channels.length > 0)
 
 type ProductGeneralSectionProps = {
   product: HttpTypes.AdminProduct
@@ -85,6 +103,19 @@ export const ProductGeneralSection = ({
                     label: t("actions.edit"),
                     to: "edit",
                     icon: <PencilSquare />,
+                  },
+                  // Pagly: open the product's page in the online store.
+                  {
+                    label: t("onlineStore.view"),
+                    href: storefrontUrl(
+                      `/products/${encodeURIComponent(product.handle)}`
+                    ),
+                    icon: <ArrowUpRightOnBox />,
+                    disabled: !isInStore(product),
+                    disabledTooltip:
+                      product.status === "published"
+                        ? t("onlineStore.unavailable.noSalesChannel")
+                        : t("onlineStore.unavailable.product"),
                   },
                 ],
               },
