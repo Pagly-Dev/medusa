@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { ComponentType, useCallback, useState } from "react"
 import { UseFormReturn } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -26,6 +26,23 @@ const SUPPORTED_FORMATS = [
   "image/svg+xml",
 ]
 
+// Pagly: a plugin can register a media library to choose already stored images
+// from. `@pagly/storefront` registers its media picker here.
+type MediaPickerProps = {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  multiple?: boolean
+  accept?: string | string[]
+  onSelect: (files: { url: string }[]) => void
+}
+
+const MEDIA_PICKER_KEY = "__paglyMediaPicker"
+
+const getMediaPicker = () =>
+  (globalThis as Record<string, unknown>)[MEDIA_PICKER_KEY] as
+    | ComponentType<MediaPickerProps>
+    | undefined
+
 const SUPPORTED_FORMATS_FILE_EXTENSIONS = [
   ".jpeg",
   ".png",
@@ -47,6 +64,8 @@ export const UploadMediaFormItem = ({
   showHint?: boolean
 }) => {
   const { t } = useTranslation()
+  const MediaPicker = getMediaPicker()
+  const [isPickerOpen, setIsPickerOpen] = useState(false)
 
   const hasInvalidFiles = useCallback(
     (fileList: FileType[] = [], rejectedFiles: RejectedFile[] = []) => {
@@ -107,6 +126,23 @@ export const UploadMediaFormItem = ({
     [form, append, hasInvalidFiles]
   )
 
+  // Picked images are already stored, so they are added by URL with no file to
+  // upload on save. Each gets its own id, as a dropped file does.
+  const onPicked = useCallback(
+    (files: { url: string }[]) => {
+      form.clearErrors("media")
+      files.forEach((file) =>
+        append({
+          id: Math.random().toString(36).substring(7),
+          url: file.url,
+          isThumbnail: false,
+          file: null,
+        })
+      )
+    },
+    [form, append]
+  )
+
   return (
     <Form.Field
       control={
@@ -130,9 +166,21 @@ export const UploadMediaFormItem = ({
                   hasError={!!form.formState.errors.media}
                   formats={SUPPORTED_FORMATS}
                   onUploaded={onUploaded}
+                  onBrowse={
+                    MediaPicker ? () => setIsPickerOpen(true) : undefined
+                  }
                 />
               </Form.Control>
               <Form.ErrorMessage className="whitespace-pre-line" />
+              {MediaPicker && (
+                <MediaPicker
+                  open={isPickerOpen}
+                  onOpenChange={setIsPickerOpen}
+                  multiple
+                  accept={SUPPORTED_FORMATS}
+                  onSelect={onPicked}
+                />
+              )}
             </div>
           </Form.Item>
         )
