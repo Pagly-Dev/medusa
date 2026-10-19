@@ -173,6 +173,7 @@ export const ProductOrganizationForm = ({
                         options={tags.options}
                         onSearchValueChange={tags.onSearchValueChange}
                         searchValue={tags.searchValue}
+                        fetchNextPage={tags.fetchNextPage}
                         onCreateOption={async (value) => {
                           const label = createdLabel(value)
                           const id = await create.tag(label)
