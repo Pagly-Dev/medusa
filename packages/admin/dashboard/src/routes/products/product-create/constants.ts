@@ -65,7 +65,7 @@ export const ProductCreateSchema = z
     description: z.string().optional(),
     discountable: z.boolean(),
     type_id: z.string().optional(),
-    collection_id: z.string().optional(),
+    // Pagly: no collection_id. Collections are assigned through the collection-sources plugin.
     shipping_profile_id: z.string().optional(),
     categories: z.array(z.string()),
     tags: z.array(z.string()).optional(),
@@ -147,7 +147,6 @@ export const PRODUCT_CREATE_FORM_DEFAULTS: Partial<
   enable_variants: false,
   media: [],
   categories: [],
-  collection_id: "",
   shipping_profile_id: "",
   description: "",
   handle: "",

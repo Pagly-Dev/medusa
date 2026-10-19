@@ -75,6 +75,31 @@ export const PromotionDetail = () => {
     )
   }
 
+  // Pagly: an offer promotion belongs to an offer (quantity breaks, bundles) and is edited there.
+  if (promotion.type === "offer") {
+    const offerId = (promotion.metadata as Record<string, unknown> | null)
+      ?.offer_id
+    return (
+      <Container className="divide-y p-0">
+        <div className="flex flex-col items-start gap-y-2 px-6 py-4">
+          <Heading>{t("promotions.offer.notice.heading")}</Heading>
+          <Text size="small" className="text-ui-fg-subtle">
+            {t("promotions.offer.notice.description")}
+          </Text>
+          <Button size="small" variant="secondary" asChild>
+            <Link
+              to={
+                typeof offerId === "string" ? `/offers/${offerId}` : "/offers"
+              }
+            >
+              {t("promotions.offer.notice.action")}
+            </Link>
+          </Button>
+        </div>
+      </Container>
+    )
+  }
+
   return (
     <LayoutComposer
       widgetsZonePrefix="promotion.details"

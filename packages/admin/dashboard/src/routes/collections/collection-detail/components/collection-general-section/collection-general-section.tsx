@@ -1,9 +1,15 @@
-import { GlobeEurope, PencilSquare, Trash } from "@medusajs/icons"
+import {
+  ArrowUpRightOnBox,
+  GlobeEurope,
+  PencilSquare,
+  Trash,
+} from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import { Container, Heading, Text, usePrompt } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
 import { ActionMenu } from "../../../../../components/common/action-menu"
 import { useDeleteCollection } from "../../../../../hooks/api/collections"
+import { storefrontUrl } from "../../../../../lib/storefront"
 import { useNavigate } from "react-router-dom"
 import { useFeatureFlag } from "../../../../../providers/feature-flag-provider"
 
@@ -51,6 +57,15 @@ export const CollectionGeneralSection = ({
                   label: t("actions.edit"),
                   to: `/collections/${collection.id}/edit`,
                   disabled: !collection.id,
+                },
+                // Pagly: open the collection's page in the online store.
+                {
+                  icon: <ArrowUpRightOnBox />,
+                  label: t("onlineStore.view"),
+                  href: storefrontUrl(
+                    `/collections/${encodeURIComponent(collection.handle ?? "")}`
+                  ),
+                  disabled: !collection.handle,
                 },
               ],
             },

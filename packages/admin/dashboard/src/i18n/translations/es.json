@@ -1119,6 +1119,24 @@
       "hint": "Crea un nuevo cliente y administra sus detalles.",
       "successToast": "Cliente {{email}} creado correctamente."
     },
+    "export": {
+      "header": "Exportar lista de clientes",
+      "description": "Exporta la lista de clientes a un archivo.",
+      "success": {
+        "title": "Estamos procesando tu exportación",
+        "description": "Exportar los datos puede tomar unos minutos. Te notificaremos cuando hayamos terminado."
+      },
+      "format": {
+        "label": "Formato",
+        "description": "Elige el formato del archivo exportado. JSON captura datos anidados en todos los módulos sin pérdida, lo cual es recomendado para solicitudes de acceso a datos personales.",
+        "json": "JSON",
+        "csv": "CSV"
+      },
+      "filters": {
+        "title": "Filtros",
+        "description": "Aplica filtros en la vista general de la tabla para ajustar esta vista"
+      }
+    },
     "groups": {
       "label": "Grupos de clientes",
       "remove": "¿Estás seguro de que deseas eliminar al cliente del grupo de clientes \"{{name}}\"?",
@@ -1901,15 +1919,15 @@
         "action": "Editar precios"
       },
       "conditionalPrices": {
-        "header": "Precios Condicionales",
+        "header": "Precios Condicionales para {{name}}",
         "description": "Establece precios diferentes basados en condiciones específicas.",
         "attributes": {
           "cartItemTotal": "Total de artículos del carrito"
         },
         "summaries": {
-          "range": "Rango",
-          "greaterThan": "Mayor que",
-          "lessThan": "Menor que"
+          "range": "Si <0>{{attribute}}</0> está entre <1>{{gte}}</1> y <2>{{lte}}</2>",
+          "greaterThan": "Si <0>{{attribute}}</0> ≥ <1>{{gte}}</1>",
+          "lessThan": "Si <0>{{attribute}}</0> ≤ <1>{{lte}}</1>"
         },
         "actions": {
           "addPrice": "Agregar precio",
@@ -2278,6 +2296,13 @@
         "heading": "Promoción bancaria",
         "description": "Esta promoción se edita en Promociones bancarias.",
         "action": "Abrir promoción bancaria"
+      }
+    },
+    "offer": {
+      "notice": {
+        "heading": "Promoción de oferta",
+        "description": "Esta promoción pertenece a una oferta y se edita en Ofertas.",
+        "action": "Abrir oferta"
       }
     },
     "list": {
@@ -3840,7 +3865,13 @@
     }
   },
   "onlineStore": {
-    "domain": "Tienda online"
+    "domain": "Tienda online",
+    "view": "Ver en tienda online",
+    "unavailable": {
+      "product": "Publicá el producto para verlo en tu tienda online.",
+      "noSalesChannel": "Agregá el producto a un canal de venta para verlo en tu tienda online.",
+      "category": "Activá la categoría y hacela pública para verla en tu tienda online."
+    }
   },
   "home": {
     "domain": "Inicio"

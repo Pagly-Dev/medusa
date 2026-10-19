@@ -85,7 +85,9 @@ export const RulesFormField = ({
   const promotionType = useWatch({
     control: form.control,
     name: "type",
-    defaultValue: promotion?.type,
+    // Bank promotions open their own page, so this editor only sees standard
+    // and buy-get promotions.
+    defaultValue: promotion?.type as CreatePromotionSchemaType["type"],
   })
 
   const applicationMethodType = useWatch({

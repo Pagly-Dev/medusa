@@ -21,6 +21,8 @@ export interface FileUploadProps {
   formats: string[]
   maxFileSize?: number // in bytes, defaults to 1MB. Set to Infinity to disable.
   onUploaded: (files: FileType[], rejectedFiles?: RejectedFile[]) => void
+  // Pagly: a click opens this instead of the file dialog (the media picker).
+  onBrowse?: () => void
 }
 
 const DEFAULT_MAX_FILE_SIZE = __MAX_UPLOAD_FILE_SIZE__ ?? 1024 * 1024 // 1MB fallback
@@ -33,6 +35,7 @@ export const FileUpload = ({
   formats,
   maxFileSize = DEFAULT_MAX_FILE_SIZE,
   onUploaded,
+  onBrowse,
 }: FileUploadProps) => {
   const [isDragOver, setIsDragOver] = useState<boolean>(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -114,7 +117,7 @@ export const FileUpload = ({
       <button
         ref={dropZoneRef}
         type="button"
-        onClick={handleOpenFileSelector}
+        onClick={onBrowse ?? handleOpenFileSelector}
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
         onDragEnter={handleDragEnter}

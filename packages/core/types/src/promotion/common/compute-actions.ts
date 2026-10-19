@@ -10,6 +10,7 @@ export type ComputeActions =
   | RemoveShippingMethodAdjustment
   | CampaignBudgetExceededAction
   | PromotionLimitExceededAction
+  | CampaignBudgetAttributeMissingAction
 
 /**
  * These computed action types can affect a campaign's budget.
@@ -55,6 +56,29 @@ export interface PromotionLimitExceededAction {
    * The promotion's code.
    */
   code: string
+}
+
+// Pagly: computeActions skips, rather than throws, when this attribute is missing.
+/**
+ * This action indicates that a promotion was skipped because its campaign
+ * budget counts usage by an attribute (for example, `customer_email`) that
+ * the context doesn't have yet.
+ */
+export interface CampaignBudgetAttributeMissingAction {
+  /**
+   * The type of action.
+   */
+  action: "campaignBudgetAttributeMissing"
+
+  /**
+   * The promotion's code.
+   */
+  code: string
+
+  /**
+   * The campaign budget attribute that is missing from the context.
+   */
+  attribute: string
 }
 
 /**

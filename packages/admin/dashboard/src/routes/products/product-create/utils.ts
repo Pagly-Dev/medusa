@@ -25,7 +25,7 @@ export const normalizeProductFormValues = (
       ? values.sales_channels?.map((sc) => ({ id: sc.id }))
       : undefined,
     images,
-    collection_id: values.collection_id || undefined,
+    // Pagly: collection_id is never sent. Membership lives in the collection-sources plugin.
     shipping_profile_id: values.shipping_profile_id || undefined,
     categories: values.categories.map((id) => ({ id })),
     type_id: values.type_id || undefined,
@@ -121,3 +121,21 @@ export const decorateVariantsWithDefaultValues = (
     inventory_kit: variant.inventory_kit || false,
   }))
 }
+
+// Pagly: entries picked from the media library are already stored and carry
+// only a URL; only entries with a file still need uploading.
+export const partitionMediaForUpload = <
+  T extends { url: string; isThumbnail: boolean; file?: File | null }
+>(
+  media: T[]
+): {
+  thumbnail: T | undefined
+  others: T[]
+  stored: { url: string; isThumbnail: boolean }[]
+} => ({
+  thumbnail: media.find((m) => m.isThumbnail && !!m.file),
+  others: media.filter((m) => !m.isThumbnail && !!m.file),
+  stored: media
+    .filter((m) => !m.file)
+    .map(({ url, isThumbnail }) => ({ url, isThumbnail })),
+})

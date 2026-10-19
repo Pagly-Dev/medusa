@@ -3,6 +3,8 @@ export enum PromotionType {
   BUYGET = "buyget",
   // Pagly: bank promotions are a separate admin type and are not applied at checkout yet.
   BANK = "bank",
+  // Pagly: offer promotions belong to a Pagly offer (quantity breaks, bundles). They are calculated like standard ones.
+  OFFER = "offer",
 }
 
 export enum PromotionStatus {
@@ -52,6 +54,8 @@ export enum ComputedActions {
   REMOVE_SHIPPING_METHOD_ADJUSTMENT = "removeShippingMethodAdjustment",
   CAMPAIGN_BUDGET_EXCEEDED = "campaignBudgetExceeded",
   PROMOTION_LIMIT_EXCEEDED = "promotionLimitExceeded",
+  // Pagly: the cart lacks the attribute a use_by_attribute or spend_by_attribute budget counts by.
+  CAMPAIGN_BUDGET_ATTRIBUTE_MISSING = "campaignBudgetAttributeMissing",
 }
 
 export enum PromotionActions {

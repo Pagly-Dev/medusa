@@ -21,7 +21,6 @@ import {
   useCreateOrganizeOptions,
   withCreated,
 } from "../../../common/hooks/use-create-organize-options"
-import { collectionsQueryKeys } from "../../../../../hooks/api/collections"
 import { productTypesQueryKeys } from "../../../../../hooks/api/product-types"
 import { productTagsQueryKeys } from "../../../../../hooks/api/tags"
 
@@ -31,7 +30,6 @@ type ProductOrganizationFormProps = {
 
 const ProductOrganizationSchema = zod.object({
   type_id: zod.string().nullable(),
-  collection_id: zod.string().nullable(),
   category_ids: zod.array(zod.string()),
   tag_ids: zod.array(zod.string()),
 })
@@ -45,16 +43,6 @@ export const ProductOrganizationForm = ({
 
   const configs = getFormConfigs("product", "organize")
   const fields = getFormFields("product", "organize")
-
-  const collections = useComboboxData({
-    queryKey: collectionsQueryKeys.lists(),
-    queryFn: (params) => sdk.admin.productCollection.list(params),
-    getOptions: (data) =>
-      data.collections.map((collection) => ({
-        label: collection.title!,
-        value: collection.id!,
-      })),
-  })
 
   const types = useComboboxData({
     queryKey: productTypesQueryKeys.lists(),
@@ -79,7 +67,6 @@ export const ProductOrganizationForm = ({
   const form = useExtendableForm({
     defaultValues: {
       type_id: product.type_id ?? "",
-      collection_id: product.collection_id ?? "",
       category_ids: product.categories?.map((c) => c.id) || [],
       tag_ids: product.tags?.map((t) => t.id) || [],
     },
@@ -95,7 +82,6 @@ export const ProductOrganizationForm = ({
     await mutateAsync(
       {
         type_id: data.type_id || null,
-        collection_id: data.collection_id || null,
         categories: data.category_ids.map((c) => ({ id: c })),
         tags: data.tag_ids?.map((t) => ({ id: t })),
       },
@@ -150,36 +136,7 @@ export const ProductOrganizationForm = ({
                 )
               }}
             />
-            <Form.Field
-              control={form.control}
-              name="collection_id"
-              render={({ field }) => {
-                return (
-                  <Form.Item>
-                    <Form.Label optional>
-                      {t("products.fields.collection.label")}
-                    </Form.Label>
-                    <Form.Control>
-                      <Combobox
-                        {...field}
-                        value={field.value || ""}
-                        onChange={(value) => field.onChange(value || "")}
-                        multiple={false}
-                        options={collections.options}
-                        onSearchValueChange={collections.onSearchValueChange}
-                        searchValue={collections.searchValue}
-                        allowClear
-                        onCreateOption={async (value) => {
-                          const id = await create.collection(createdLabel(value))
-                          form.setValue("collection_id", id ?? "", { shouldDirty: true })
-                        }}
-                      />
-                    </Form.Control>
-                    <Form.ErrorMessage />
-                  </Form.Item>
-                )
-              }}
-            />
+            {/* Pagly: no collection field. Collections are assigned through the collection-sources plugin, so collection_id is never sent. */}
             <Form.Field
               control={form.control}
               name="category_ids"
@@ -216,6 +173,7 @@ export const ProductOrganizationForm = ({
                         options={tags.options}
                         onSearchValueChange={tags.onSearchValueChange}
                         searchValue={tags.searchValue}
+                        fetchNextPage={tags.fetchNextPage}
                         onCreateOption={async (value) => {
                           const label = createdLabel(value)
                           const id = await create.tag(label)

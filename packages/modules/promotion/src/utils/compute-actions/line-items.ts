@@ -16,7 +16,11 @@ import {
 import { Promotion } from "@models"
 import { areRulesValidForContext } from "../validations"
 import { sortLineItemByPriceAscending } from "./sort-by-price"
-import { computeActionForBudgetExceeded } from "./usage"
+import {
+  AttributeBudgetSpend,
+  computeActionForBudgetExceeded,
+  recordAttributeBudgetSpend,
+} from "./usage"
 
 function validateContext(
   contextKey: string,
@@ -34,7 +38,9 @@ export function getComputedActionsForItems(
   promotion: PromotionTypes.PromotionDTO | InferEntityType<typeof Promotion>,
   items: PromotionTypes.ComputeActionContext[TargetType.ITEMS],
   appliedPromotionsMap: Map<string, number>,
-  allocationOverride?: ApplicationMethodAllocationValues
+  allocationOverride?: ApplicationMethodAllocationValues,
+  // Pagly: set when the campaign budget is spend_by_attribute.
+  attributeBudgetSpend?: AttributeBudgetSpend
 ): PromotionTypes.ComputeActions[] {
   validateContext("items", items)
 
@@ -42,7 +48,8 @@ export function getComputedActionsForItems(
     promotion,
     items,
     appliedPromotionsMap,
-    allocationOverride
+    allocationOverride,
+    attributeBudgetSpend
   )
 }
 
@@ -50,7 +57,8 @@ function applyPromotionToItems(
   promotion: PromotionTypes.PromotionDTO | InferEntityType<typeof Promotion>,
   items: PromotionTypes.ComputeActionContext[TargetType.ITEMS],
   appliedPromotionsMap: Map<string, BigNumberInput>,
-  allocationOverride?: ApplicationMethodAllocationValues
+  allocationOverride?: ApplicationMethodAllocationValues,
+  attributeBudgetSpend?: AttributeBudgetSpend
 ): PromotionTypes.ComputeActions[] {
   const { application_method: applicationMethod } = promotion
 
@@ -156,13 +164,16 @@ function applyPromotionToItems(
 
     const budgetExceededAction = computeActionForBudgetExceeded(
       promotion,
-      amount
+      amount,
+      attributeBudgetSpend
     )
 
     if (budgetExceededAction) {
       computedActions.push(budgetExceededAction)
       continue
     }
+
+    recordAttributeBudgetSpend(attributeBudgetSpend, amount)
 
     const appliedAmountExclTax = promotion.is_tax_inclusive
       ? MathBN.mult(amount, MathBN.div(item.subtotal, item.original_total))

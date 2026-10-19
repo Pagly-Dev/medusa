@@ -4197,6 +4197,64 @@
           "required": ["header", "hint", "successToast"],
           "additionalProperties": false
         },
+        "export": {
+          "type": "object",
+          "properties": {
+            "header": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "success": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": ["title", "description"],
+              "additionalProperties": false
+            },
+            "format": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "json": {
+                  "type": "string"
+                },
+                "csv": {
+                  "type": "string"
+                }
+              },
+              "required": ["label", "description", "json", "csv"],
+              "additionalProperties": false
+            },
+            "filters": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": ["title", "description"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["header", "description", "success", "format", "filters"],
+          "additionalProperties": false
+        },
         "groups": {
           "type": "object",
           "properties": {
@@ -4414,6 +4472,7 @@
         "domain",
         "list",
         "create",
+        "export",
         "groups",
         "edit",
         "delete",
@@ -8609,6 +8668,29 @@
           "required": ["notice"],
           "additionalProperties": false
         },
+        "offer": {
+          "type": "object",
+          "properties": {
+            "notice": {
+              "type": "object",
+              "properties": {
+                "heading": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "action": {
+                  "type": "string"
+                }
+              },
+              "required": ["heading", "description", "action"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["notice"],
+          "additionalProperties": false
+        },
         "list": {
           "type": "object",
           "properties": {
@@ -9414,6 +9496,7 @@
       "required": [
         "domain",
         "bank",
+        "offer",
         "list",
         "sections",
         "tabs",
@@ -14730,9 +14813,28 @@
       "properties": {
         "domain": {
           "type": "string"
+        },
+        "view": {
+          "type": "string"
+        },
+        "unavailable": {
+          "type": "object",
+          "properties": {
+            "product": {
+              "type": "string"
+            },
+            "noSalesChannel": {
+              "type": "string"
+            },
+            "category": {
+              "type": "string"
+            }
+          },
+          "required": ["product", "noSalesChannel", "category"],
+          "additionalProperties": false
         }
       },
-      "required": ["domain"],
+      "required": ["domain", "view", "unavailable"],
       "additionalProperties": false
     },
     "home": {
