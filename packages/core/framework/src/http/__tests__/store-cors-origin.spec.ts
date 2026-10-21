@@ -168,6 +168,63 @@ describe("/store CORS with http.storeCorsOrigin", function () {
     warn.mockRestore()
   })
 
+  it("admits only on a plain true, not on any truthy answer", async function () {
+    for (const answer of ["yes", 1, {}, "true"]) {
+      storeCorsOrigin.mockResolvedValueOnce(answer)
+
+      const res = await request(
+        "OPTIONS",
+        "/store/custom",
+        preflight("/store/custom", "https://www.tienda.com.uy")
+      )
+
+      expect(res.headers["access-control-allow-origin"]).not.toBeTruthy()
+    }
+  })
+
+  it("asks again on every request, leaving any memory to the resolver", async function () {
+    storeCorsOrigin.mockResolvedValueOnce(true).mockResolvedValueOnce(false)
+
+    const first = await request(
+      "OPTIONS",
+      "/store/custom",
+      preflight("/store/custom", "https://www.tienda.com.uy")
+    )
+    const second = await request(
+      "OPTIONS",
+      "/store/custom",
+      preflight("/store/custom", "https://www.tienda.com.uy")
+    )
+
+    expect(storeCorsOrigin).toHaveBeenCalledTimes(2)
+    expect(first.headers["access-control-allow-origin"]).toBe(
+      "https://www.tienda.com.uy"
+    )
+    expect(second.headers["access-control-allow-origin"]).not.toBeTruthy()
+  })
+
+  it("does not let one admitted origin open the door to another", async function () {
+    storeCorsOrigin.mockImplementation(
+      async (origin: string) => origin === "https://www.tienda.com.uy"
+    )
+
+    const admitted = await request(
+      "OPTIONS",
+      "/store/custom",
+      preflight("/store/custom", "https://www.tienda.com.uy")
+    )
+    const other = await request(
+      "OPTIONS",
+      "/store/custom",
+      preflight("/store/custom", "https://otra.example.com")
+    )
+
+    expect(admitted.headers["access-control-allow-origin"]).toBe(
+      "https://www.tienda.com.uy"
+    )
+    expect(other.headers["access-control-allow-origin"]).not.toBeTruthy()
+  })
+
   it("does not ask when the request has no Origin", async function () {
     const res = await request("GET", "/store/custom")
 
