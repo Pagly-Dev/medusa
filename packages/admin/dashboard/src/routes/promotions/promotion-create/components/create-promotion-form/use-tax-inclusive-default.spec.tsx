@@ -60,11 +60,15 @@ describe("useTaxInclusiveDefault", () => {
     expect(result.current.getValues("is_tax_inclusive")).toBe(false)
   })
 
-  it("keeps what the merchant chose", () => {
+  it("keeps what the merchant chose, even the default", () => {
     const { result } = setup()
 
+    // A click on the switch, then away from it.
     act(() =>
-      result.current.setValue("is_tax_inclusive", false, { shouldDirty: true })
+      result.current.setValue("is_tax_inclusive", false, {
+        shouldDirty: true,
+        shouldTouch: true,
+      })
     )
     act(() => result.current.setValue("application_method.currency_code", "uyu"))
 
