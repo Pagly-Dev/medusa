@@ -20,9 +20,15 @@ function flatten(value: unknown, prefix = ""): [string, string][] {
   )
 }
 
-const strings = flatten(es).filter(([key]) => key !== "$schema")
+/** Copy only: interpolations ("{{sales_channel}}") and tags ("<0>") are code. */
+const strings = flatten(es)
+  .filter(([key]) => key !== "$schema")
+  .map(([key, value]) => [
+    key,
+    value.replace(/\{\{[^}]*\}\}|\{[^}]*\}|<\/?\w+>/g, "_"),
+  ]) as [string, string][]
 
-/** Second-person "tú" forms that read differently with "vos". */
+/** "tú" and "usted" forms that read differently with "vos". */
 const TU_ANYWHERE = new RegExp(
   "(?<!\\p{L})(" +
     [
@@ -46,6 +52,11 @@ const TU_ANYWHERE = new RegExp(
       "agrégala",
       "agrégalas",
       "cámbiala",
+      "cópiala",
+      "guárdala",
+      "déjalo",
+      "agréguelos",
+      "tenga",
       "reconstruyelos",
     ].join("|") +
     ")(?!\\p{L})",
@@ -58,13 +69,16 @@ const TU_IMPERATIVES = [
   "actualiza",
   "agrega",
   "añade",
+  "anula",
   "aplica",
   "arrastra",
   "asegúrate",
+  "asocia",
   "busca",
   "cambia",
   "comienza",
   "comparte",
+  "compra",
   "completa",
   "configura",
   "confirma",
@@ -82,6 +96,7 @@ const TU_IMPERATIVES = [
   "elige",
   "elimina",
   "empieza",
+  "envía",
   "escanea",
   "escribe",
   "espera",
@@ -97,8 +112,10 @@ const TU_IMPERATIVES = [
   "intenta",
   "introduce",
   "invita",
+  "notifica",
   "organiza",
   "personaliza",
+  "programa",
   "proporciona",
   "quita",
   "recuerda",
