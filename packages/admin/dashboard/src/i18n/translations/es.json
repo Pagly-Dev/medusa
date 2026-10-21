@@ -788,6 +788,7 @@
     },
     "options": {
       "header": "Opciones",
+      "oneVersion": "Este producto viene en una sola versión. Agregá opciones, como talle o color, desde Gestionar.",
       "edit": {
         "header": "Editar Opción",
         "successToast": "Opción {{title}} actualizada correctamente."

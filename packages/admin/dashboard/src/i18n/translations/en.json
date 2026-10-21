@@ -741,6 +741,7 @@
     },
     "options": {
       "header": "Options",
+      "oneVersion": "This product comes in one version. Add options, like size or color, from Manage.",
       "edit": {
         "header": "Edit Option",
         "successToast": "Option {{title}} was successfully updated."

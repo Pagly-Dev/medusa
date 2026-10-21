@@ -33,7 +33,9 @@ export const getOptionValues = (options?: { value?: string | null }[] | null) =>
     .map((option) => option.value)
     .filter((value): value is string => !!value && !isDefaultOptionValue(value))
 
-// Red stub: the tests land before the code.
-export const isDefaultOption = (_option: {
+/** Whether an option is the create form's default one: its only values are the default value. */
+export const isDefaultOption = (option: {
   values?: { value?: string | null }[] | null
-}) => false
+}) =>
+  !!option.values?.length &&
+  option.values.every((value) => isDefaultOptionValue(value.value))
