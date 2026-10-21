@@ -1,0 +1,179 @@
+{
+  "draftOrders": {
+    "addresses": {
+      "billingTag": "Billing",
+      "province": "Province / State",
+      "editBillingDescription": "Edit the billing address for the draft order",
+      "editShippingDescription": "Edit the shipping address for the draft order"
+    },
+    "inputs": {
+      "decreaseBy": "Decrease by {{step}}",
+      "increaseBy": "Increase by {{step}}"
+    },
+    "validation": {
+      "required": "This field is required.",
+      "requiredShippingAddress": "Shipping address is required",
+      "requiredBillingAddress": "Billing address is required"
+    },
+    "general": {
+      "title": "Draft Order #{{displayId}}",
+      "delete": "Delete draft order"
+    },
+    "pendingEdit": {
+      "title": "Edit pending",
+      "noChanges": "There is a pending edit on this draft order with no changes. Click below to cancel it, or open one of the menus to start making changes.",
+      "withChanges": "There is a pending edit on this draft order with changes. Click below to cancel it, or continue to complete the edit.",
+      "cancelled": "Edit cancelled"
+    },
+    "activity": {
+      "by": "By",
+      "created": {
+        "title": "Created",
+        "description": "Draft order created"
+      },
+      "transferred": {
+        "title": "Transferred",
+        "description": "Draft order transferred"
+      },
+      "customerUpdated": "Customer updated",
+      "salesChannelUpdated": "Sales channel updated",
+      "billingAddressUpdated": "Billing address updated",
+      "shippingAddressUpdated": "Shipping address updated",
+      "emailUpdated": "Email updated",
+      "items": {
+        "added": "Items added",
+        "removed": "Items removed",
+        "updated": "Items updated",
+        "addedCount_one": "Added {{count}} item",
+        "addedCount_other": "Added {{count}} items",
+        "removedCount_one": "Removed {{count}} item",
+        "removedCount_other": "Removed {{count}} items"
+      },
+      "shippingMethods": {
+        "added": "Shipping methods added",
+        "removed": "Shipping methods removed",
+        "updated": "Shipping methods updated",
+        "addedCount_one": "Added {{count}} shipping method",
+        "addedCount_other": "Added {{count}} shipping methods",
+        "removedCount_one": "Removed {{count}} shipping method",
+        "removedCount_other": "Removed {{count}} shipping methods"
+      },
+      "promotions": {
+        "added": "Promotions added",
+        "removed": "Promotions removed",
+        "updated": "Promotions updated",
+        "addedCount_one": "Added {{count}} promotion",
+        "addedCount_other": "Added {{count}} promotions",
+        "removedCount_one": "Removed {{count}} promotion",
+        "removedCount_other": "Removed {{count}} promotions"
+      }
+    },
+    "summary": {
+      "total": "Total",
+      "convert": "Convert to order",
+      "convertWarning": "You are about to convert this draft order to an order. This action cannot be undone.",
+      "converted": "Draft order converted to order"
+    },
+    "shipping": {
+      "requiresShipping": "Requires shipping",
+      "add": "Add shipping",
+      "edit": "Edit shipping",
+      "units_one": "{{count}}x item",
+      "units_other": "{{count}}x items",
+      "noItems": "This draft order currently has no items. Add items to the order before adding shipping.",
+      "description": "Choose which shipping method(s) to use for the items in the order.",
+      "action": "Action",
+      "editOption": "Edit shipping option",
+      "removeOption": "Remove shipping option",
+      "addOption": "Add shipping option",
+      "methodDescription": "Add a shipping method for the selected shipping profile. You can see the items that will be shipped using this method in the preview below.",
+      "update": "Update",
+      "itemsToShip": "Items to ship",
+      "itemsToShipHint": "Items with the selected shipping profile.",
+      "locationHint": "Choose where you want to ship the items from.",
+      "selectLocation": "Select location",
+      "chooseLocationAndProfile": "Choose a location and shipping profile first.",
+      "chooseLocation": "Choose a location first.",
+      "chooseProfile": "Choose a shipping profile first.",
+      "optionHint": "Choose the shipping option to use.",
+      "selectOption": "Select shipping option",
+      "customAmount": "Custom amount",
+      "customAmountHint": "Set a custom amount for the shipping option."
+    },
+    "nav": "Drafts",
+    "email": {
+      "description": "Edit the email for the draft order"
+    },
+    "customItems": {
+      "header": "Edit Custom Items"
+    },
+    "metadata": {
+      "description": "Add metadata to the draft order.",
+      "updated": "Metadata updated"
+    },
+    "salesChannel": {
+      "description": "Update which sales channel the draft order is associated with"
+    },
+    "create": {
+      "selectSalesChannel": "Select sales channel",
+      "selectCustomer": "Select customer",
+      "description": "Create a new draft order",
+      "regionHint": "Choose region",
+      "selectRegion": "Select region",
+      "salesChannelHint": "Choose sales channel",
+      "emailHint": "Input a email to associate with the order",
+      "emailLocked": "You cannot change the email when a customer is selected",
+      "emailPlaceholder": "john@doe.com",
+      "customerHint": "Choose an existing customer",
+      "shippingAddressHint": "Address used for shipping",
+      "billingAddressHint": "Address used for billing",
+      "sameAsShippingHint": "Use the same address for billing and shipping",
+      "savedAddresses": "Saved addresses",
+      "savedAddressesHint": "Choose one of the customers saved addresses.",
+      "selectShippingAddress": "Select shipping address",
+      "selectBillingAddress": "Select billing address"
+    },
+    "transferOwnership": {
+      "description": "Transfer the ownership of this draft order to a new customer",
+      "currentOwnerHint": "The customer that is currently associated with this draft order.",
+      "newCustomer": "New customer",
+      "newCustomerHint": "The customer to transfer this draft order to."
+    },
+    "promotions": {
+      "header": "Edit promotions",
+      "apply": "Apply promotions",
+      "applyHint": "Manage promotions that should be applied to the order.",
+      "allocationOnce": "Once"
+    },
+    "loading": "Loading data for the draft order, please wait...",
+    "edit": {
+      "requestFailed": "Failed to request order edit: {{message}}",
+      "confirmFailed": "Failed to confirm order edit: {{message}}"
+    },
+    "items": {
+      "header": "Edit items",
+      "description": "Edit the items in the draft order",
+      "hint": "Choose items from the product catalog.",
+      "search": "Search items",
+      "emptyTitle": "There are no items in this order",
+      "emptyDescription": "Add items to the order to get started.",
+      "noResults": "No items found",
+      "noResultsFor": "No items found for \"{{query}}\".",
+      "add": "Add items",
+      "variants": "Product Variants",
+      "variantsHint": "Choose product variants to add to the order.",
+      "update": "Update items",
+      "available_one": "{{count}} available",
+      "available_other": "{{count}} available",
+      "availableAt": "{{available}} at {{locations}}",
+      "locations_one": "{{count}} location",
+      "locations_other": "{{count}} locations",
+      "stock": "Stock",
+      "customItemDescription": "Add a custom item to the order. This will add a new line item that is not associated with an existing product.",
+      "titleHint": "Enter the title of the item",
+      "unitPriceHint": "Enter the unit price of the item",
+      "quantityHint": "Enter the quantity of the item",
+      "addItem": "Add item"
+    }
+  }
+}

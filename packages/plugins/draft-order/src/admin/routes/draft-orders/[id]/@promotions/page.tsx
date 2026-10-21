@@ -11,7 +11,9 @@ import {
   Text,
   toast,
 } from "@medusajs/ui"
+import type { TFunction } from "i18next"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useParams } from "react-router-dom"
 import { KeyboundForm } from "../../../../components/common/keybound-form"
 import { Combobox } from "../../../../components/inputs/combobox"
@@ -33,6 +35,8 @@ import { getLocaleAmount } from "../../../../lib/data/currencies"
 import { sdk } from "../../../../lib/queries/sdk"
 
 const Promotions = () => {
+  // Pagly: copy comes from the plugin's catalogs in src/admin/i18n.
+  const { t } = useTranslation()
   const { id } = useParams()
 
   const {
@@ -55,7 +59,7 @@ const Promotions = () => {
     <RouteDrawer onClose={onCancel}>
       <RouteDrawer.Header>
         <RouteDrawer.Title asChild>
-          <Heading>Edit Promotions</Heading>
+          <Heading>{t("draftOrders.promotions.header")}</Heading>
         </RouteDrawer.Title>
       </RouteDrawer.Header>
       {isReady && <PromotionForm preview={preview} />}
@@ -68,6 +72,7 @@ interface PromotionFormProps {
 }
 
 const PromotionForm = ({ preview }: PromotionFormProps) => {
+  const { t } = useTranslation()
   const { items, shipping_methods } = preview
 
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -176,10 +181,10 @@ const PromotionForm = ({ preview }: PromotionFormProps) => {
           <div className="flex flex-col gap-3">
             <div className="flex flex-col">
               <Label size="small" weight="plus" htmlFor="promotion-combobox">
-                Apply promotions
+                {t("draftOrders.promotions.apply")}
               </Label>
               <Hint id="promotion-combobox-hint">
-                Manage promotions that should be applied to the order.
+                {t("draftOrders.promotions.applyHint")}
               </Hint>
             </div>
             <Combobox
@@ -212,7 +217,7 @@ const PromotionForm = ({ preview }: PromotionFormProps) => {
         <div className="flex justify-end gap-2">
           <RouteDrawer.Close asChild>
             <Button size="small" variant="secondary">
-              Cancel
+              {t("actions.cancel")}
             </Button>
           </RouteDrawer.Close>
           <Button
@@ -220,7 +225,7 @@ const PromotionForm = ({ preview }: PromotionFormProps) => {
             type="submit"
             isLoading={isSubmitting || isAddingPromotions}
           >
-            Save
+            {t("actions.save")}
           </Button>
         </div>
       </RouteDrawer.Footer>
@@ -239,6 +244,7 @@ const PromotionItem = ({
   orderId,
   isLoading,
 }: PromotionItemProps) => {
+  const { t } = useTranslation()
   const { mutateAsync: removePromotions, isPending } =
     useDraftOrderRemovePromotions(orderId)
 
@@ -283,7 +289,7 @@ const PromotionItem = ({
             </div>
           )}
           <Text size="small" leading="compact" className="capitalize">
-            {promotion.application_method?.allocation!}
+            {getAllocationLabel(t, promotion.application_method?.allocation)}
           </Text>
         </div>
       </div>
@@ -298,6 +304,20 @@ const PromotionItem = ({
       </IconButton>
     </div>
   )
+}
+
+/** Pagly: the allocation's name, as the promotion form shows it. */
+function getAllocationLabel(t: TFunction, allocation?: string | null) {
+  switch (allocation) {
+    case "each":
+      return t("promotions.form.allocation.each.title")
+    case "across":
+      return t("promotions.form.allocation.across.title")
+    case "once":
+      return t("draftOrders.promotions.allocationOnce")
+    default:
+      return allocation
+  }
 }
 
 function getDisplayValue(promotion: HttpTypes.AdminPromotion) {

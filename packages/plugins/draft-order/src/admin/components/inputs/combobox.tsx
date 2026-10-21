@@ -31,6 +31,7 @@ import {
   useState,
   useTransition,
 } from "react"
+import { useTranslation } from "react-i18next"
 import { genericForwardRef } from "../utilities/generic-forward-ref"
 
 type ComboboxOption = {
@@ -74,6 +75,8 @@ const ComboboxImpl = <T extends Value = string>(
   }: ComboboxProps<T>,
   ref: ForwardedRef<HTMLInputElement>
 ) => {
+  // Pagly: copy comes from the plugin's catalogs in src/admin/i18n.
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
 
@@ -264,7 +267,7 @@ const ComboboxImpl = <T extends Value = string>(
               )}
             >
               <Text size="small" leading="compact">
-                Selected
+                {t("general.selected")}
               </Text>
             </div>
           )}
@@ -370,7 +373,7 @@ const ComboboxImpl = <T extends Value = string>(
                 leading="compact"
                 className="text-ui-fg-subtle"
               >
-                No results found
+                {t("general.noResultsTitle")}
               </Text>
             </div>
           ))}
@@ -385,7 +388,7 @@ const ComboboxImpl = <T extends Value = string>(
             >
               <PlusMini className="text-ui-fg-subtle" />
               <Text size="small" leading="compact">
-                Create &quot;{searchValue}&quot;
+                {`${t("actions.create")} "${searchValue}"`}
               </Text>
             </PrimitiveComboboxItem>
           </Fragment>

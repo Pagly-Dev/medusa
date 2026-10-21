@@ -189,7 +189,8 @@ describe("Draft order drawers in Spanish", () => {
   })
 
   it("labels the sales channel form", () => {
-    renderRoute(SalesChannel, { sales_channel_id: "sc_1" })
+    // With no channel picked, the combobox shows its placeholder.
+    renderRoute(SalesChannel, { sales_channel_id: null })
 
     expect(screen.getByText("Editar canal de venta")).toBeTruthy()
     expect(screen.getByText("Canal de venta")).toBeTruthy()
@@ -200,7 +201,8 @@ describe("Draft order drawers in Spanish", () => {
   })
 
   it("labels the transfer ownership form", () => {
-    renderRoute(TransferOwnership, { customer_id: customer.id, customer })
+    // With no new customer picked, the combobox shows its placeholder.
+    renderRoute(TransferOwnership, { customer_id: null, customer })
 
     expect(screen.getByText("Transferir propiedad")).toBeTruthy()
     expect(screen.getByText("Propietario actual")).toBeTruthy()
@@ -209,7 +211,7 @@ describe("Draft order drawers in Spanish", () => {
     ).toBeTruthy()
     expect(screen.getByText("Nuevo cliente")).toBeTruthy()
     expect(
-      screen.getByText("El cliente al que se transfiere este pedido borrador.")
+      screen.getByText("El cliente que va a recibir este pedido borrador.")
     ).toBeTruthy()
     expect(screen.getByPlaceholderText("Seleccioná un cliente")).toBeTruthy()
     expectFooter()

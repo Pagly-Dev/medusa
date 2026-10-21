@@ -121,14 +121,17 @@ describe("the draft order screens", () => {
   it.each(["en", "es"])("only use keys that exist in %s", (language) => {
     const missing = uses
       .filter(({ literal }) => literal)
-      .flatMap(({ file, line, key, plural }) =>
-        (plural ? [`${key}_one`, `${key}_other`] : [key])
-          .filter(
-            (needed) =>
-              i18n.getResource(language, "translation", needed) === undefined
-          )
+      .flatMap(({ file, line, key, plural }) => {
+        const has = (needed: string) =>
+          i18n.getResource(language, "translation", needed) !== undefined
+        // With `count`, i18next reads `_one`/`_other` and falls back to the key.
+        const needed =
+          plural && !has(key) ? [`${key}_one`, `${key}_other`] : [key]
+
+        return needed
+          .filter((needed) => !has(needed))
           .map((needed) => `${file}:${line} ${needed}`)
-      )
+      })
 
     expect(missing).toEqual([])
   })

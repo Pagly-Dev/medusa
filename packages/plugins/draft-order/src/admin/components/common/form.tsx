@@ -23,6 +23,7 @@ import {
   useFormContext,
   useFormState,
 } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 
 const Provider = FormProvider
 
@@ -121,6 +122,8 @@ const Label = forwardRef<
     ref
   ) => {
     const { formLabelId, formItemId } = useFormField()
+    // Pagly: copy comes from the plugin's catalogs in src/admin/i18n.
+    const { t } = useTranslation()
 
     return (
       <div className="flex items-center gap-x-1">
@@ -146,7 +149,7 @@ const Label = forwardRef<
         {icon}
         {optional && (
           <Text size="small" leading="compact" className="text-ui-fg-muted">
-            (Optional)
+            ({t("fields.optional")})
           </Text>
         )}
       </div>

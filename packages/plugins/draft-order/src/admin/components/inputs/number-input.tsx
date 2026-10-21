@@ -1,6 +1,7 @@
 import { Minus, Plus } from "@medusajs/icons"
 import { clx } from "@medusajs/ui"
 import { forwardRef, InputHTMLAttributes } from "react"
+import { useTranslation } from "react-i18next"
 
 type InputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -31,6 +32,9 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     },
     ref
   ) => {
+    // Pagly: copy comes from the plugin's catalogs in src/admin/i18n.
+    const { t } = useTranslation()
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const newValue =
         event.target.value === "" ? min : Number(event.target.value)
@@ -100,7 +104,9 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           disabled={(min !== undefined && value <= min) || disabled}
         >
           <Minus />
-          <span className="sr-only">{`Decrease by ${step}`}</span>
+          <span className="sr-only">
+            {t("draftOrders.inputs.decreaseBy", { step })}
+          </span>
         </button>
         <button
           className={clx(
@@ -118,7 +124,9 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           disabled={(max !== undefined && value >= max) || disabled}
         >
           <Plus />
-          <span className="sr-only">{`Increase by ${step}`}</span>
+          <span className="sr-only">
+            {t("draftOrders.inputs.increaseBy", { step })}
+          </span>
         </button>
       </div>
     )

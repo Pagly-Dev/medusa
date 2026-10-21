@@ -1,0 +1,179 @@
+{
+  "draftOrders": {
+    "addresses": {
+      "billingTag": "Facturación",
+      "province": "Provincia / Estado",
+      "editBillingDescription": "Editá la dirección de facturación del pedido borrador",
+      "editShippingDescription": "Editá la dirección de envío del pedido borrador"
+    },
+    "inputs": {
+      "decreaseBy": "Restar {{step}}",
+      "increaseBy": "Sumar {{step}}"
+    },
+    "validation": {
+      "required": "Este campo es obligatorio.",
+      "requiredShippingAddress": "La dirección de envío es obligatoria",
+      "requiredBillingAddress": "La dirección de facturación es obligatoria"
+    },
+    "general": {
+      "title": "Pedido borrador #{{displayId}}",
+      "delete": "Eliminar pedido borrador"
+    },
+    "pendingEdit": {
+      "title": "Edición pendiente",
+      "noChanges": "Este pedido borrador tiene una edición pendiente sin cambios. Cancelala abajo o abrí uno de los menús para empezar a editar.",
+      "withChanges": "Este pedido borrador tiene una edición pendiente con cambios. Cancelala abajo o seguí para completar la edición.",
+      "cancelled": "Edición cancelada"
+    },
+    "activity": {
+      "by": "Por",
+      "created": {
+        "title": "Creado",
+        "description": "Pedido borrador creado"
+      },
+      "transferred": {
+        "title": "Transferido",
+        "description": "Pedido borrador transferido"
+      },
+      "customerUpdated": "Cliente actualizado",
+      "salesChannelUpdated": "Canal de venta actualizado",
+      "billingAddressUpdated": "Dirección de facturación actualizada",
+      "shippingAddressUpdated": "Dirección de envío actualizada",
+      "emailUpdated": "Correo electrónico actualizado",
+      "items": {
+        "added": "Artículos agregados",
+        "removed": "Artículos quitados",
+        "updated": "Artículos actualizados",
+        "addedCount_one": "{{count}} artículo agregado",
+        "addedCount_other": "{{count}} artículos agregados",
+        "removedCount_one": "{{count}} artículo quitado",
+        "removedCount_other": "{{count}} artículos quitados"
+      },
+      "shippingMethods": {
+        "added": "Métodos de envío agregados",
+        "removed": "Métodos de envío quitados",
+        "updated": "Métodos de envío actualizados",
+        "addedCount_one": "{{count}} método de envío agregado",
+        "addedCount_other": "{{count}} métodos de envío agregados",
+        "removedCount_one": "{{count}} método de envío quitado",
+        "removedCount_other": "{{count}} métodos de envío quitados"
+      },
+      "promotions": {
+        "added": "Promociones agregadas",
+        "removed": "Promociones quitadas",
+        "updated": "Promociones actualizadas",
+        "addedCount_one": "{{count}} promoción agregada",
+        "addedCount_other": "{{count}} promociones agregadas",
+        "removedCount_one": "{{count}} promoción quitada",
+        "removedCount_other": "{{count}} promociones quitadas"
+      }
+    },
+    "summary": {
+      "total": "Total",
+      "convert": "Convertir en pedido",
+      "convertWarning": "Vas a convertir este pedido borrador en un pedido. Esta acción no se puede deshacer.",
+      "converted": "Pedido borrador convertido en pedido"
+    },
+    "shipping": {
+      "requiresShipping": "Requiere envío",
+      "add": "Agregar envío",
+      "edit": "Editar envío",
+      "units_one": "{{count}} artículo",
+      "units_other": "{{count}} artículos",
+      "noItems": "Este pedido borrador todavía no tiene artículos. Agregá artículos antes de agregar el envío.",
+      "description": "Elegí qué métodos de envío usar para los artículos del pedido.",
+      "action": "Acción",
+      "editOption": "Editar opción de envío",
+      "removeOption": "Quitar opción de envío",
+      "addOption": "Agregar opción de envío",
+      "methodDescription": "Agregá un método de envío para el perfil de envío elegido. Abajo ves los artículos que se envían con este método.",
+      "update": "Actualizar",
+      "itemsToShip": "Artículos a enviar",
+      "itemsToShipHint": "Artículos con el perfil de envío elegido.",
+      "locationHint": "Elegí desde dónde enviar los artículos.",
+      "selectLocation": "Seleccioná una ubicación",
+      "chooseLocationAndProfile": "Primero elegí una ubicación y un perfil de envío.",
+      "chooseLocation": "Primero elegí una ubicación.",
+      "chooseProfile": "Primero elegí un perfil de envío.",
+      "optionHint": "Elegí la opción de envío a usar.",
+      "selectOption": "Seleccioná una opción de envío",
+      "customAmount": "Monto personalizado",
+      "customAmountHint": "Definí un monto personalizado para la opción de envío."
+    },
+    "nav": "Borradores",
+    "email": {
+      "description": "Editá el correo electrónico del pedido borrador"
+    },
+    "customItems": {
+      "header": "Editar artículos personalizados"
+    },
+    "metadata": {
+      "description": "Agregá metadatos al pedido borrador.",
+      "updated": "Metadatos actualizados"
+    },
+    "salesChannel": {
+      "description": "Elegí el canal de venta del pedido borrador"
+    },
+    "create": {
+      "selectSalesChannel": "Seleccioná un canal de venta",
+      "selectCustomer": "Seleccioná un cliente",
+      "description": "Creá un pedido borrador nuevo",
+      "regionHint": "Elegí la región",
+      "selectRegion": "Seleccioná una región",
+      "salesChannelHint": "Elegí el canal de venta",
+      "emailHint": "Ingresá un correo electrónico para asociar al pedido",
+      "emailLocked": "No podés cambiar el correo electrónico si hay un cliente elegido",
+      "emailPlaceholder": "nombre@ejemplo.com",
+      "customerHint": "Elegí un cliente existente",
+      "shippingAddressHint": "Dirección para el envío",
+      "billingAddressHint": "Dirección para la facturación",
+      "sameAsShippingHint": "Usá la misma dirección para facturación y envío",
+      "savedAddresses": "Direcciones guardadas",
+      "savedAddressesHint": "Elegí una de las direcciones guardadas del cliente.",
+      "selectShippingAddress": "Seleccioná una dirección de envío",
+      "selectBillingAddress": "Seleccioná una dirección de facturación"
+    },
+    "transferOwnership": {
+      "description": "Transferí este pedido borrador a otro cliente",
+      "currentOwnerHint": "El cliente asociado hoy a este pedido borrador.",
+      "newCustomer": "Nuevo cliente",
+      "newCustomerHint": "El cliente que va a recibir este pedido borrador."
+    },
+    "promotions": {
+      "header": "Editar promociones",
+      "apply": "Aplicar promociones",
+      "applyHint": "Gestioná las promociones que se aplican al pedido.",
+      "allocationOnce": "Una vez"
+    },
+    "loading": "Cargando los datos del pedido borrador...",
+    "edit": {
+      "requestFailed": "No se pudo iniciar la edición del pedido: {{message}}",
+      "confirmFailed": "No se pudo confirmar la edición del pedido: {{message}}"
+    },
+    "items": {
+      "header": "Editar artículos",
+      "description": "Editá los artículos del pedido borrador",
+      "hint": "Elegí artículos del catálogo de productos.",
+      "search": "Buscar artículos",
+      "emptyTitle": "Este pedido no tiene artículos",
+      "emptyDescription": "Agregá artículos al pedido para empezar.",
+      "noResults": "No se encontraron artículos",
+      "noResultsFor": "No se encontraron artículos para \"{{query}}\".",
+      "add": "Agregar artículos",
+      "variants": "Variantes de producto",
+      "variantsHint": "Elegí las variantes de producto para agregar al pedido.",
+      "update": "Actualizar artículos",
+      "available_one": "{{count}} disponible",
+      "available_other": "{{count}} disponibles",
+      "availableAt": "{{available}} en {{locations}}",
+      "locations_one": "{{count}} ubicación",
+      "locations_other": "{{count}} ubicaciones",
+      "stock": "Stock",
+      "customItemDescription": "Agregá un artículo personalizado al pedido. Se suma como una línea nueva, sin un producto asociado.",
+      "titleHint": "Ingresá el título del artículo",
+      "unitPriceHint": "Ingresá el precio unitario del artículo",
+      "quantityHint": "Ingresá la cantidad del artículo",
+      "addItem": "Agregar artículo"
+    }
+  }
+}

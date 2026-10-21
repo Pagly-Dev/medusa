@@ -23,8 +23,29 @@ export function isSameAddress(
   )
 }
 
+/**
+ * Pagly: a country's name in `language`, from the browser's region names,
+ * falling back to the English name on the plugin's country list.
+ */
+export function getCountryName(iso2: string, language: string) {
+  const code = iso2.toUpperCase()
+
+  try {
+    const name = new Intl.DisplayNames([language], { type: "region" }).of(code)
+
+    if (name && name !== code) {
+      return name
+    }
+  } catch {
+    // An unknown language or region falls through to the list.
+  }
+
+  return getCountryByIso2(iso2)?.display_name ?? code
+}
+
 export function getFormattedAddress(
-  address?: HttpTypes.AdminOrderAddress | HttpTypes.AdminCustomerAddress | null
+  address?: HttpTypes.AdminOrderAddress | HttpTypes.AdminCustomerAddress | null,
+  language = "en"
 ) {
   if (!address) {
     return []
@@ -72,16 +93,13 @@ export function getFormattedAddress(
     formattedAddress.push(cityProvincePostal)
   }
 
-  if (country) {
-    formattedAddress.push(country.display_name!)
-  } else if (country_code) {
-    const country = getCountryByIso2(country_code)
+  // Pagly: the country is named in the admin's language.
+  const countryCode = country?.iso_2 ?? country_code
 
-    if (country) {
-      formattedAddress.push(country.display_name)
-    } else {
-      formattedAddress.push(country_code.toUpperCase())
-    }
+  if (countryCode) {
+    formattedAddress.push(getCountryName(countryCode, language))
+  } else if (country?.display_name) {
+    formattedAddress.push(country.display_name)
   }
 
   return formattedAddress

@@ -2,12 +2,15 @@ import {
   ComponentPropsWithoutRef,
   forwardRef,
   useImperativeHandle,
+  useMemo,
   useRef,
 } from "react"
 
 import { TrianglesMini } from "@medusajs/icons"
 import { clx } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
 import { countries } from "../../lib/data/countries"
+import { getCountryName } from "../../lib/utils/address-utils"
 
 export const CountrySelect = forwardRef<
   HTMLSelectElement,
@@ -24,6 +27,19 @@ export const CountrySelect = forwardRef<
     const innerRef = useRef<HTMLSelectElement>(null)
 
     useImperativeHandle(ref, () => innerRef.current as HTMLSelectElement)
+
+    // Pagly: countries by their name in the admin's language, in its order.
+    const { t, i18n } = useTranslation()
+    const options = useMemo(
+      () =>
+        countries
+          .map((country) => ({
+            value: country.iso_2.toLowerCase(),
+            label: getCountryName(country.iso_2, i18n.language),
+          }))
+          .sort((a, b) => a.label.localeCompare(b.label, i18n.language)),
+      [i18n.language]
+    )
 
     const isPlaceholder = innerRef.current?.value === ""
 
@@ -59,12 +75,12 @@ export const CountrySelect = forwardRef<
         >
           {/* Add an empty option so the first option is preselected */}
           <option value="" disabled className="text-ui-fg-muted">
-            {placeholder || "Select country"}
+            {placeholder || t("fields.selectCountry")}
           </option>
-          {countries.map((country) => {
+          {options.map((option) => {
             return (
-              <option key={country.iso_2} value={country.iso_2.toLowerCase()}>
-                {country.display_name}
+              <option key={option.value} value={option.value}>
+                {option.label}
               </option>
             )
           })}
