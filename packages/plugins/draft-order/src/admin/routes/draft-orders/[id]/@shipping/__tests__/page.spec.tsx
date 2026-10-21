@@ -14,6 +14,8 @@ import {
   pageText,
   shippingOption,
 } from "../../../../../__tests__/fixtures/one-version-items"
+import { inSpanish } from "../../../../../__tests__/fixtures/i18n"
+import { openActionMenu } from "../../../../../__tests__/fixtures/menus"
 import Shipping from "../page"
 
 const state = vi.hoisted(() => ({
@@ -166,5 +168,61 @@ describe("Edit shipping", () => {
     expect(screen.getByText("Taza de cerámica hecha a mano")).toBeTruthy()
     expect(screen.getByText("(M / Negro)")).toBeTruthy()
     expect(pageText()).not.toContain("Default variant")
+  })
+})
+
+describe("Edit shipping in Spanish", () => {
+  inSpanish()
+
+  it("labels the shipping form", () => {
+    renderShipping()
+
+    expect(screen.getByText("Envío")).toBeTruthy()
+    expect(
+      screen.getByText(
+        "Elegí qué métodos de envío usar para los artículos del pedido."
+      )
+    ).toBeTruthy()
+    expect(screen.getByText("Perfil de envío")).toBeTruthy()
+    expect(screen.getByText("Acción")).toBeTruthy()
+    expect(screen.getByText("2 artículos")).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Cancelar" })).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Guardar" })).toBeTruthy()
+  })
+
+  it("labels the form that adds a shipping option", () => {
+    renderShipping()
+    fireEvent.click(
+      screen.getByRole("button", { name: "Agregar opción de envío" })
+    )
+
+    expect(
+      screen.getByText(
+        "Agregá un método de envío para el perfil de envío elegido. Abajo ves los artículos que se envían con este método."
+      )
+    ).toBeTruthy()
+    expect(screen.getByText("Ubicación")).toBeTruthy()
+    expect(
+      screen.getByText("Elegí desde dónde enviar los artículos.")
+    ).toBeTruthy()
+    expect(screen.getByText("Opción de envío")).toBeTruthy()
+    expect(screen.getByText("Elegí la opción de envío a usar.")).toBeTruthy()
+    expect(screen.getByText("Monto personalizado")).toBeTruthy()
+    expect(screen.getByText("Artículos a enviar")).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Agregar" })).toBeTruthy()
+  })
+
+  it("counts a shipped profile's units and names its actions", () => {
+    shipWithMoto()
+    renderShipping()
+
+    expect(screen.getByText("3 artículos")).toBeTruthy()
+    openActionMenu()
+    expect(
+      screen.getByRole("menuitem", { name: "Editar opción de envío" })
+    ).toBeTruthy()
+    expect(
+      screen.getByRole("menuitem", { name: "Quitar opción de envío" })
+    ).toBeTruthy()
   })
 })

@@ -15,6 +15,8 @@ import {
   pageText,
   shirtItem,
 } from "../../../../../__tests__/fixtures/one-version-items"
+import { inSpanish } from "../../../../../__tests__/fixtures/i18n"
+import { openActionMenu } from "../../../../../__tests__/fixtures/menus"
 import Items from "../page"
 
 const mutation = vi.hoisted(() => () => ({
@@ -151,5 +153,63 @@ describe("Edit items", () => {
       const row = screen.getByText("BUZO-L-GRIS").closest("tr")!
       expect(within(row).getByText("L / Gris")).toBeTruthy()
     })
+  })
+})
+
+describe("Edit items in Spanish", () => {
+  inSpanish()
+
+  it("labels the items form", () => {
+    renderItems()
+
+    expect(screen.getByText("Editar artículos")).toBeTruthy()
+    expect(screen.getByText("Artículos")).toBeTruthy()
+    expect(
+      screen.getByText("Elegí artículos del catálogo de productos.")
+    ).toBeTruthy()
+    expect(screen.getByPlaceholderText("Buscar artículos")).toBeTruthy()
+    for (const header of ["Artículo", "Cantidad", "Precio", "Subtotal"]) {
+      expect(screen.getByText(header)).toBeTruthy()
+    }
+    expect(screen.getByRole("button", { name: "Cancelar" })).toBeTruthy()
+    expect(screen.getByRole("button", { name: "Guardar" })).toBeTruthy()
+  })
+
+  it("names the add menu's choices", () => {
+    renderItems()
+    openActionMenu()
+
+    expect(
+      screen.getByRole("menuitem", { name: "Agregar artículos" })
+    ).toBeTruthy()
+    expect(
+      screen.getByRole("menuitem", { name: "Agregar artículo personalizado" })
+    ).toBeTruthy()
+  })
+
+  it("labels the variant picker", () => {
+    renderItems()
+    openActionMenu()
+    fireEvent.click(screen.getByRole("menuitem", { name: "Agregar artículos" }))
+
+    expect(screen.getByText("Variantes de producto")).toBeTruthy()
+    expect(
+      screen.getByText("Elegí las variantes de producto para agregar al pedido.")
+    ).toBeTruthy()
+    for (const header of [
+      "Producto",
+      "Variante",
+      "SKU",
+      "Actualizado",
+      "Creado",
+      "Stock",
+    ]) {
+      expect(screen.getByText(header)).toBeTruthy()
+    }
+    expect(screen.getAllByText("No gestionado")).toHaveLength(2)
+    expect(screen.getAllByText("20 oct 2026").length).toBeGreaterThan(0)
+    expect(
+      screen.getByRole("button", { name: "Actualizar artículos" })
+    ).toBeTruthy()
   })
 })

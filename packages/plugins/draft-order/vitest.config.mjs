@@ -5,5 +5,6 @@ import { defineConfig } from "vitest/config"
 export default defineConfig({
   test: {
     include: ["src/admin/**/__tests__/**/*.spec.{ts,tsx}"],
+    setupFiles: ["src/admin/__tests__/setup.ts"],
   },
 })

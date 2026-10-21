@@ -16,6 +16,7 @@ import {
   pageText,
   shippingOption,
 } from "../../../__tests__/fixtures/one-version-items"
+import { inSpanish } from "../../../__tests__/fixtures/i18n"
 import { ShippingSection } from "../shipping-section"
 
 const shippingOptions = vi.hoisted(() => ({ current: [] as unknown[] }))
@@ -109,5 +110,32 @@ describe("ShippingSection", () => {
       expect(pageText()).not.toContain("Default variant")
       expect(pageText()).not.toContain("Default option value")
     })
+  })
+})
+
+describe("ShippingSection in Spanish", () => {
+  inSpanish()
+
+  it("labels a profile that still needs shipping", () => {
+    renderShipping(draftOrder())
+
+    expect(screen.getByText("Envío")).toBeTruthy()
+    expect(screen.getByText("Requiere envío")).toBeTruthy()
+    expect(screen.getByText("2 artículos")).toBeTruthy()
+    expect(screen.getByRole("link", { name: "Agregar envío" })).toBeTruthy()
+  })
+
+  it("counts a shipped profile's units", () => {
+    shippingOptions.current = [shippingOption]
+    renderShipping(
+      draftOrder({
+        shipping_methods: [
+          { id: "sm_1", shipping_option_id: shippingOption.id },
+        ],
+      })
+    )
+
+    expect(screen.getByText("3 artículos")).toBeTruthy()
+    expect(screen.getByRole("link", { name: "Editar envío" })).toBeTruthy()
   })
 })
