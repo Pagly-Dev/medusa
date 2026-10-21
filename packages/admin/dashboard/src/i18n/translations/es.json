@@ -994,7 +994,7 @@
     "fields": {
       "title": {
         "label": "Título",
-        "placeholder": "Talla"
+        "placeholder": "Talle"
       },
       "values": {
         "label": "Valores",

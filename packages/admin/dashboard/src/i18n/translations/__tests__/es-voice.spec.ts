@@ -154,6 +154,8 @@ const KEPT_CAPITALS: Record<string, string[]> = {
   "promotions.offer.notice.description": ["Ofertas"],
   "promotions.campaign_currency.tooltip": ["Detalles"],
   "promotions.errors.promotionTabError": ["Promoción"],
+  // medusa#30's one-version note names the Manage menu.
+  "products.options.oneVersion": ["Gestionar"],
 }
 
 /** A capitalized word that follows another word, not a sentence's end. */
