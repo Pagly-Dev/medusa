@@ -7,6 +7,7 @@ import {
   ProductCell,
   ProductHeader,
 } from "../../../../../components/table/table-cells/product/product-cell"
+import { getVariantTitle } from "../../../../../lib/default-names"
 import { getStylizedAmount } from "../../../../../lib/money-amount-helpers"
 import { getReturnableQuantity } from "../../../../../lib/rma"
 
@@ -68,6 +69,9 @@ export const useExchangeItemTableColumns = (currencyCode: string) => {
       }),
       columnHelper.accessor("variant.title", {
         header: t("fields.variant"),
+        // Pagly: a product's one version is named after the product.
+        cell: ({ getValue, row }) =>
+          getVariantTitle(getValue(), row.original.product_title),
       }),
       columnHelper.accessor("quantity", {
         header: () => (

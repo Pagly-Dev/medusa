@@ -5,8 +5,9 @@ import {
   AdminProductVariant,
 } from "@medusajs/types"
 
+// Pagly: +product.title names a one-version product's variant after the product.
 export const VARIANT_DETAIL_FIELDS =
-  "*inventory_items,*inventory_items.inventory,*inventory_items.inventory.location_levels,*options,*options.option,*prices,*prices.price_rules,+images.id,+images.url,+images.variants.id,+product.handle,+product.status"
+  "*inventory_items,*inventory_items.inventory,*inventory_items.inventory.location_levels,*options,*options.option,*prices,*prices.price_rules,+images.id,+images.url,+images.variants.id,+product.handle,+product.status,+product.title"
 
 export type ExtendedVariantPrice = AdminPrice & {
   rules?: Record<string, unknown>

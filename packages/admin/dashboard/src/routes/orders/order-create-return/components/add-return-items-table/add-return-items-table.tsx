@@ -10,6 +10,7 @@ import {
 import { useTranslation } from "react-i18next"
 import { _DataTable } from "../../../../../components/table/data-table"
 import { useDataTable } from "../../../../../hooks/use-data-table"
+import { getVariantTitle } from "../../../../../lib/default-names"
 import { getStylizedAmount } from "../../../../../lib/money-amount-helpers"
 import { getReturnableQuantity } from "../../../../../lib/rma"
 import { useReturnItemTableColumns } from "./use-return-item-table-columns"
@@ -76,7 +77,10 @@ export const AddReturnItemsTable = ({
       results = results.filter((i) => {
         return (
           i.product_title?.toLowerCase().includes(q.toLowerCase()) ||
-          i.variant_title?.toLowerCase().includes(q.toLowerCase()) ||
+          // Pagly: by the name the Variant column shows.
+          getVariantTitle(i.variant_title, i.product_title)
+            ?.toLowerCase()
+            .includes(q.toLowerCase()) ||
           i.variant_sku?.toLowerCase().includes(q.toLowerCase())
         )
       })
@@ -184,8 +188,9 @@ const sortItems = (
       aValue = a.product_title
       bValue = b.product_title
     } else if (field === "variant_title") {
-      aValue = a.variant_title
-      bValue = b.variant_title
+      // Pagly: by the name the Variant column shows.
+      aValue = getVariantTitle(a.variant_title, a.product_title)
+      bValue = getVariantTitle(b.variant_title, b.product_title)
     } else if (field === "sku") {
       aValue = a.variant_sku
       bValue = b.variant_sku

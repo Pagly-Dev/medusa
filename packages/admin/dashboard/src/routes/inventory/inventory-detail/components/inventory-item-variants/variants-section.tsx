@@ -5,6 +5,10 @@ import { Link } from "react-router-dom"
 
 import { ProductVariantDTO } from "@medusajs/types"
 import { Thumbnail } from "../../../../../components/common/thumbnail"
+import {
+  getOptionValues,
+  getVariantTitle,
+} from "../../../../../lib/default-names"
 
 type InventoryItemVariantsSectionProps = {
   variants: ProductVariantDTO[]
@@ -38,11 +42,12 @@ export const InventoryItemVariantsSection = ({
                   <Thumbnail src={variant.product?.thumbnail} />
                 </div>
                 <div className="flex flex-1 flex-col">
+                  {/* Pagly: a one-version product shows its title and no default option value. */}
                   <span className="text-ui-fg-base font-medium">
-                    {variant.title}
+                    {getVariantTitle(variant.title, variant.product?.title)}
                   </span>
                   <span className="text-ui-fg-subtle">
-                    {variant.options.map((o) => o.value).join(" ⋅ ")}
+                    {getOptionValues(variant.options).join(" ⋅ ")}
                   </span>
                 </div>
                 <div className="flex size-7 items-center justify-center">

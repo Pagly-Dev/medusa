@@ -24,6 +24,7 @@ import { useProductVariantsInventoryItemsBatch } from "../../../../../hooks/api/
 import { useComboboxData } from "../../../../../hooks/use-combobox-data"
 import { castNumber } from "../../../../../lib/cast-number"
 import { sdk } from "../../../../../lib/client"
+import { getVariantTitle } from "../../../../../lib/default-names"
 import { ExtendedVariant } from "../../../product-variant-detail/constants"
 
 type ManageVariantInventoryItemsFormProps = {
@@ -327,7 +328,10 @@ export function ManageVariantInventoryItemsForm({
             <div className="grid gap-y-4 pb-8">
               <div className="flex items-start justify-between gap-x-4">
                 <div className="flex flex-col">
-                  <Form.Label>{variant.title}</Form.Label>
+                  {/* Pagly: a product's one version is named after the product. */}
+                  <Form.Label>
+                    {getVariantTitle(variant.title, variant.product?.title)}
+                  </Form.Label>
                   <Form.Hint>
                     {t(
                       hasKit

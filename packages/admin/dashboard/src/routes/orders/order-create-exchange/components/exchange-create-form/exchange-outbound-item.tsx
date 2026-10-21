@@ -8,6 +8,7 @@ import { ActionMenu } from "../../../../../components/common/action-menu"
 import { Form } from "../../../../../components/common/form"
 import { Thumbnail } from "../../../../../components/common/thumbnail"
 import { MoneyAmountCell } from "../../../../../components/table/table-cells/common/money-amount-cell"
+import { isDefaultVariantTitle } from "../../../../../lib/default-names"
 import { CreateExchangeSchemaType } from "./schema"
 
 type ExchangeOutboundItemProps = {
@@ -53,7 +54,10 @@ function ExchangeOutboundItem({
               )}
             </div>
             <Text as="div" className="text-ui-fg-subtle txt-small">
-              {previewItem.subtitle}
+              {/* Pagly: a one-version product is named by its title alone. */}
+              {isDefaultVariantTitle(previewItem.subtitle)
+                ? null
+                : previewItem.subtitle}
             </Text>
           </div>
           {appliedPromoCodes.length > 0 && (
