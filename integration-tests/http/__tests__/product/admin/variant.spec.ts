@@ -827,7 +827,9 @@ medusaIntegrationTestRunner({
             required_quantity: 1,
             inventory: expect.objectContaining({
               sku: "variant-enable-manage-inventory",
-              title: "Variant without inventory",
+              // Pagly: the default inventory item is named after its product
+              title:
+                "Test product for enabling manage inventory · Variant without inventory",
               requires_shipping: true,
             }),
           })

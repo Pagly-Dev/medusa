@@ -19,6 +19,7 @@ import {
   createWorkflow,
   parallelize,
   transform,
+  when,
 } from "@medusajs/framework/workflows-sdk"
 import {
   createRemoteLinkStep,
@@ -29,6 +30,8 @@ import {
 import { upsertVariantPricesWorkflow } from "./upsert-variant-prices"
 import { createProductVariantsDefaultInventoryStep } from "../steps/create-product-variants-default-inventory"
 import { dismissProductVariantsInventoryStep } from "../steps/dismiss-product-variants-inventory"
+import { updateInventoryItemsStep } from "../../inventory/steps/update-inventory-items"
+import { renameDefaultInventoryItems } from "../utils/create-default-inventory-item"
 
 /**
  * Update products that match a specified selector, along with custom data that's passed to the workflow's hooks.
@@ -443,6 +446,56 @@ export const updateProductsWorkflow = createWorkflow(
       }
     )
 
+    // Pagly: renaming a product or a variant renames the default inventory
+    // items still named after it, so their names are read before the update
+    const renameFilters = transform({ input }, (data) => {
+      if ("products" in data.input) {
+        const ids = data.input.products
+          .filter(
+            (product) =>
+              isDefined(product.title) ||
+              product.variants?.some((variant) => isDefined(variant.title))
+          )
+          .map((product) => product.id)
+
+        return ids.length ? { id: ids } : null
+      }
+
+      const { update } = data.input
+
+      return isDefined(update?.title) ||
+        update?.variants?.some((variant) => isDefined(variant.title))
+        ? data.input.selector
+        : null
+    })
+
+    const variantsBeforeRename = when(
+      { renameFilters },
+      ({ renameFilters }) => !!renameFilters
+    ).then(() => {
+      const products = useRemoteQueryStep({
+        entry_point: "product",
+        fields: [
+          "title",
+          "variants.id",
+          "variants.title",
+          "variants.inventory_items.inventory.id",
+          "variants.inventory_items.inventory.title",
+          "variants.inventory_items.inventory.description",
+        ],
+        variables: { filters: renameFilters },
+      }).config({ name: "get-variant-names-before-update" })
+
+      return transform({ products }, ({ products }) =>
+        products.flatMap((product) =>
+          (product.variants ?? []).map((variant) => ({
+            ...variant,
+            product: { title: product.title },
+          }))
+        )
+      )
+    })
+
     const toUpdateInput = transform({ input }, prepareUpdateProductInput)
     const updatedProducts = updateProductsStep(toUpdateInput)
 
@@ -491,6 +544,36 @@ export const updateProductsWorkflow = createWorkflow(
         variantIds: variantsToCreateInventory,
       })
     )
+
+    // Pagly: the default inventory items follow the new names
+    when(
+      { variantsBeforeRename },
+      ({ variantsBeforeRename }) => !!variantsBeforeRename?.length
+    ).then(() => {
+      const renamedVariantIds = transform(
+        { variantsBeforeRename },
+        ({ variantsBeforeRename }) => variantsBeforeRename!.map((v) => v.id)
+      )
+
+      const variantsAfterRename = useRemoteQueryStep({
+        entry_point: "product_variant",
+        fields: ["id", "title", "product.title"],
+        variables: { filters: { id: renamedVariantIds } },
+      }).config({ name: "get-variant-names-after-update" })
+
+      const renames = transform(
+        { variantsBeforeRename, variantsAfterRename },
+        (data) =>
+          renameDefaultInventoryItems(
+            data.variantsBeforeRename!,
+            data.variantsAfterRename
+          )
+      )
+
+      updateInventoryItemsStep(renames).config({
+        name: "rename-default-inventory-items",
+      })
+    })
 
     const salesChannelLinks = transform(
       { input, updatedProducts },
