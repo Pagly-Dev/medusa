@@ -16,6 +16,7 @@ import { JsonViewSection } from "../json-view-section"
 import { MetadataSection } from "../metadata-section"
 
 const preview = vi.hoisted(() => ({ actions: [] as unknown[] }))
+const deleteDraftOrder = vi.hoisted(() => vi.fn(() => Promise.resolve()))
 
 vi.mock("../../../hooks/api/regions", () => ({
   useRegion: () => ({
@@ -34,7 +35,10 @@ vi.mock("../../../hooks/api/users", () => ({
 }))
 
 vi.mock("../../../hooks/api/draft-orders", () => ({
-  useDeleteDraftOrder: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  useDeleteDraftOrder: () => ({
+    mutateAsync: deleteDraftOrder,
+    isPending: false,
+  }),
   useDraftOrderCancelEdit: () => ({ mutateAsync: vi.fn(), isPending: false }),
 }))
 
@@ -47,6 +51,7 @@ vi.mock("../../../hooks/api/orders", () => ({
 afterEach(() => {
   cleanup()
   preview.actions = []
+  deleteDraftOrder.mockClear()
 })
 
 const daysAgo = (days: number) =>
@@ -92,6 +97,18 @@ describe("Draft order page sections in Spanish", () => {
 
       expect(screen.getByText("Pedido borrador #4")).toBeTruthy()
       expect(screen.getByText(/ desde Tienda online$/)).toBeTruthy()
+    })
+
+    it("asks before deleting the draft", async () => {
+      renderInRouter(<GeneralSection order={order} />)
+      openActionMenu()
+      fireEvent.click(
+        screen.getByRole("menuitem", { name: "Eliminar pedido borrador" })
+      )
+
+      expect(await screen.findByText("¿Estás seguro?")).toBeTruthy()
+      expect(screen.getByText(/pedido borrador #4/)).toBeTruthy()
+      expect(deleteDraftOrder).not.toHaveBeenCalled()
     })
 
     it("names the menu's actions", () => {
@@ -246,5 +263,24 @@ describe("Draft order page sections in Spanish", () => {
       ).toBeTruthy()
       expect(screen.getByRole("button", { name: "Continuar" })).toBeTruthy()
     })
+  })
+})
+
+describe("ActivitySection in English", () => {
+  it("lists what an edit added and removed in one sentence", () => {
+    const edit = {
+      id: "ch_edit",
+      change_type: "edit",
+      created_at: daysAgo(1),
+      confirmed_at: daysAgo(1),
+      actions: [
+        { action: "ITEM_ADD", ordering: 1, details: { quantity: 2 } },
+        { action: "ITEM_UPDATE", ordering: 2, details: { quantity_diff: -1 } },
+      ],
+    } as any
+    renderInRouter(<ActivitySection order={order} changes={[edit]} />)
+
+    expect(screen.getByText("Items updated")).toBeTruthy()
+    expect(screen.getByText("2 items added, 1 item removed")).toBeTruthy()
   })
 })
