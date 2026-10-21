@@ -47,6 +47,8 @@ import {
   CreatePromotionSchemaType,
 } from "./form-schema"
 import { templates } from "./templates"
+// Pagly: amounts follow their currency's tax-inclusive prices by default
+import { useTaxInclusiveDefault } from "./use-tax-inclusive-default"
 import { useDocumentDirection } from "../../../../../hooks/use-document-direction"
 
 const defaultValues = {
@@ -293,6 +295,13 @@ export const CreatePromotionForm = () => {
   })
 
   const isFixedValueType = watchValueType === "fixed"
+
+  // Pagly: an amount off includes tax where its currency's prices do
+  useTaxInclusiveDefault(
+    form,
+    isFixedValueType &&
+      !currentTemplate?.hiddenFields?.includes("is_tax_inclusive")
+  )
   const watchAllocation = useWatch({
     control: form.control,
     name: "application_method.allocation",
