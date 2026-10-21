@@ -4,7 +4,7 @@ import {
   isFileDisabled,
   parseCorsOrigins,
 } from "@medusajs/utils"
-import cors, { CorsOptions } from "cors"
+import cors, { CorsOptions, CorsOptionsDelegate } from "cors"
 import type {
   ErrorRequestHandler,
   Express,
@@ -24,7 +24,7 @@ import type {
   RouteHandler,
 } from "./types"
 
-import { Logger, MedusaContainer } from "@medusajs/types"
+import { ConfigModule, Logger, MedusaContainer } from "@medusajs/types"
 import { join } from "path"
 import { configManager } from "../config"
 import { MiddlewareFileLoader } from "./middleware-file-loader"
@@ -282,6 +282,53 @@ export class ApiLoader {
   }
 
   /**
+   * Pagly: the /store CORS options. An origin the static storeCors list misses
+   * is admitted when http.storeCorsOrigin answers true for it.
+   */
+  #createStoreCorsOptions(
+    http: ConfigModule["projectConfig"]["http"]
+  ): CorsOptions | CorsOptionsDelegate<MedusaRequest> {
+    const options = this.#createCorsOptions(http.storeCors)
+    const resolver = http.storeCorsOrigin
+
+    if (!resolver) {
+      return options
+    }
+
+    const listed = options.origin as (string | RegExp)[]
+    const logger = this.#logger
+
+    return (req, callback) => {
+      const origin = req.headers.origin
+
+      if (
+        !origin ||
+        listed.some((entry) =>
+          typeof entry === "string" ? entry === origin : entry.test(origin)
+        )
+      ) {
+        return callback(null, options)
+      }
+
+      Promise.resolve()
+        .then(() => resolver(origin, req.scope))
+        .then(
+          (allowed) =>
+            callback(
+              null,
+              allowed === true ? { ...options, origin: true } : options
+            ),
+          (error) => {
+            logger.warn(
+              `storeCorsOrigin failed for ${origin}: ${error?.message ?? error}`
+            )
+            callback(null, options)
+          }
+        )
+    }
+  }
+
+  /**
    * Assigns global cors middleware for a given prefix
    */
   #applyCorsMiddleware(
@@ -291,10 +338,11 @@ export class ApiLoader {
       | "shouldAppendAdminCors"
       | "shouldAppendAuthCors"
       | "shouldAppendStoreCors",
-    corsOptions: CorsOptions
+    // Pagly: /store passes a delegate when http.storeCorsOrigin is set
+    corsOptions: CorsOptions | CorsOptionsDelegate<MedusaRequest>
   ) {
     const logger = this.#logger
-    const corsFn = cors(corsOptions)
+    const corsFn = cors(corsOptions) as unknown as RequestHandler
     const corsMiddleware: RequestHandler = function corsMiddleware(
       req,
       res,
@@ -528,7 +576,8 @@ export class ApiLoader {
       routesFinder,
       "/store",
       "shouldAppendStoreCors",
-      this.#createCorsOptions(configManager.config.projectConfig.http.storeCors)
+      // Pagly: /store also asks http.storeCorsOrigin about an unlisted origin
+      this.#createStoreCorsOptions(configManager.config.projectConfig.http)
     )
     /**
      * Publishable key check, CORS and auth setup for store routes.

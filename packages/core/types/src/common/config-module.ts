@@ -14,6 +14,7 @@ import { ConnectionOptions } from "node:tls"
 // @ts-ignore
 import type { InlineConfig } from "vite"
 import type { Logger } from "../logger"
+import type { MedusaContainer } from "./medusa-container"
 
 /**
  * Registry for module options types. Modules can augment this interface
@@ -897,6 +898,30 @@ export type ProjectConfigOptions = {
      * ```
      */
     storeCors: string
+
+    /**
+     * Pagly: admits a `/store` origin that `storeCors` does not list, such as a
+     * domain a merchant connected to their storefront after the server
+     * started. It is asked only when the static list misses, with the request's
+     * scope, and an origin is admitted only when it answers `true`. A thrown
+     * error or a rejected promise refuses the origin.
+     *
+     * @example
+     * ```js title="medusa-config.ts"
+     * module.exports = defineConfig({
+     *   projectConfig: {
+     *     http: {
+     *       storeCors: process.env.STORE_CORS,
+     *       storeCorsOrigin: (origin, scope) => isConnectedDomain(origin, scope),
+     *     }
+     *   },
+     * })
+     * ```
+     */
+    storeCorsOrigin?: (
+      origin: string,
+      scope: MedusaContainer
+    ) => boolean | Promise<boolean>
 
     /**
      * The Medusa application's API Routes are protected by Cross-Origin Resource Sharing (CORS). So, only allowed URLs or URLs matching a specified pattern can send requests to the backend’s API Routes.
