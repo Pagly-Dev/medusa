@@ -73,7 +73,7 @@ describe("Draft orders list in Spanish", () => {
   it("names the table's columns", () => {
     renderList()
 
-    expect(screen.getByText("Pedidos Borradores")).toBeTruthy()
+    expect(screen.getByText("Pedidos borrador")).toBeTruthy()
     for (const header of [
       "Pedido",
       "Fecha",
@@ -92,7 +92,7 @@ describe("Draft orders list in Spanish", () => {
   })
 
   it("translates the breadcrumb and the sidebar label", () => {
-    expect(handle.breadcrumb()).toBe("Pedidos Borradores")
+    expect(handle.breadcrumb()).toBe("Pedidos borrador")
     expect(
       i18n.t(config.label!, { ns: (config as any).translationNs })
     ).toBe("Borradores")
