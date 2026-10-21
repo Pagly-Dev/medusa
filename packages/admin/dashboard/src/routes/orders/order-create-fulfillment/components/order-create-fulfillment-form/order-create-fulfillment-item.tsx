@@ -8,6 +8,7 @@ import { HttpTypes } from "@medusajs/types"
 import { Form } from "../../../../../components/common/form/index"
 import { Thumbnail } from "../../../../../components/common/thumbnail/index"
 import { useProductVariant } from "../../../../../hooks/api/products"
+import { isDefaultVariantTitle } from "../../../../../lib/default-names"
 import { divideDecimal } from "../../../../../lib/number-helper"
 import { getFulfillableQuantity } from "../../../../../lib/order-item"
 import { CreateFulfillmentSchema } from "./constants"
@@ -165,7 +166,10 @@ export function OrderCreateFulfillmentItem({
                 {item.variant_sku && <span>({item.variant_sku})</span>}
               </div>
               <Text as="div" className="text-ui-fg-subtle txt-small">
-                {item.variant_title}
+                {/* Pagly: a one-version product is named by its title alone. */}
+                {isDefaultVariantTitle(item.variant_title)
+                  ? null
+                  : item.variant_title}
               </Text>
             </div>
           </div>

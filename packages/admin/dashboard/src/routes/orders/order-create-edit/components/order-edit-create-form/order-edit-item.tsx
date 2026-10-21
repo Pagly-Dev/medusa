@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next"
 import { ActionMenu } from "../../../../../components/common/action-menu"
 import { Thumbnail } from "../../../../../components/common/thumbnail"
 import { MoneyAmountCell } from "../../../../../components/table/table-cells/common/money-amount-cell"
+import { isDefaultVariantTitle } from "../../../../../lib/default-names"
 import { useMemo } from "react"
 import {
   useAddOrderEditItems,
@@ -157,7 +158,8 @@ function OrderEditItem({ item, currencyCode, orderId }: OrderEditItemProps) {
                 {item.variant_sku && <span>({item.variant_sku})</span>}
               </div>
               <Text as="div" className="text-ui-fg-subtle txt-small">
-                {item.subtitle}
+                {/* Pagly: a one-version product is named by its title alone. */}
+                {isDefaultVariantTitle(item.subtitle) ? null : item.subtitle}
               </Text>
             </div>
           </div>

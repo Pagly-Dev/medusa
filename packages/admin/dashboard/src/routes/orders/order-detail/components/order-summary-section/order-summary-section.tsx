@@ -52,6 +52,7 @@ import { useReservationItems } from "../../../../../hooks/api/reservations"
 import { useReturns } from "../../../../../hooks/api/returns"
 import { useDate } from "../../../../../hooks/use-date"
 import { getTotalCreditLines } from "../../../../../lib/credit-line"
+import { getOptionValues } from "../../../../../lib/default-names"
 import { formatCurrency } from "../../../../../lib/format-currency"
 import { getReservationsLimitCount } from "../../../../../lib/orders"
 import {
@@ -433,7 +434,8 @@ const Item = ({
                 </div>
               )}
               <Text size="small">
-                {item.variant?.options?.map((o) => o.value).join(" · ")}
+                {/* Pagly: no "Default option value" for a one-version product. */}
+                {getOptionValues(item.variant?.options).join(" · ")}
               </Text>
             </div>
           </div>
