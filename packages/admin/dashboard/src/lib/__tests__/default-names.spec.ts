@@ -46,6 +46,11 @@ describe("isDefaultOptionValue", () => {
     expect(isDefaultOptionValue("Default option")).toBe(false)
   })
 
+  it("does not match a value the merchant named Default, which the create form never writes", () => {
+    expect(isDefaultOptionValue("Default")).toBe(false)
+    expect(isDefaultOptionValue("default")).toBe(false)
+  })
+
   it("does not match a missing value", () => {
     expect(isDefaultOptionValue(undefined)).toBe(false)
     expect(isDefaultOptionValue(null)).toBe(false)
@@ -94,6 +99,13 @@ describe("getOptionValues", () => {
     expect(
       getOptionValues([{ value: "Default option value" }, { value: "Marrón" }])
     ).toEqual(["Marrón"])
+  })
+
+  it("keeps a value the merchant named Default", () => {
+    expect(getOptionValues([{ value: "Default" }, { value: "Azul" }])).toEqual([
+      "Default",
+      "Azul",
+    ])
   })
 
   it("returns no values for missing options", () => {
