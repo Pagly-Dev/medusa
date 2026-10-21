@@ -14,6 +14,8 @@ import { CUSTOMIZE_IDS } from "../../layout-composer/constants"
 import { INavItem, NavItem } from "../nav-item"
 import { Shell } from "../shell"
 import { UserMenu } from "../user-menu"
+// Pagly: the plugin settings pages listed under General.
+import { GENERAL_EXTENSION_PATHS } from "./general-extension-paths"
 
 export const SettingsLayout = () => {
   return (
@@ -181,14 +183,6 @@ const toNavEntries = (items: INavItem[]) =>
       <NavItem key={item.to} type="setting" {...item} />
     </LayoutComposer.Entry>
   ))
-
-// Pagly: plugin settings pages that merchants treat as store setup render under General, not Extensions, in this order: Pagos, Checkout, Customer accounts, then the AI assistant.
-const GENERAL_EXTENSION_PATHS = [
-  "/settings/pagos",
-  "/settings/checkout",
-  "/settings/customer-accounts",
-  "/settings/asistente",
-]
 
 const SettingsSidebar = () => {
   const { getMenu } = useExtension()
