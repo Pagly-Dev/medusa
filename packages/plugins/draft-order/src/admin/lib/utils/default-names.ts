@@ -7,7 +7,8 @@
  * import.
  */
 const DEFAULT_VARIANT_TITLES = new Set(["default variant", "default"])
-const DEFAULT_OPTION_VALUES = new Set(["default option value", "default"])
+// "Default" alone is only ever a variant title; as an option value it is the merchant's.
+const DEFAULT_OPTION_VALUES = new Set(["default option value"])
 
 const isOneOf = (names: Set<string>, name?: string | null) =>
   !!name && names.has(name.trim().toLowerCase())
