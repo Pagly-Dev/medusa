@@ -17,6 +17,7 @@ import {
   createHook,
   createWorkflow,
   transform,
+  when,
 } from "@medusajs/framework/workflows-sdk"
 import { emitEventStep, useQueryGraphStep } from "../../common"
 import { createLinksWorkflow } from "../../common/workflows/create-links"
@@ -163,26 +164,31 @@ const buildLinksToCreate = (data: {
   return linksToCreate
 }
 
+// Pagly: whether a created variant gets a default inventory item: it manages
+// inventory and was given no items of its own
+const getsDefaultInventoryItem = (
+  variant: ProductTypes.ProductVariantDTO,
+  variantInput: CreateProductVariantsWorkflowInput["product_variants"][number]
+) => variant.manage_inventory && !variantInput.inventory_items?.length
+
 const buildVariantItemCreateMap = (data: {
   createdVariants: ProductTypes.ProductVariantDTO[]
   input: CreateProductVariantsWorkflowInput
-  products: { id: string; title: string }[]
+  products?: { id: string; title: string }[]
 }) => {
   let index = 0
   const map: Record<number, InventoryTypes.CreateInventoryItemInput> = {}
 
   for (const variant of data.createdVariants || []) {
     const variantInput = data.input.product_variants[index]
-    const shouldManageInventory = variant.manage_inventory
-    const hasInventoryItems = variantInput.inventory_items?.length
     index += 1
 
-    if (!shouldManageInventory || hasInventoryItems) {
+    if (!getsDefaultInventoryItem(variant, variantInput)) {
       continue
     }
 
     // Pagly: the item is named after the variant's product
-    const productTitle = data.products.find(
+    const productTitle = data.products?.find(
       (product) => product.id === variant.product_id
     )?.title
 
@@ -265,16 +271,33 @@ export const createProductVariantsWorkflow = createWorkflow(
 
     validateInventoryItems(inventoryItemIds)
 
-    // Pagly: the products' titles name the variants' default inventory items
-    const productIds = transform({ createdVariants }, (data) =>
-      deduplicate(data.createdVariants.map((variant) => variant.product_id!))
+    // Pagly: the products' titles name the variants' default inventory items,
+    // so they're read only when a variant gets one
+    const productIds = transform({ createdVariants, input }, (data) =>
+      deduplicate(
+        data.createdVariants
+          .filter((variant, index) =>
+            getsDefaultInventoryItem(
+              variant,
+              data.input.product_variants[index]
+            )
+          )
+          .map((variant) => variant.product_id!)
+      )
     )
 
-    const { data: products } = useQueryGraphStep({
-      entity: "product",
-      fields: ["id", "title"],
-      filters: { id: productIds },
-    }).config({ name: "get-variant-products" })
+    const products = when(
+      { productIds },
+      ({ productIds }) => productIds.length > 0
+    ).then(() => {
+      const { data } = useQueryGraphStep({
+        entity: "product",
+        fields: ["id", "title"],
+        filters: { id: productIds },
+      }).config({ name: "get-variant-products" })
+
+      return data
+    })
 
     const variantItemCreateMap = transform(
       { createdVariants, input, products },
