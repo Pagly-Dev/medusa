@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import {
   getOptionValues,
   getVariantTitle,
+  isDefaultOption,
   isDefaultOptionValue,
   isDefaultVariantTitle,
 } from "../default-names"
@@ -111,5 +112,38 @@ describe("getOptionValues", () => {
   it("returns no values for missing options", () => {
     expect(getOptionValues(undefined)).toEqual([])
     expect(getOptionValues(null)).toEqual([])
+  })
+})
+
+describe("isDefaultOption", () => {
+  const option = (title: string, ...values: string[]) => ({
+    title,
+    values: values.map((value) => ({ value })),
+  })
+
+  it("matches the create form's option, whose one value is the default", () => {
+    expect(
+      isDefaultOption(option("Default option", "Default option value"))
+    ).toBe(true)
+  })
+
+  it("goes by the values, in any case, whatever the option's title", () => {
+    expect(isDefaultOption(option("Opción", "DEFAULT OPTION VALUE"))).toBe(true)
+  })
+
+  it("does not match an option whose value is the merchant's Default", () => {
+    expect(isDefaultOption(option("Modelo", "Default"))).toBe(false)
+  })
+
+  it("does not match an option with a value the merchant gave", () => {
+    expect(
+      isDefaultOption(option("Default option", "Default option value", "Negro"))
+    ).toBe(false)
+    expect(isDefaultOption(option("Color", "Negro"))).toBe(false)
+  })
+
+  it("does not match an option without values", () => {
+    expect(isDefaultOption(option("Default option"))).toBe(false)
+    expect(isDefaultOption({ values: null })).toBe(false)
   })
 })

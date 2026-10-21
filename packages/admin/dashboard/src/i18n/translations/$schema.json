@@ -2908,6 +2908,9 @@
             "header": {
               "type": "string"
             },
+            "oneVersion": {
+              "type": "string"
+            },
             "edit": {
               "type": "object",
               "properties": {
@@ -2977,7 +2980,14 @@
               "type": "string"
             }
           },
-          "required": ["header", "edit", "create", "manage", "deleteWarning"],
+          "required": [
+            "header",
+            "oneVersion",
+            "edit",
+            "create",
+            "manage",
+            "deleteWarning"
+          ],
           "additionalProperties": false
         },
         "organization": {

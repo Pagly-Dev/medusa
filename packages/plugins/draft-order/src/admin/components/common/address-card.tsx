@@ -1,6 +1,7 @@
 import { XMark } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import { Badge, IconButton, Skeleton, Text } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
 import { useCustomerAddress } from "../../hooks/api/customers"
 import { getFormattedAddress } from "../../lib/utils/address-utils"
 
@@ -28,11 +29,16 @@ export const AddressCard = ({
 
   const isReady = !isPending && !!address
 
+  // Pagly: copy comes from the plugin's catalogs in src/admin/i18n.
+  const { t } = useTranslation()
+
   return (
     <div className="px-3 py-2 rounded-lg bg-ui-bg-component shadow-elevation-card-rest flex items-center gap-4">
       {!isReady ? <LoadingState /> : <AddressInfo address={address} />}
       <Badge size="2xsmall">
-        {tag === "shipping" ? "Shipping" : "Billing"}
+        {tag === "shipping"
+          ? t("fields.shipping")
+          : t("draftOrders.addresses.billingTag")}
       </Badge>
       {onRemove && (
         <IconButton
@@ -64,7 +70,8 @@ interface AddressInfoProps {
 }
 
 const AddressInfo = ({ address }: AddressInfoProps) => {
-  const addressSegments = getFormattedAddress(address)
+  const { i18n } = useTranslation()
+  const addressSegments = getFormattedAddress(address, i18n.language)
 
   return (
     <div className="flex flex-col flex-1">

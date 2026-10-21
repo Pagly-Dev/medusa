@@ -1,5 +1,6 @@
 import { clx } from "@medusajs/ui"
 import { ComponentPropsWithoutRef, forwardRef } from "react"
+import { useTranslation } from "react-i18next"
 
 interface InlineTipProps extends ComponentPropsWithoutRef<"div"> {
   /**
@@ -26,7 +27,10 @@ interface InlineTipProps extends ComponentPropsWithoutRef<"div"> {
  */
 export const InlineTip = forwardRef<HTMLDivElement, InlineTipProps>(
   ({ variant = "tip", label, className, children, ...props }, ref) => {
-    const labelValue = label || (variant === "warning" ? "Warning" : "Tip")
+    // Pagly: copy comes from the plugin's catalogs in src/admin/i18n.
+    const { t } = useTranslation()
+    const labelValue =
+      label || (variant === "warning" ? t("general.warning") : t("general.tip"))
 
     return (
       <div

@@ -15,6 +15,7 @@ import {
 } from "@medusajs/ui"
 import Primitive from "@uiw/react-json-view"
 import { CSSProperties, MouseEvent, Suspense, useState } from "react"
+import { Trans, useTranslation } from "react-i18next"
 
 type JsonViewSectionProps = {
   data: object
@@ -22,14 +23,16 @@ type JsonViewSectionProps = {
 }
 
 export const JsonViewSection = ({ data }: JsonViewSectionProps) => {
+  // Pagly: the dashboard's JSON section copy.
+  const { t } = useTranslation()
   const numberOfKeys = Object.keys(data).length
 
   return (
     <Container className="flex items-center justify-between px-6 py-4">
       <div className="flex items-center gap-x-4">
-        <Heading level="h2">JSON</Heading>
+        <Heading level="h2">{t("json.header")}</Heading>
         <Badge size="2xsmall" rounded="full">
-          {`${numberOfKeys} ${numberOfKeys === 1 ? "key" : "keys"}`}
+          {t("json.numberOfKeys", { count: numberOfKeys })}
         </Badge>
       </div>
       <Drawer>
@@ -47,14 +50,17 @@ export const JsonViewSection = ({ data }: JsonViewSectionProps) => {
             <div className="flex items-center gap-x-4">
               <Drawer.Title asChild>
                 <Heading className="text-ui-contrast-fg-primary">
-                  JSON{" "}
-                  <span key="count-span" className="text-ui-fg-subtle">
-                    {numberOfKeys}
-                  </span>
+                  <Trans
+                    i18nKey="json.drawer.header"
+                    count={numberOfKeys}
+                    components={[
+                      <span key="count-span" className="text-ui-fg-subtle" />,
+                    ]}
+                  />
                 </Heading>
               </Drawer.Title>
               <Drawer.Description className="sr-only">
-                View the JSON representation of the draft order.
+                {t("json.drawer.description")}
               </Drawer.Description>
             </div>
             <div className="flex items-center gap-x-2">
@@ -121,11 +127,9 @@ export const JsonViewSection = ({ data }: JsonViewSectionProps) => {
                     render={(_props, { value }) => {
                       return (
                         <span className="text-ui-contrast-fg-secondary ml-2">
-                          {`${Object.keys(value as object).length} ${
-                            Object.keys(value as object).length === 1
-                              ? "key"
-                              : "keys"
-                          }`}
+                          {t("json.numberOfKeys", {
+                            count: Object.keys(value as object).length,
+                          })}
                         </span>
                       )
                     }}

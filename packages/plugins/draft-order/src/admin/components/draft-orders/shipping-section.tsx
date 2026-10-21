@@ -18,11 +18,12 @@ import {
   Tooltip,
 } from "@medusajs/ui"
 import { Accordion } from "radix-ui"
+import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 
 import { useShippingOptions } from "../../hooks/api/shipping-options"
+import { getItemTitle, getOptionValues } from "../../lib/utils/default-names"
 import { getUniqueShippingProfiles } from "../../lib/utils/order-utils"
-import { pluralize } from "../../lib/utils/string-utils"
 import { Thumbnail } from "../common/thumbnail"
 import { useMemo } from "react"
 
@@ -31,6 +32,8 @@ interface ShippingSectionProps {
 }
 
 export const ShippingSection = ({ order }: ShippingSectionProps) => {
+  // Pagly: copy comes from the plugin's catalogs in src/admin/i18n.
+  const { t } = useTranslation()
   const orderHasShipping = order.shipping_methods.length > 0
 
   const {
@@ -101,7 +104,7 @@ export const ShippingSection = ({ order }: ShippingSectionProps) => {
   return (
     <Container className="p-0 overflow-hidden">
       <div className="px-6 py-4">
-        <Heading>Shipping</Heading>
+        <Heading>{t("fields.shipping")}</Heading>
       </div>
       <Divider variant="dashed" />
       <Accordion.Root type="multiple">
@@ -156,6 +159,7 @@ const ProfileWithShipping = ({
   shippingOption,
   isLast,
 }: ProfileWithShipping) => {
+  const { t } = useTranslation()
   const hasItems = profile.items.length > 0
 
   return (
@@ -177,10 +181,12 @@ const ProfileWithShipping = ({
               <Tooltip
                 content={
                   <ul>
+                    {/* Pagly: a one-version product is named by its title alone. */}
                     {profile.items.map((item) => (
-                      <li
-                        key={item.id}
-                      >{`${item.quantity}x ${item.variant?.product?.title} (${item.variant?.title})`}</li>
+                      <li key={item.id}>{`${item.quantity}x ${getItemTitle(
+                        item.variant?.product?.title,
+                        item.variant?.title
+                      )}`}</li>
                     ))}
                   </ul>
                 }
@@ -191,11 +197,12 @@ const ProfileWithShipping = ({
                 >
                   <Shopping className="shrink-0" />
                   <span className="truncate">
-                    {profile.items.reduce(
-                      (acc, item) => acc + item.quantity,
-                      0
-                    )}
-                    x {pluralize(profile.items.length, "items", "item")}
+                    {t("draftOrders.shipping.units", {
+                      count: profile.items.reduce(
+                        (acc, item) => acc + item.quantity,
+                        0
+                      ),
+                    })}
                   </span>
                 </Badge>
               </Tooltip>
@@ -245,6 +252,8 @@ const ProfileWithoutShipping = ({
   profile,
   isLast,
 }: ProfileWithoutShippingProps) => {
+  const { t } = useTranslation()
+
   return (
     <div>
       <Accordion.Item value={profile.id}>
@@ -270,17 +279,15 @@ const ProfileWithoutShipping = ({
                   leading="compact"
                   className="text-ui-fg-subtle"
                 >
-                  {`${profile.items.length} ${pluralize(
-                    profile.items.length,
-                    "item",
-                    "items"
-                  )}`}
+                  {t("general.items", { count: profile.items.length })}
                 </Text>
               </div>
             </div>
           </div>
           <div>
-            <StatusBadge color="orange">Requires shipping</StatusBadge>
+            <StatusBadge color="orange">
+              {t("draftOrders.shipping.requiresShipping")}
+            </StatusBadge>
           </div>
         </div>
         <ShippingProfileItems profile={profile} />
@@ -317,17 +324,19 @@ const ShippingProfileItems = ({ profile }: ShippingProfileItemsProps) => {
                 </div>
                 <Thumbnail thumbnail={item.thumbnail} />
                 <div>
+                  {/* Pagly: no "Default variant" or "Default option value" for a one-version product. */}
                   <Text size="small" leading="compact" weight="plus">
-                    {item.variant?.product?.title} ({item.variant?.title})
+                    {getItemTitle(
+                      item.variant?.product?.title,
+                      item.variant?.title
+                    )}
                   </Text>
                   <Text
                     size="small"
                     leading="compact"
                     className="text-ui-fg-subtle"
                   >
-                    {item.variant?.options
-                      ?.map((option) => option.value)
-                      .join(" · ")}
+                    {getOptionValues(item.variant?.options).join(" · ")}
                   </Text>
                 </div>
               </div>
@@ -345,11 +354,15 @@ interface FooterProps {
 }
 
 const Footer = ({ isSomeProfilesAssigned }: FooterProps) => {
+  const { t } = useTranslation()
+
   return (
     <div className="px-6 py-4 flex items-center justify-end bg-ui-bg-component">
       <Button size="small" variant="secondary" asChild>
         <Link to="shipping">
-          {isSomeProfilesAssigned ? "Edit shipping" : "Add shipping"}
+          {isSomeProfilesAssigned
+            ? t("draftOrders.shipping.edit")
+            : t("draftOrders.shipping.add")}
         </Link>
       </Button>
     </div>

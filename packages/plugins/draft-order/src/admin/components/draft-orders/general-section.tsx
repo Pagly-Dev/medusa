@@ -8,10 +8,12 @@ import {
   Skeleton,
   Text,
   toast,
+  usePrompt,
 } from "@medusajs/ui"
+import { useTranslation } from "react-i18next"
 import { Link, useNavigate } from "react-router-dom"
 import { useRegion } from "../../hooks/api/regions"
-import { getFullDate } from "../../lib/utils/date-utils"
+import { useDate } from "../../hooks/common/use-date"
 import { ActionMenu } from "../common/action-menu"
 import { useDeleteDraftOrder } from "../../hooks/api/draft-orders"
 
@@ -20,7 +22,11 @@ interface GeneralSectionProps {
 }
 
 export const GeneralSection = ({ order }: GeneralSectionProps) => {
+  // Pagly: copy comes from the plugin's catalogs in src/admin/i18n.
+  const { t } = useTranslation()
+  const { getFullDate } = useDate()
   const navigate = useNavigate()
+  const prompt = usePrompt()
 
   const { mutateAsync: deleteDraftOrder, isPending: isDeleting } =
     useDeleteDraftOrder()
@@ -43,7 +49,9 @@ export const GeneralSection = ({ order }: GeneralSectionProps) => {
     <Container className="flex items-center justify-between gap-4">
       <div>
         <div className="flex items-center gap-x-2">
-          <Heading>Draft Order #{order.display_id}</Heading>
+          <Heading>
+            {t("draftOrders.general.title", { displayId: order.display_id })}
+          </Heading>
           <Copy content={`#${order.display_id}`} />
           {isRegionLoaded ? (
             <Badge size="2xsmall" rounded="full" asChild>
@@ -54,10 +62,15 @@ export const GeneralSection = ({ order }: GeneralSectionProps) => {
           )}
         </div>
         <Text size="small" className="text-ui-fg-subtle">
-          {`${getFullDate({
-            date: order.created_at,
-            includeTime: true,
-          })} from ${order.sales_channel?.name}`}
+          {[
+            getFullDate({ date: order.created_at, includeTime: true }),
+            order.sales_channel?.name &&
+              t("orders.activity.events.placed.fromSalesChannel", {
+                salesChannel: order.sales_channel.name,
+              }),
+          ]
+            .filter(Boolean)
+            .join(" ")}
         </Text>
       </div>
       <ActionMenu
@@ -65,14 +78,28 @@ export const GeneralSection = ({ order }: GeneralSectionProps) => {
           {
             actions: [
               {
-                label: "Edit sales channel",
+                label: t("salesChannels.editSalesChannel"),
                 icon: <Channels />,
                 to: "sales-channel",
               },
               {
-                label: "Delete draft order",
+                label: t("draftOrders.general.delete"),
                 icon: <Trash />,
                 onClick: async () => {
+                  // Pagly: deleting a draft asks first, like other deletes.
+                  const confirmed = await prompt({
+                    title: t("general.areYouSure"),
+                    description: t("draftOrders.deleteWarning", {
+                      id: `#${order.display_id}`,
+                    }),
+                    confirmText: t("actions.delete"),
+                    cancelText: t("actions.cancel"),
+                  })
+
+                  if (!confirmed) {
+                    return
+                  }
+
                   try {
                     await deleteDraftOrder(order.id)
                     navigate("/draft-orders")

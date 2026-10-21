@@ -1,9 +1,10 @@
 import { ArrowRight, PencilSquare } from "@medusajs/icons"
-import { Badge, Container, Heading } from "@medusajs/ui"
+import { Badge, Container, Heading, Text } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
 import { ActionMenu } from "../../../../../components/common/action-menu"
 import { SectionRow } from "../../../../../components/common/section"
 import { HttpTypes } from "@medusajs/types"
+import { isDefaultOption } from "../../../../../lib/default-names"
 
 const OptionActions = ({
   option,
@@ -38,6 +39,10 @@ export const ProductOptionSection = ({
 }: ProductOptionSectionProps) => {
   const { t } = useTranslation()
 
+  // Pagly: the create form's default option names a product's one version,
+  // so it gets no row; a product with no other option says so instead.
+  const options = product.options?.filter((option) => !isDefaultOption(option))
+
   return (
     <Container className="divide-y p-0">
       <div className="flex items-center justify-between px-6 py-4">
@@ -57,7 +62,15 @@ export const ProductOptionSection = ({
         />
       </div>
 
-      {product.options?.map((option) => {
+      {!options?.length && (
+        <div className="px-6 py-4">
+          <Text size="small" leading="compact" className="text-ui-fg-subtle">
+            {t("products.options.oneVersion")}
+          </Text>
+        </div>
+      )}
+
+      {options?.map((option) => {
         return (
           <SectionRow
             title={option.title}

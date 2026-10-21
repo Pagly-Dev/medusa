@@ -16,14 +16,15 @@ import { useDraftOrders } from "../../hooks/api/draft-orders"
 import { useRegions } from "../../hooks/api/regions"
 import { useSalesChannels } from "../../hooks/api/sales-channels"
 import { useDataTableDateFilters } from "../../hooks/common/use-data-table-date-filters"
+import { useDate } from "../../hooks/common/use-date"
 import { useQueryParams } from "../../hooks/common/use-query-params"
-import { getFullDate } from "../../lib/utils/date-utils"
-import { useTranslation } from "react-i18next"
+import { getI18n, useTranslation } from "react-i18next"
 
 const PAGE_SIZE = 20
 
+// Pagly: the breadcrumb, sidebar label, columns and filters are translated.
 export const handle = {
-  breadcrumb: () => "Draft Orders",
+  breadcrumb: () => getI18n().t("draftOrders.domain"),
 }
 
 const List = () => {
@@ -93,24 +94,28 @@ const List = () => {
 }
 
 export const config = defineRouteConfig({
-  label: "Drafts",
+  label: "draftOrders.nav",
+  translationNs: "translation",
   nested: "/orders",
 })
 
 const columnHelper = createDataTableColumnHelper<HttpTypes.AdminOrder>()
 
 const useColumns = () => {
+  const { t } = useTranslation()
+  const { getFullDate } = useDate()
+
   return useMemo(
     () => [
       columnHelper.accessor("display_id", {
-        header: "Display ID",
+        header: t("fields.order"),
         cell: ({ getValue }) => {
           return `#${getValue()}`
         },
         enableSorting: true,
       }),
       columnHelper.accessor("created_at", {
-        header: "Date",
+        header: t("fields.date"),
         cell: ({ getValue }) => {
           return (
             <Tooltip
@@ -123,32 +128,33 @@ const useColumns = () => {
         enableSorting: true,
       }),
       columnHelper.accessor("customer_id", {
-        header: "Customer",
+        header: t("fields.customer"),
         cell: ({ row }) => {
           return row.original.customer?.email || "-"
         },
         enableSorting: true,
       }),
       columnHelper.accessor("sales_channel_id", {
-        header: "Sales Channel",
+        header: t("fields.salesChannel"),
         cell: ({ row }) => {
           return row.original.sales_channel?.name || "-"
         },
         enableSorting: true,
       }),
       columnHelper.accessor("region_id", {
-        header: "Region",
+        header: t("fields.region"),
         cell: ({ row }) => {
           return row.original.region?.name || "-"
         },
         enableSorting: true,
       }),
     ],
-    []
+    [t, getFullDate]
   )
 }
 
 const useFilters = (): DataTableFilter[] => {
+  const { t } = useTranslation()
   const dateFilterOptions = useDataTableDateFilters()
 
   const { customers } = useCustomers(
@@ -183,7 +189,7 @@ const useFilters = (): DataTableFilter[] => {
     return [
       {
         id: "customer_id",
-        label: "Customer",
+        label: t("fields.customer"),
         options:
           customers
             ?.filter(
@@ -198,7 +204,7 @@ const useFilters = (): DataTableFilter[] => {
       },
       {
         id: "sales_channel_id",
-        label: "Sales Channel",
+        label: t("fields.salesChannel"),
         options:
           sales_channels?.map((sales_channel) => ({
             label: sales_channel.name,
@@ -208,7 +214,7 @@ const useFilters = (): DataTableFilter[] => {
       },
       {
         id: "region_id",
-        label: "Region",
+        label: t("fields.region"),
         options:
           regions?.map((region) => ({
             label: region.name,
@@ -218,7 +224,7 @@ const useFilters = (): DataTableFilter[] => {
       },
       ...dateFilterOptions,
     ] satisfies DataTableFilter[]
-  }, [customers, sales_channels, regions, dateFilterOptions])
+  }, [customers, sales_channels, regions, dateFilterOptions, t])
 }
 
 type UseDraftOrderTableQueryProps = {

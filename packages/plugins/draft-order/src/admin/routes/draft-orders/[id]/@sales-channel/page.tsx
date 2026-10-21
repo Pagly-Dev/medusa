@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { HttpTypes } from "@medusajs/types"
 import { Button, Heading, toast } from "@medusajs/ui"
 import { Control, useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { useParams } from "react-router-dom"
 import { z } from "zod"
 
@@ -15,8 +16,11 @@ import {
 } from "../../../../hooks/api/draft-orders"
 import { useComboboxData } from "../../../../hooks/common/use-combobox-data"
 import { sdk } from "../../../../lib/queries/sdk"
+import { required } from "../../../../lib/schemas/messages"
 
 const SalesChannel = () => {
+  // Pagly: copy comes from the plugin's catalogs in src/admin/i18n.
+  const { t } = useTranslation()
   const { id } = useParams()
 
   const { draft_order, isPending, isError, error } = useDraftOrder(
@@ -39,11 +43,11 @@ const SalesChannel = () => {
     <RouteDrawer>
       <RouteDrawer.Header>
         <RouteDrawer.Title asChild>
-          <Heading>Edit Sales Channel</Heading>
+          <Heading>{t("salesChannels.editSalesChannel")}</Heading>
         </RouteDrawer.Title>
         <RouteDrawer.Description asChild>
           <span className="sr-only">
-            Update which sales channel the draft order is associated with
+            {t("draftOrders.salesChannel.description")}
           </span>
         </RouteDrawer.Description>
       </RouteDrawer.Header>
@@ -57,6 +61,7 @@ interface SalesChannelFormProps {
 }
 
 const SalesChannelForm = ({ order }: SalesChannelFormProps) => {
+  const { t } = useTranslation()
   const form = useForm<z.infer<typeof schema>>({
     defaultValues: {
       sales_channel_id: order.sales_channel_id || "",
@@ -74,7 +79,7 @@ const SalesChannelForm = ({ order }: SalesChannelFormProps) => {
       },
       {
         onSuccess: () => {
-          toast.success("Sales channel updated")
+          toast.success(t("draftOrders.activity.salesChannelUpdated"))
           handleSuccess()
         },
         onError: (error) => {
@@ -97,11 +102,11 @@ const SalesChannelForm = ({ order }: SalesChannelFormProps) => {
           <div className="flex justify-end gap-2">
             <RouteDrawer.Close asChild>
               <Button size="small" variant="secondary">
-                Cancel
+                {t("actions.cancel")}
               </Button>
             </RouteDrawer.Close>
             <Button size="small" type="submit" isLoading={isPending}>
-              Save
+              {t("actions.save")}
             </Button>
           </div>
         </RouteDrawer.Footer>
@@ -116,6 +121,7 @@ interface SalesChannelFieldProps {
 }
 
 const SalesChannelField = ({ control, order }: SalesChannelFieldProps) => {
+  const { t } = useTranslation()
   const salesChannels = useComboboxData({
     queryFn: async (params) => {
       return await sdk.admin.salesChannel.list(params)
@@ -137,7 +143,7 @@ const SalesChannelField = ({ control, order }: SalesChannelFieldProps) => {
       render={({ field }) => {
         return (
           <Form.Item>
-            <Form.Label>Sales Channel</Form.Label>
+            <Form.Label>{t("fields.salesChannel")}</Form.Label>
             <Form.Control>
               <Combobox
                 options={salesChannels.options}
@@ -145,7 +151,7 @@ const SalesChannelField = ({ control, order }: SalesChannelFieldProps) => {
                 isFetchingNextPage={salesChannels.isFetchingNextPage}
                 searchValue={salesChannels.searchValue}
                 onSearchValueChange={salesChannels.onSearchValueChange}
-                placeholder="Select sales channel"
+                placeholder={t("draftOrders.create.selectSalesChannel")}
                 {...field}
               />
             </Form.Control>
@@ -158,7 +164,7 @@ const SalesChannelField = ({ control, order }: SalesChannelFieldProps) => {
 }
 
 const schema = z.object({
-  sales_channel_id: z.string().min(1),
+  sales_channel_id: z.string().min(1, required),
 })
 
 export default SalesChannel

@@ -30,6 +30,10 @@ import {
   useProductVariants,
 } from "../../../../../hooks/api/products"
 import { useQueryParams } from "../../../../../hooks/use-query-params"
+import {
+  getVariantTitle,
+  isDefaultOption,
+} from "../../../../../lib/default-names"
 import { PRODUCT_VARIANT_IDS_KEY } from "../../../common/constants"
 import { Thumbnail } from "../../../../../components/common/thumbnail"
 import { useFeatureFlag } from "../../../../../providers/feature-flag-provider"
@@ -193,7 +197,10 @@ const useColumns = (product: HttpTypes.AdminProduct) => {
       return []
     }
 
-    return product.options.map((option) => {
+    // Pagly: the create form's default option gets no column.
+    const options = product.options.filter((option) => !isDefaultOption(option))
+
+    return options.map((option) => {
       return columnHelper.display({
         id: option.id,
         header: option.title,
@@ -263,7 +270,12 @@ const useColumns = (product: HttpTypes.AdminProduct) => {
           {
             icon: <Trash />,
             label: t("actions.delete"),
-            onClick: () => handleDelete(variant.id, variant.title!),
+            // Pagly: a product's one version is named after the product.
+            onClick: () =>
+              handleDelete(
+                variant.id,
+                getVariantTitle(variant.title, product.title)!
+              ),
           },
         ]
 
@@ -309,7 +321,7 @@ const useColumns = (product: HttpTypes.AdminProduct) => {
 
       return [mainActions, secondaryActions]
     },
-    [handleDelete, navigate, t, tableSearchParams]
+    [handleDelete, navigate, t, tableSearchParams, product.title]
   )
 
   return useMemo(() => {
@@ -328,6 +340,8 @@ const useColumns = (product: HttpTypes.AdminProduct) => {
       }),
       columnHelper.accessor("title", {
         header: t("fields.title"),
+        // Pagly: a product's one version is named after the product.
+        cell: ({ getValue }) => getVariantTitle(getValue(), product.title),
         enableSorting: true,
         sortAscLabel: t("filters.sorting.alphabeticallyAsc"),
         sortDescLabel: t("filters.sorting.alphabeticallyDesc"),
@@ -349,7 +363,7 @@ const useColumns = (product: HttpTypes.AdminProduct) => {
         actions: getActions,
       }),
     ]
-  }, [t, optionColumns, getActions])
+  }, [t, optionColumns, getActions, product.title])
 }
 
 const filterHelper =
