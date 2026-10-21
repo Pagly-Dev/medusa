@@ -45,7 +45,7 @@ export class ProductCategoryRepository extends DALUtils.MikroOrmBaseTreeReposito
       fields.indexOf("mpath") === -1 && fields.push("mpath")
       fields.indexOf("parent_category_id") === -1 &&
         fields.push("parent_category_id")
-      // The tree is sorted by rank once it is built (`sortCategoriesByRank`)
+      // Pagly: select rank too, which the built tree is sorted by (sortCategoriesByRank)
       fields.indexOf("rank") === -1 && fields.push("rank")
     }
 
