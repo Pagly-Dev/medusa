@@ -26,7 +26,10 @@ import {
   useMarkOrderFulfillmentAsDelivered,
 } from "../../../../../hooks/api/orders"
 import { useStockLocation } from "../../../../../hooks/api/stock-locations"
-import { getOptionValues } from "../../../../../lib/default-names"
+import {
+  getOptionValues,
+  getVariantTitle,
+} from "../../../../../lib/default-names"
 import { formatProvider } from "../../../../../lib/format-provider"
 import { getLocaleAmount } from "../../../../../lib/money-amount-helpers"
 import { FulfillmentSetType } from "../../../../locations/common/constants"
@@ -382,7 +385,13 @@ const Fulfillment = ({
           {fulfillment.items.map((f_item) => (
             <li key={f_item.line_item_id}>
               <Text size="small" leading="compact">
-                {f_item.quantity}x {f_item.title}
+                {/* Pagly: the item copies the variant's title, so a one-version product shows its own. */}
+                {f_item.quantity}x{" "}
+                {getVariantTitle(
+                  f_item.title,
+                  order.items?.find((i) => i.id === f_item.line_item_id)
+                    ?.product_title
+                )}
               </Text>
             </li>
           ))}
