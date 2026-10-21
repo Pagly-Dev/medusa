@@ -70,9 +70,11 @@ export const createProductVariantsDefaultInventoryStep = createStep(
       Modules.PRODUCT
     )
 
-    const variants = await productService.listProductVariants({
-      id: variantIdsWithoutInventory,
-    })
+    // Pagly: the product's title names each variant's inventory item
+    const variants = await productService.listProductVariants(
+      { id: variantIdsWithoutInventory },
+      { relations: ["product"] }
+    )
 
     if (!variants.length) {
       return new StepResponse(void 0)
@@ -83,7 +85,9 @@ export const createProductVariantsDefaultInventoryStep = createStep(
     )
 
     const createdItems = await inventoryService.createInventoryItems(
-      variants.map((variant) => createDefaultInventoryItem(variant))
+      variants.map((variant) =>
+        createDefaultInventoryItem(variant, variant.product?.title)
+      )
     )
 
     const links: LinkDefinition[] = variants.map((variant, index) => ({

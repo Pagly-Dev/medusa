@@ -6,6 +6,7 @@ import {
   ProductTypes,
 } from "@medusajs/framework/types"
 import {
+  deduplicate,
   MedusaError,
   Modules,
   ProductVariantWorkflowEvents,
@@ -17,7 +18,7 @@ import {
   createWorkflow,
   transform,
 } from "@medusajs/framework/workflows-sdk"
-import { emitEventStep } from "../../common"
+import { emitEventStep, useQueryGraphStep } from "../../common"
 import { createLinksWorkflow } from "../../common/workflows/create-links"
 import { validateInventoryItems } from "../../inventory/steps/validate-inventory-items"
 import { createInventoryItemsWorkflow } from "../../inventory/workflows/create-inventory-items"
@@ -165,6 +166,7 @@ const buildLinksToCreate = (data: {
 const buildVariantItemCreateMap = (data: {
   createdVariants: ProductTypes.ProductVariantDTO[]
   input: CreateProductVariantsWorkflowInput
+  products: { id: string; title: string }[]
 }) => {
   let index = 0
   const map: Record<number, InventoryTypes.CreateInventoryItemInput> = {}
@@ -179,8 +181,13 @@ const buildVariantItemCreateMap = (data: {
       continue
     }
 
+    // Pagly: the item is named after the variant's product
+    const productTitle = data.products.find(
+      (product) => product.id === variant.product_id
+    )?.title
+
     // Create a default inventory item if the above conditions arent met
-    map[index] = createDefaultInventoryItem(variantInput)
+    map[index] = createDefaultInventoryItem(variantInput, productTitle)
   }
 
   return map
@@ -258,8 +265,19 @@ export const createProductVariantsWorkflow = createWorkflow(
 
     validateInventoryItems(inventoryItemIds)
 
+    // Pagly: the products' titles name the variants' default inventory items
+    const productIds = transform({ createdVariants }, (data) =>
+      deduplicate(data.createdVariants.map((variant) => variant.product_id!))
+    )
+
+    const { data: products } = useQueryGraphStep({
+      entity: "product",
+      fields: ["id", "title"],
+      filters: { id: productIds },
+    }).config({ name: "get-variant-products" })
+
     const variantItemCreateMap = transform(
-      { createdVariants, input },
+      { createdVariants, input, products },
       buildVariantItemCreateMap
     )
 
