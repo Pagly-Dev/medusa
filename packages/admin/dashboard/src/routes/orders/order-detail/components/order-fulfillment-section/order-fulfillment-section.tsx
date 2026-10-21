@@ -26,6 +26,7 @@ import {
   useMarkOrderFulfillmentAsDelivered,
 } from "../../../../../hooks/api/orders"
 import { useStockLocation } from "../../../../../hooks/api/stock-locations"
+import { getOptionValues } from "../../../../../lib/default-names"
 import { formatProvider } from "../../../../../lib/format-provider"
 import { getLocaleAmount } from "../../../../../lib/money-amount-helpers"
 import { FulfillmentSetType } from "../../../../locations/common/constants"
@@ -80,7 +81,8 @@ const UnfulfilledItem = ({
             </div>
           )}
           <Text size="small">
-            {item.variant?.options?.map((o) => o.value).join(" · ")}
+            {/* Pagly: no "Default option value" for a one-version product. */}
+            {getOptionValues(item.variant?.options).join(" · ")}
           </Text>
         </div>
       </div>

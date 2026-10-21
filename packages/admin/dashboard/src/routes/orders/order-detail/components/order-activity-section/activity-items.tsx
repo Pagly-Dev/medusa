@@ -8,6 +8,7 @@ import { Popover, Text } from "@medusajs/ui"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Thumbnail } from "../../../../../components/common/thumbnail"
+import { isDefaultVariantTitle } from "../../../../../lib/default-names"
 
 type ActivityItemsProps = {
   itemsToSend?:
@@ -76,7 +77,10 @@ function ActivityItems(props: ActivityItemsProps) {
                       <Thumbnail src={originalItem?.thumbnail} />
 
                       <Text className="txt-compact-small text-ui-fg-subtle truncate">
-                        {`${originalItem?.variant_title} · ${originalItem?.product_title}`}
+                        {/* Pagly: a one-version product's line is named by the product alone. */}
+                        {isDefaultVariantTitle(originalItem?.variant_title)
+                          ? originalItem?.product_title
+                          : `${originalItem?.variant_title} · ${originalItem?.product_title}`}
                       </Text>
                     </div>
                   )
@@ -106,7 +110,10 @@ function ActivityItems(props: ActivityItemsProps) {
                       <Thumbnail src={originalItem?.thumbnail} />
 
                       <Text className="txt-compact-small text-ui-fg-subtle truncate">
-                        {`${originalItem?.variant_title} · ${originalItem?.product_title}`}
+                        {/* Pagly: a one-version product's line is named by the product alone. */}
+                        {isDefaultVariantTitle(originalItem?.variant_title)
+                          ? originalItem?.product_title
+                          : `${originalItem?.variant_title} · ${originalItem?.product_title}`}
                       </Text>
                     </div>
                   )
