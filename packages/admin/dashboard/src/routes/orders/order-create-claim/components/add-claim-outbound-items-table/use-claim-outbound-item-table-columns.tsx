@@ -11,6 +11,7 @@ import {
   VariantInventoryCell,
   VariantInventoryHeader,
 } from "../../../../../components/table/table-cells/product/variant-inventory-cell"
+import { getVariantTitle } from "../../../../../lib/default-names"
 
 const columnHelper = createColumnHelper<any>()
 
@@ -65,6 +66,9 @@ export const useClaimOutboundItemTableColumns = (currencyCode: string) => {
       }),
       columnHelper.accessor("title", {
         header: t("fields.title"),
+        // Pagly: a product's one version is named after the product.
+        cell: ({ getValue, row }) =>
+          getVariantTitle(getValue(), row.original.product?.title),
       }),
       columnHelper.display({
         id: "inventory",
