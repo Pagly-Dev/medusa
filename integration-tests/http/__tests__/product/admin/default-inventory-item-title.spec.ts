@@ -1,3 +1,4 @@
+import { createProductVariantsWorkflow } from "@medusajs/core-flows"
 import { medusaIntegrationTestRunner } from "@medusajs/test-utils"
 import {
   adminHeaders,
@@ -245,6 +246,199 @@ medusaIntegrationTestRunner({
         expect(itemOf(product, "Default variant").title).toEqual(
           "Taza de cerámica"
         )
+      })
+    })
+
+    describe("the default inventory item's name when names change", () => {
+      it("follows a one-version product's new name", async () => {
+        const created = (
+          await api.post("/admin/products", oneVersionProduct(), adminHeaders)
+        ).data.product
+
+        await api.post(
+          `/admin/products/${created.id}`,
+          { title: "Taza esmaltada" },
+          adminHeaders
+        )
+
+        const item = itemOf(await getProduct(created.id), "Default variant")
+
+        expect(item.title).toEqual("Taza esmaltada")
+        expect(item.description).toEqual("Taza esmaltada")
+      })
+
+      it("follows the product's new name for a named variant", async () => {
+        const created = (
+          await api.post("/admin/products", remera(), adminHeaders)
+        ).data.product
+
+        await api.post(
+          `/admin/products/${created.id}`,
+          { title: "Remera de lino" },
+          adminHeaders
+        )
+
+        const product = await getProduct(created.id)
+
+        expect(itemOf(product, "S / Blanco").title).toEqual(
+          "Remera de lino · S / Blanco"
+        )
+        expect(itemOf(product, "M / Negro").title).toEqual(
+          "Remera de lino · M / Negro"
+        )
+      })
+
+      it("follows a variant's new name", async () => {
+        const created = (
+          await api.post("/admin/products", remera(), adminHeaders)
+        ).data.product
+        const variant = created.variants.find((v) => v.title === "S / Blanco")
+
+        await api.post(
+          `/admin/products/${created.id}/variants/${variant.id}`,
+          { title: "S / Crudo" },
+          adminHeaders
+        )
+
+        expect(itemOf(await getProduct(created.id), "S / Crudo").title).toEqual(
+          "Remera básica · S / Crudo"
+        )
+      })
+
+      it("adds the title a one-version product's variant gets", async () => {
+        const created = (
+          await api.post("/admin/products", oneVersionProduct(), adminHeaders)
+        ).data.product
+
+        await api.post(
+          `/admin/products/${created.id}/variants/${created.variants[0].id}`,
+          { title: "250 ml" },
+          adminHeaders
+        )
+
+        expect(itemOf(await getProduct(created.id), "250 ml").title).toEqual(
+          "Taza de cerámica · 250 ml"
+        )
+      })
+
+      it("follows a variant renamed through the product update", async () => {
+        const created = (
+          await api.post("/admin/products", oneVersionProduct(), adminHeaders)
+        ).data.product
+
+        await api.post(
+          `/admin/products/${created.id}`,
+          { variants: [{ id: created.variants[0].id, title: "250 ml" }] },
+          adminHeaders
+        )
+
+        expect(itemOf(await getProduct(created.id), "250 ml").title).toEqual(
+          "Taza de cerámica · 250 ml"
+        )
+      })
+
+      it("follows variants renamed in a batch", async () => {
+        const created = (
+          await api.post("/admin/products", remera(), adminHeaders)
+        ).data.product
+        const variant = created.variants.find((v) => v.title === "M / Negro")
+
+        await api.post(
+          `/admin/products/${created.id}/variants/batch`,
+          { update: [{ id: variant.id, title: "M / Grafito" }] },
+          adminHeaders
+        )
+
+        expect(
+          itemOf(await getProduct(created.id), "M / Grafito").title
+        ).toEqual("Remera básica · M / Grafito")
+      })
+
+      it("leaves an item the merchant renamed", async () => {
+        const created = (
+          await api.post("/admin/products", oneVersionProduct(), {
+            ...adminHeaders,
+            params: inventoryFields,
+          })
+        ).data.product
+        const { id } = itemOf(created, "Default variant")
+
+        await api.post(
+          `/admin/inventory-items/${id}`,
+          { title: "Taza (depósito)" },
+          adminHeaders
+        )
+        await api.post(
+          `/admin/products/${created.id}`,
+          { title: "Taza esmaltada" },
+          adminHeaders
+        )
+
+        expect(
+          itemOf(await getProduct(created.id), "Default variant").title
+        ).toEqual("Taza (depósito)")
+      })
+
+      it("keeps the item's name when the update renames nothing", async () => {
+        const created = (
+          await api.post("/admin/products", oneVersionProduct(), adminHeaders)
+        ).data.product
+
+        await api.post(
+          `/admin/products/${created.id}`,
+          { description: "Hecha a mano" },
+          adminHeaders
+        )
+
+        expect(
+          itemOf(await getProduct(created.id), "Default variant").title
+        ).toEqual("Taza de cerámica")
+      })
+    })
+
+    describe("adding variants", () => {
+      // The step that reads the products' names, wherever the workflow nests it.
+      const productsRead = (transaction) =>
+        Object.entries(transaction.getFlow().steps).find(([key]) =>
+          key.endsWith(".get-variant-products")
+        )?.[1] as { invoke: { state: string } } | undefined
+
+      const addVariant = async (variant: Record<string, unknown>) => {
+        const product = (
+          await api.post("/admin/products", remera(), adminHeaders)
+        ).data.product
+
+        const { transaction } = await createProductVariantsWorkflow(
+          getContainer()
+        ).run({
+          input: {
+            product_variants: [
+              {
+                product_id: product.id,
+                title: "L / Blanco",
+                options: { Talle: "L", Color: "Blanco" },
+                prices: [{ currency_code: "usd", amount: 100 }],
+                ...variant,
+              },
+            ],
+          },
+        })
+
+        return transaction
+      }
+
+      it("does not read the products when no variant gets a default inventory item", async () => {
+        const transaction = await addVariant({ manage_inventory: false })
+
+        expect(productsRead(transaction)?.invoke.state ?? "skipped").toEqual(
+          "skipped"
+        )
+      })
+
+      it("reads the products when a variant gets a default inventory item", async () => {
+        const transaction = await addVariant({ manage_inventory: true })
+
+        expect(productsRead(transaction)?.invoke.state).toEqual("done")
       })
     })
   },
