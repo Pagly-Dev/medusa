@@ -199,6 +199,10 @@ describe("es.json", () => {
     expect(es.salesChannels.domain).toBe("Canales de venta")
   })
 
+  test("says talle, as the product options hint does", () => {
+    expect(es.productOptions.fields.title.placeholder).toBe("Talle")
+  })
+
   test("names every promotion allocation in Spanish", () => {
     expect(es.promotions.form.allocation.once.title).toBe("Una vez")
     expect(es.promotions.fields.allocationTooltip).not.toMatch(/\b(Each|Once)\b/)
