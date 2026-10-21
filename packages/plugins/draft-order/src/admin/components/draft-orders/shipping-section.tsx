@@ -21,6 +21,7 @@ import { Accordion } from "radix-ui"
 import { Link } from "react-router-dom"
 
 import { useShippingOptions } from "../../hooks/api/shipping-options"
+import { getItemTitle, getOptionValues } from "../../lib/utils/default-names"
 import { getUniqueShippingProfiles } from "../../lib/utils/order-utils"
 import { pluralize } from "../../lib/utils/string-utils"
 import { Thumbnail } from "../common/thumbnail"
@@ -177,10 +178,12 @@ const ProfileWithShipping = ({
               <Tooltip
                 content={
                   <ul>
+                    {/* Pagly: a one-version product is named by its title alone. */}
                     {profile.items.map((item) => (
-                      <li
-                        key={item.id}
-                      >{`${item.quantity}x ${item.variant?.product?.title} (${item.variant?.title})`}</li>
+                      <li key={item.id}>{`${item.quantity}x ${getItemTitle(
+                        item.variant?.product?.title,
+                        item.variant?.title
+                      )}`}</li>
                     ))}
                   </ul>
                 }
@@ -317,17 +320,19 @@ const ShippingProfileItems = ({ profile }: ShippingProfileItemsProps) => {
                 </div>
                 <Thumbnail thumbnail={item.thumbnail} />
                 <div>
+                  {/* Pagly: no "Default variant" or "Default option value" for a one-version product. */}
                   <Text size="small" leading="compact" weight="plus">
-                    {item.variant?.product?.title} ({item.variant?.title})
+                    {getItemTitle(
+                      item.variant?.product?.title,
+                      item.variant?.title
+                    )}
                   </Text>
                   <Text
                     size="small"
                     leading="compact"
                     className="text-ui-fg-subtle"
                   >
-                    {item.variant?.options
-                      ?.map((option) => option.value)
-                      .join(" · ")}
+                    {getOptionValues(item.variant?.options).join(" · ")}
                   </Text>
                 </div>
               </div>

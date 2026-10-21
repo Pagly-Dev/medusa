@@ -57,6 +57,10 @@ import {
   getStylizedAmount,
 } from "../../../../lib/data/currencies"
 import { getFullDate } from "../../../../lib/utils/date-utils"
+import {
+  getVariantTitle,
+  isDefaultVariantTitle,
+} from "../../../../lib/utils/default-names"
 import { convertNumber } from "../../../../lib/utils/number-utils"
 
 const STACKED_MODAL_ID = "items_stacked_modal"
@@ -489,13 +493,16 @@ const VariantItem = ({ item, preview, currencyCode }: ItemProps) => {
                 <Text size="small" weight="plus" leading="compact">
                   {item.product_title}
                 </Text>
-                <Text
-                  size="small"
-                  leading="compact"
-                  className="text-ui-fg-subtle"
-                >
-                  ({item.variant_title})
-                </Text>
+                {/* Pagly: a one-version product is named by its title alone. */}
+                {!isDefaultVariantTitle(item.variant_title) && (
+                  <Text
+                    size="small"
+                    leading="compact"
+                    className="text-ui-fg-subtle"
+                  >
+                    ({item.variant_title})
+                  </Text>
+                )}
               </div>
               <Text
                 size="small"
@@ -1005,6 +1012,9 @@ const useColumns = () => {
       }),
       columnHelper.accessor("title", {
         header: "Variant",
+        // Pagly: a product's one version is named after the product.
+        cell: ({ getValue, row }) =>
+          getVariantTitle(getValue(), row.original.product?.title),
         enableSorting: true,
       }),
       columnHelper.accessor("sku", {

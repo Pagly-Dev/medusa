@@ -52,6 +52,11 @@ import { useCancelOrderEdit } from "../../../../hooks/order-edits/use-cancel-ord
 import { useInitiateOrderEdit } from "../../../../hooks/order-edits/use-initiate-order-edit"
 import { getNativeSymbol } from "../../../../lib/data/currencies"
 import { sdk } from "../../../../lib/queries/sdk"
+import {
+  getItemTitle,
+  getOptionValues,
+  isDefaultVariantTitle,
+} from "../../../../lib/utils/default-names"
 import { convertNumber } from "../../../../lib/utils/number-utils"
 import {
   getItemsWithShippingProfile,
@@ -354,10 +359,14 @@ const ShippingForm = ({ preview, order }: ShippingFormProps) => {
                                 <Tooltip
                                   content={
                                     <ul>
+                                      {/* Pagly: a one-version product is named by its title alone. */}
                                       {items.map((item) => (
                                         <li
                                           key={item.id}
-                                        >{`${item.quantity}x ${item.variant?.product?.title} (${item.variant?.title})`}</li>
+                                        >{`${item.quantity}x ${getItemTitle(
+                                          item.variant?.product?.title,
+                                          item.variant?.title
+                                        )}`}</li>
                                       ))}
                                     </ul>
                                   }
@@ -492,22 +501,25 @@ const ShippingForm = ({ preview, order }: ShippingFormProps) => {
                                     </div>
                                     <Thumbnail thumbnail={item.thumbnail} />
                                     <div>
+                                      {/* Pagly: no "Default variant" or "Default option value" for a one-version product. */}
                                       <Text
                                         size="small"
                                         leading="compact"
                                         weight="plus"
                                       >
-                                        {item.variant?.product?.title} (
-                                        {item.variant?.title})
+                                        {getItemTitle(
+                                          item.variant?.product?.title,
+                                          item.variant?.title
+                                        )}
                                       </Text>
                                       <Text
                                         size="small"
                                         leading="compact"
                                         className="text-ui-fg-subtle"
                                       >
-                                        {item.variant?.options
-                                          ?.map((option) => option.value)
-                                          .join(" · ")}
+                                        {getOptionValues(
+                                          item.variant?.options
+                                        ).join(" · ")}
                                       </Text>
                                     </div>
                                   </div>
@@ -811,13 +823,16 @@ const ItemsPreview = ({ order, shippingProfileId }: ItemsPreviewProps) => {
                       <Text size="small" weight="plus" leading="compact">
                         {item.product_title}
                       </Text>
-                      <Text
-                        size="small"
-                        leading="compact"
-                        className="text-ui-fg-subtle"
-                      >
-                        ({item.variant_title})
-                      </Text>
+                      {/* Pagly: a one-version product is named by its title alone. */}
+                      {!isDefaultVariantTitle(item.variant_title) && (
+                        <Text
+                          size="small"
+                          leading="compact"
+                          className="text-ui-fg-subtle"
+                        >
+                          ({item.variant_title})
+                        </Text>
+                      )}
                     </div>
                     <Text
                       size="small"

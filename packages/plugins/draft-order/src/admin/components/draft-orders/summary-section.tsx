@@ -13,6 +13,7 @@ import {
 import { Link, useNavigate } from "react-router-dom"
 import { useConvertDraftOrder } from "../../hooks/api/draft-orders"
 import { getLocaleAmount, getStylizedAmount } from "../../lib/data/currencies"
+import { isDefaultVariantTitle } from "../../lib/utils/default-names"
 import { ActionMenu } from "../common/action-menu"
 import { Thumbnail } from "../common/thumbnail"
 
@@ -107,15 +108,17 @@ const Item = ({ item, currencyCode }: ItemProps) => {
             <Text size="small" weight="plus" leading="compact">
               {item.product_title || item.title}
             </Text>
-            {item.variant_title && (
-              <Text
-                size="small"
-                leading="compact"
-                className="text-ui-fg-subtle"
-              >
-                ({item.variant_title})
-              </Text>
-            )}
+            {/* Pagly: a one-version product is named by its title alone. */}
+            {item.variant_title &&
+              !isDefaultVariantTitle(item.variant_title) && (
+                <Text
+                  size="small"
+                  leading="compact"
+                  className="text-ui-fg-subtle"
+                >
+                  ({item.variant_title})
+                </Text>
+              )}
           </div>
           <Text size="small" leading="compact" className="text-ui-fg-subtle">
             {item.variant_sku}
