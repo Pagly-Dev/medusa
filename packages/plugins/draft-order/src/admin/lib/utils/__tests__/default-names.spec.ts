@@ -33,9 +33,13 @@ describe("isDefaultVariantTitle", () => {
 
 describe("getOptionValues", () => {
   it("leaves out the default option's value", () => {
+    expect(getOptionValues([{ value: "Default option value" }])).toEqual([])
+  })
+
+  it("keeps a value the merchant named Default", () => {
     expect(
-      getOptionValues([{ value: "Default option value" }, { value: "default" }])
-    ).toEqual([])
+      getOptionValues([{ value: "Default option value" }, { value: "Default" }])
+    ).toEqual(["Default"])
   })
 
   it("keeps a variant's real values in order", () => {

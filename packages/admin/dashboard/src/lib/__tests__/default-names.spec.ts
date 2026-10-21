@@ -128,7 +128,11 @@ describe("isDefaultOption", () => {
   })
 
   it("goes by the values, in any case, whatever the option's title", () => {
-    expect(isDefaultOption(option("Opción", "default"))).toBe(true)
+    expect(isDefaultOption(option("Opción", "DEFAULT OPTION VALUE"))).toBe(true)
+  })
+
+  it("does not match an option whose value is the merchant's Default", () => {
+    expect(isDefaultOption(option("Modelo", "Default"))).toBe(false)
   })
 
   it("does not match an option with a value the merchant gave", () => {
