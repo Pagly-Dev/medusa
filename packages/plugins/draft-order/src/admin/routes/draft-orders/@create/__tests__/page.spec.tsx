@@ -67,7 +67,7 @@ describe("Create draft order in Spanish", () => {
   it("labels the order's details", () => {
     renderCreate()
 
-    expect(screen.getByText("Crear Pedido Borrador")).toBeTruthy()
+    expect(screen.getByText("Crear pedido borrador")).toBeTruthy()
     for (const text of [
       "Región",
       "Elegí la región",
