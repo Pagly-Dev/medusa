@@ -44,28 +44,28 @@
         "added": "Items added",
         "removed": "Items removed",
         "updated": "Items updated",
-        "addedCount_one": "Added {{count}} item",
-        "addedCount_other": "Added {{count}} items",
-        "removedCount_one": "Removed {{count}} item",
-        "removedCount_other": "Removed {{count}} items"
+        "addedCount_one": "{{count}} item added",
+        "addedCount_other": "{{count}} items added",
+        "removedCount_one": "{{count}} item removed",
+        "removedCount_other": "{{count}} items removed"
       },
       "shippingMethods": {
         "added": "Shipping methods added",
         "removed": "Shipping methods removed",
         "updated": "Shipping methods updated",
-        "addedCount_one": "Added {{count}} shipping method",
-        "addedCount_other": "Added {{count}} shipping methods",
-        "removedCount_one": "Removed {{count}} shipping method",
-        "removedCount_other": "Removed {{count}} shipping methods"
+        "addedCount_one": "{{count}} shipping method added",
+        "addedCount_other": "{{count}} shipping methods added",
+        "removedCount_one": "{{count}} shipping method removed",
+        "removedCount_other": "{{count}} shipping methods removed"
       },
       "promotions": {
         "added": "Promotions added",
         "removed": "Promotions removed",
         "updated": "Promotions updated",
-        "addedCount_one": "Added {{count}} promotion",
-        "addedCount_other": "Added {{count}} promotions",
-        "removedCount_one": "Removed {{count}} promotion",
-        "removedCount_other": "Removed {{count}} promotions"
+        "addedCount_one": "{{count}} promotion added",
+        "addedCount_other": "{{count}} promotions added",
+        "removedCount_one": "{{count}} promotion removed",
+        "removedCount_other": "{{count}} promotions removed"
       }
     },
     "summary": {

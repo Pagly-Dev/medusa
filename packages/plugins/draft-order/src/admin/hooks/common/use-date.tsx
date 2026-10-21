@@ -1,5 +1,6 @@
 import { format, formatDistance, sub } from "date-fns"
 import { enUS, es } from "date-fns/locale"
+import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 
 /**
@@ -13,37 +14,40 @@ export const useDate = () => {
 
   const locale = DATE_LOCALES[i18n.language] || enUS
 
-  const getFullDate = ({
-    date,
-    includeTime = false,
-  }: {
-    date: string | Date
-    includeTime?: boolean
-  }) => {
-    const ensuredDate = new Date(date)
+  // The formatters only change with the locale, so memos that use them hold.
+  return useMemo(() => {
+    const getFullDate = ({
+      date,
+      includeTime = false,
+    }: {
+      date: string | Date
+      includeTime?: boolean
+    }) => {
+      const ensuredDate = new Date(date)
 
-    if (isNaN(ensuredDate.getTime())) {
-      return ""
+      if (isNaN(ensuredDate.getTime())) {
+        return ""
+      }
+
+      const timeFormat = includeTime ? "p" : ""
+
+      return format(ensuredDate, `PP ${timeFormat}`, {
+        locale,
+      })
     }
 
-    const timeFormat = includeTime ? "p" : ""
+    function getRelativeDate(date: string | Date): string {
+      const now = new Date()
 
-    return format(ensuredDate, `PP ${timeFormat}`, {
-      locale,
-    })
-  }
+      return formatDistance(sub(new Date(date), { minutes: 0 }), now, {
+        addSuffix: true,
+        locale,
+      })
+    }
 
-  function getRelativeDate(date: string | Date): string {
-    const now = new Date()
-
-    return formatDistance(sub(new Date(date), { minutes: 0 }), now, {
-      addSuffix: true,
-      locale,
-    })
-  }
-
-  return {
-    getFullDate,
-    getRelativeDate,
-  }
+    return {
+      getFullDate,
+      getRelativeDate,
+    }
+  }, [locale])
 }

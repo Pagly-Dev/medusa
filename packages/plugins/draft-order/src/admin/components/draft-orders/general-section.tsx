@@ -8,6 +8,7 @@ import {
   Skeleton,
   Text,
   toast,
+  usePrompt,
 } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
 import { Link, useNavigate } from "react-router-dom"
@@ -25,6 +26,7 @@ export const GeneralSection = ({ order }: GeneralSectionProps) => {
   const { t } = useTranslation()
   const { getFullDate } = useDate()
   const navigate = useNavigate()
+  const prompt = usePrompt()
 
   const { mutateAsync: deleteDraftOrder, isPending: isDeleting } =
     useDeleteDraftOrder()
@@ -84,6 +86,20 @@ export const GeneralSection = ({ order }: GeneralSectionProps) => {
                 label: t("draftOrders.general.delete"),
                 icon: <Trash />,
                 onClick: async () => {
+                  // Pagly: deleting a draft asks first, like other deletes.
+                  const confirmed = await prompt({
+                    title: t("general.areYouSure"),
+                    description: t("draftOrders.deleteWarning", {
+                      id: `#${order.display_id}`,
+                    }),
+                    confirmText: t("actions.delete"),
+                    cancelText: t("actions.cancel"),
+                  })
+
+                  if (!confirmed) {
+                    return
+                  }
+
                   try {
                     await deleteDraftOrder(order.id)
                     navigate("/draft-orders")

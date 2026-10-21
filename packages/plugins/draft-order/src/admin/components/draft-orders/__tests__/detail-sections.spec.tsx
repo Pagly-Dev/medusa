@@ -1,6 +1,12 @@
 // @vitest-environment jsdom
 import { TooltipProvider } from "@medusajs/ui"
-import { cleanup, fireEvent, render, screen } from "@testing-library/react"
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react"
 import type { ReactNode } from "react"
 import { MemoryRouter } from "react-router-dom"
 import { afterEach, describe, expect, it, vi } from "vitest"
@@ -108,6 +114,9 @@ describe("Draft order page sections in Spanish", () => {
 
       expect(await screen.findByText("¿Estás seguro?")).toBeTruthy()
       expect(screen.getByText(/pedido borrador #4/)).toBeTruthy()
+      fireEvent.click(screen.getByRole("button", { name: "Cancelar" }))
+
+      await waitFor(() => expect(screen.queryByText("¿Estás seguro?")).toBeNull())
       expect(deleteDraftOrder).not.toHaveBeenCalled()
     })
 

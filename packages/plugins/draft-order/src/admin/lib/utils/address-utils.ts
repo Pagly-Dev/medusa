@@ -27,11 +27,19 @@ export function isSameAddress(
  * Pagly: a country's name in `language`, from the browser's region names,
  * falling back to the English name on the plugin's country list.
  */
+const regionNames = new Map<string, Intl.DisplayNames>()
+
 export function getCountryName(iso2: string, language: string) {
   const code = iso2.toUpperCase()
 
   try {
-    const name = new Intl.DisplayNames([language], { type: "region" }).of(code)
+    if (!regionNames.has(language)) {
+      regionNames.set(
+        language,
+        new Intl.DisplayNames([language], { type: "region" })
+      )
+    }
+    const name = regionNames.get(language)!.of(code)
 
     if (name && name !== code) {
       return name
