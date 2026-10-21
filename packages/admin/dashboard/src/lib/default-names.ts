@@ -32,3 +32,8 @@ export const getOptionValues = (options?: { value?: string | null }[] | null) =>
   (options ?? [])
     .map((option) => option.value)
     .filter((value): value is string => !!value && !isDefaultOptionValue(value))
+
+// Red stub: the tests land before the code.
+export const isDefaultOption = (_option: {
+  values?: { value?: string | null }[] | null
+}) => false
