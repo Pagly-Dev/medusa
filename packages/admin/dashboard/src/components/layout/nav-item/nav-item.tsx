@@ -422,10 +422,11 @@ export const NavItem = ({
             </Text>
           </NavLink>
         </NavItemTooltip>
+        {/* Pagly: a plugin's quick actions, clickable only while shown. */}
         {NavActions && (
           <div
             className={clx(
-              "absolute inset-y-0 right-1 flex items-center opacity-0 transition-opacity focus-within:opacity-100 group-hover/nav-item:opacity-100",
+              "pointer-events-none absolute inset-y-0 right-1 flex items-center opacity-0 transition-opacity focus-within:pointer-events-auto focus-within:opacity-100 group-hover/nav-item:pointer-events-auto group-hover/nav-item:opacity-100",
               { "max-lg:hidden": !!items?.length }
             )}
           >
