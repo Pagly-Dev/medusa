@@ -17,6 +17,7 @@ import { DotsSix, Eye, EyeSlash } from "@medusajs/icons"
 import { IconButton, Kbd, Text, clx } from "@medusajs/ui"
 import { Collapsible as RadixCollapsible } from "radix-ui"
 import {
+  ComponentType,
   PropsWithChildren,
   ReactNode,
   useCallback,
@@ -54,6 +55,20 @@ const ACTIVE_NAV_LINK_CLASSES =
   "bg-ui-bg-base shadow-elevation-card-rest text-ui-fg-base hover:bg-ui-bg-base"
 const NESTED_NAV_LINK_CLASSES = "pl-[34px] pr-2 py-1 w-full text-ui-fg-muted"
 const SETTING_NAV_LINK_CLASSES = "pl-2 py-1"
+
+/**
+ * Pagly: the global a plugin sets to the quick actions it shows on a nav item
+ * while it is hovered, keyed by the item's route. Kept as a global so core
+ * takes no dependency on the plugin.
+ */
+const NAV_ACTIONS_KEY = "__paglyNavActions"
+
+const getNavActions = (to: string) =>
+  (
+    (globalThis as Record<string, unknown>)[NAV_ACTIONS_KEY] as
+      | Record<string, ComponentType>
+      | undefined
+  )?.[to]
 
 // Prefix match that respects path-segment boundaries, so that a route like
 // "/inventory-sources" is not considered a match for "/inventory". This keeps
@@ -375,36 +390,49 @@ export const NavItem = ({
   )
 
   const isSetting = type === "setting"
+  const NavActions = editMode ? undefined : getNavActions(to)
 
   return (
     <div>
-      <NavItemTooltip to={to}>
-        <NavLink
-          to={getLinkTarget(to)}
-          end={items?.some((i) => i.to === pathname)}
-          state={
-            from
-              ? {
-                  from,
-                }
-              : undefined
-          }
-          className={({ isActive }) => {
-            return clx(navLinkClassNames({ isActive, isSetting, to }), {
-              "max-lg:hidden": !!items?.length,
-            })
-          }}
-        >
-          {type !== "setting" && (
-            <div className="flex size-6 items-center justify-center">
-              <Icon icon={icon} type={type} />
-            </div>
-          )}
-          <Text size="small" weight="plus" leading="compact">
-            {displayLabel}
-          </Text>
-        </NavLink>
-      </NavItemTooltip>
+      <div className="group/nav-item relative">
+        <NavItemTooltip to={to}>
+          <NavLink
+            to={getLinkTarget(to)}
+            end={items?.some((i) => i.to === pathname)}
+            state={
+              from
+                ? {
+                    from,
+                  }
+                : undefined
+            }
+            className={({ isActive }) => {
+              return clx(navLinkClassNames({ isActive, isSetting, to }), {
+                "max-lg:hidden": !!items?.length,
+              })
+            }}
+          >
+            {type !== "setting" && (
+              <div className="flex size-6 items-center justify-center">
+                <Icon icon={icon} type={type} />
+              </div>
+            )}
+            <Text size="small" weight="plus" leading="compact">
+              {displayLabel}
+            </Text>
+          </NavLink>
+        </NavItemTooltip>
+        {NavActions && (
+          <div
+            className={clx(
+              "absolute inset-y-0 right-1 flex items-center opacity-0 transition-opacity focus-within:opacity-100 group-hover/nav-item:opacity-100",
+              { "max-lg:hidden": !!items?.length }
+            )}
+          >
+            <NavActions />
+          </div>
+        )}
+      </div>
       {items && items.length > 0 && (
         <RadixCollapsible.Root open={editMode || open} onOpenChange={setOpen}>
           <RadixCollapsible.Trigger
