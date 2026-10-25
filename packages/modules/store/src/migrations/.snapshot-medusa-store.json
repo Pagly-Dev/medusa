@@ -22,7 +22,7 @@
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "default": "'Medusa Store'",
+          "default": "'Pagly'",
           "mappedType": "text"
         },
         "default_sales_channel_id": {

@@ -44,7 +44,7 @@ medusaIntegrationTestRunner({
         expect(store).toEqual(
           expect.objectContaining({
             id: expect.any(String),
-            name: "Medusa Store",
+            name: "Pagly",
             default_sales_channel_id: salesChannel.id,
           })
         )
