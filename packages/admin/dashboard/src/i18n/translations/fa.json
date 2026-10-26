@@ -3770,7 +3770,7 @@
   },
   "auth": {
     "login": {
-      "noProviders": "برای ورود، یک ارائه‌دهنده احراز هویت در تنظیمات Medusa خود ثبت کنید",
+      "noProviders": "برای ورود، یک ارائه‌دهنده احراز هویت در تنظیمات Pagly خود ثبت کنید",
       "authenticationFailed": "احراز هویت ناموفق بود",
       "cloud": "ورود با Medusa Cloud",
       "continueWithProvider": "ادامه با {{provider}}",

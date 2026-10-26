@@ -1608,7 +1608,7 @@
       "title": "Skapa återbetalning",
       "sendNotificationHint": "Meddela kunder om den skapade återbetalningen.",
       "systemPayment": "Systembetalning",
-      "systemPaymentDesc": "En eller flera betalningar är systembetalningar. Observera att debiteringar och återbetalningar för sådana betalningar inte hanteras av Medusa.",
+      "systemPaymentDesc": "En eller flera betalningar är systembetalningar. Observera att debiteringar och återbetalningar för sådana betalningar inte hanteras av Pagly.",
       "error": {
         "amountToLarge": "Du kan inte återbetala mer än det ursprungliga beställningsbeloppet.",
         "amountNegative": "Återbetalningsbeloppet måste vara ett positivt tal.",
@@ -2755,7 +2755,7 @@
       "header": "Redigera profil",
       "languageHint": "Språket som ska användas i adminpanelen. Detta ändrar inte språket i din butik.",
       "languagePlaceholder": "Välj språk",
-      "usageInsightsHint": "Dela användningsdata och hjälp oss förbättra Medusa. Du kan läsa mer om vad vi samlar in och hur vi använder informationen i vår <0>dokumentation</0>."
+      "usageInsightsHint": "Dela användningsdata och hjälp oss förbättra Pagly. Du kan läsa mer om vad vi samlar in och hur vi använder informationen i vår <0>dokumentation</0>."
     },
     "toast": {
       "edit": "Profiländringarna har sparats"
@@ -2934,7 +2934,7 @@
       "manageEntities": "Hantera entiteter",
       "manageLocales": "Hantera språkinställningar"
     },
-    "subtitle": "Hantera översättningar av dina data i Medusa",
+    "subtitle": "Hantera översättningar av dina data i Pagly",
     "list": {
       "metrics": "{{translated}} av {{total}} översättningar"
     },
@@ -3189,7 +3189,7 @@
       "createPublishableHeader": "Skapa publik API-nyckel",
       "createPublishableHint": "Skapa en ny publik API-nyckel för att begränsa förfrågningar till specifika försäljningskanaler.",
       "createSecretHeader": "Skapa hemlig API-nyckel",
-      "createSecretHint": "Skapa en ny hemlig API-nyckel för åtkomst till Medusa API som autentiserad adminanvändare.",
+      "createSecretHint": "Skapa en ny hemlig API-nyckel för åtkomst till Pagly API som autentiserad adminanvändare.",
       "secretKeyCreatedHeader": "Hemlig nyckel skapad",
       "secretKeyCreatedHint": "Din nya hemliga nyckel har genererats. Kopiera och spara den säkert nu. Det här är enda gången den visas.",
       "copySecretTokenSuccess": "Den hemliga nyckeln har kopierats till urklipp.",
@@ -3321,7 +3321,7 @@
   },
   "login": {
     "forgotPassword": "Glömt lösenordet? – <0>Återställ</0>",
-    "title": "Välkommen till Medusa",
+    "title": "Välkommen till Pagly",
     "hint": "Logga in för att komma åt kontot",
     "mfa": {
       "title": "Tvåfaktorsautentisering",
@@ -3339,7 +3339,7 @@
     }
   },
   "invite": {
-    "title": "Välkommen till Medusa",
+    "title": "Välkommen till Pagly",
     "hint": "Skapa ditt konto nedan",
     "backToLogin": "Tillbaka till inloggningen",
     "createAccount": "Skapa konto",
@@ -3347,8 +3347,8 @@
     "emailTooltip": "Din e-postadress kan inte ändras. Om du vill använda en annan e-postadress måste en ny inbjudan skickas.",
     "invalidInvite": "Inbjudan är ogiltig eller har löpt ut.",
     "successTitle": "Ditt konto har registrerats",
-    "successHint": "Kom igång med Medusa Admin direkt.",
-    "successAction": "Starta Medusa Admin",
+    "successHint": "Kom igång med Pagly direkt.",
+    "successAction": "Starta Pagly",
     "invalidTokenTitle": "Din inbjudningskod är ogiltig",
     "invalidTokenHint": "Begär en ny inbjudningslänk.",
     "passwordMismatch": "Lösenorden matchar inte",
@@ -3381,7 +3381,7 @@
   },
   "workflowExecutions": {
     "domain": "Arbetsflöden",
-    "subtitle": "Visa och följ arbetsflödeskörningar i din Medusa-applikation.",
+    "subtitle": "Visa och följ arbetsflödeskörningar i din Pagly-applikation.",
     "transactionIdLabel": "Transaktions-ID",
     "workflowIdLabel": "Arbetsflödes-ID",
     "stateLabel": "Delstat",
@@ -3533,7 +3533,7 @@
       "description": "Du har inga aviseringar just nu. När du får några visas de här."
     },
     "accessibility": {
-      "description": "Aviseringar om aktiviteter i Medusa visas här."
+      "description": "Aviseringar om aktiviteter i Pagly visas här."
     }
   },
   "errors": {
@@ -3770,7 +3770,7 @@
   },
   "auth": {
     "login": {
-      "noProviders": "Registrera en autentiseringsleverantör i din Medusa-konfiguration för att kunna logga in.",
+      "noProviders": "Registrera en autentiseringsleverantör i din Pagly-konfiguration för att kunna logga in.",
       "authenticationFailed": "Autentiseringen misslyckades",
       "cloud": "Logga in med Medusa Cloud",
       "continueWithProvider": "Fortsätt med {{provider}}",

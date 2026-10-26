@@ -1608,7 +1608,7 @@
       "title": "Luo hyvitys",
       "sendNotificationHint": "Ilmoita asiakkaalle luodusta hyvityksestä.",
       "systemPayment": "Järjestelmämaksu",
-      "systemPaymentDesc": "Yksi tai useampi maksuistasi on järjestelmämaksu. Huomaa, että Medusa ei käsittele tällaisten maksujen veloituksia ja hyvityksiä.",
+      "systemPaymentDesc": "Yksi tai useampi maksuistasi on järjestelmämaksu. Huomaa, että Pagly ei käsittele tällaisten maksujen veloituksia ja hyvityksiä.",
       "error": {
         "amountToLarge": "Ei voi hyvittää enempää kuin tilauksen alkuperäinen summa.",
         "amountNegative": "Hyvityssumman on oltava positiivinen luku.",
@@ -2755,7 +2755,7 @@
       "header": "Muokkaa profiilia",
       "languageHint": "Kieli, jota haluat käyttää hallintapaneelissa. Tämä ei muuta kauppasi kieltä.",
       "languagePlaceholder": "Valitse kieli",
-      "usageInsightsHint": "Jaa käyttötietoja ja auta meitä parantamaan Medusaa. Voit lukea lisää siitä, mitä keräämme ja miten käytämme sitä <0>dokumentaatiossamme</0>."
+      "usageInsightsHint": "Jaa käyttötietoja ja auta meitä parantamaan Paglya. Voit lukea lisää siitä, mitä keräämme ja miten käytämme sitä <0>dokumentaatiossamme</0>."
     },
     "toast": {
       "edit": "Profiilin muutokset tallennettu"
@@ -2934,7 +2934,7 @@
       "manageEntities": "Hallinnoi entiteettejä",
       "manageLocales": "Hallinnoi kielialueita"
     },
-    "subtitle": "Hallinnoi Medusan datasi käännöksiä",
+    "subtitle": "Hallinnoi Paglyn datasi käännöksiä",
     "list": {
       "metrics": "{{translated}}/{{total}} käännöstä"
     },
@@ -3189,7 +3189,7 @@
       "createPublishableHeader": "Luo julkinen API-avain",
       "createPublishableHint": "Luo uusi julkinen API-avain rajataksesi pyyntöjen laajuuden tiettyihin myyntikanaviin.",
       "createSecretHeader": "Luo salainen API-avain",
-      "createSecretHint": "Luo uusi salainen API-avain käyttääksesi Medusa-API:a tunnistautuneena ylläpitäjänä.",
+      "createSecretHint": "Luo uusi salainen API-avain käyttääksesi Pagly-API:a tunnistautuneena ylläpitäjänä.",
       "secretKeyCreatedHeader": "Salainen avain luotu",
       "secretKeyCreatedHint": "Uusi salainen avaimesi on luotu. Kopioi ja säilytä se turvallisesti nyt. Tämä on ainoa kerta, kun se näytetään.",
       "copySecretTokenSuccess": "Salainen avain kopioitiin leikepöydälle.",
@@ -3321,7 +3321,7 @@
   },
   "login": {
     "forgotPassword": "Unohditko salasanan? - <0>Palauta</0>",
-    "title": "Tervetuloa Medusaan",
+    "title": "Tervetuloa Paglyan",
     "hint": "Kirjaudu sisään päästäksesi tilialueelle",
     "mfa": {
       "title": "Kaksivaiheinen tunnistautuminen",
@@ -3339,7 +3339,7 @@
     }
   },
   "invite": {
-    "title": "Tervetuloa Medusaan",
+    "title": "Tervetuloa Paglyan",
     "hint": "Luo tilisi alla",
     "backToLogin": "Takaisin kirjautumiseen",
     "createAccount": "Luo tili",
@@ -3347,8 +3347,8 @@
     "emailTooltip": "Sähköpostiasi ei voi muuttaa. Jos haluat käyttää toista sähköpostia, uusi kutsu on lähetettävä.",
     "invalidInvite": "Kutsu on virheellinen tai vanhentunut.",
     "successTitle": "Tilisi on rekisteröity",
-    "successHint": "Aloita Medusa Adminin käyttö heti.",
-    "successAction": "Käynnistä Medusa Admin",
+    "successHint": "Aloita Paglyin käyttö heti.",
+    "successAction": "Käynnistä Pagly",
     "invalidTokenTitle": "Kutsutunnuksesi on virheellinen",
     "invalidTokenHint": "Yritä pyytää uusi kutsulinkki.",
     "passwordMismatch": "Salasanat eivät täsmää",
@@ -3381,7 +3381,7 @@
   },
   "workflowExecutions": {
     "domain": "Työnkulut",
-    "subtitle": "Näytä ja seuraa Medusa-sovelluksesi työnkulkujen suorituksia.",
+    "subtitle": "Näytä ja seuraa Pagly-sovelluksesi työnkulkujen suorituksia.",
     "transactionIdLabel": "Transaktion ID",
     "workflowIdLabel": "Työnkulun ID",
     "stateLabel": "Tila",
@@ -3533,7 +3533,7 @@
       "description": "Sinulla ei ole tällä hetkellä ilmoituksia, mutta kun saat niitä, ne näkyvät täällä."
     },
     "accessibility": {
-      "description": "Medusan toimintaan liittyvät ilmoitukset listataan täällä."
+      "description": "Paglyn toimintaan liittyvät ilmoitukset listataan täällä."
     }
   },
   "errors": {
@@ -3770,7 +3770,7 @@
   },
   "auth": {
     "login": {
-      "noProviders": "Rekisteröi tunnistautumispalveluntarjoaja Medusa-asetuksissasi voidaksesi kirjautua sisään",
+      "noProviders": "Rekisteröi tunnistautumispalveluntarjoaja Pagly-asetuksissasi voidaksesi kirjautua sisään",
       "authenticationFailed": "Tunnistautuminen epäonnistui",
       "cloud": "Kirjaudu Medusa Cloudilla",
       "continueWithProvider": "Jatka palveluntarjoajalla {{provider}}",

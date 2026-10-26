@@ -2807,7 +2807,7 @@
       "header": "Editați profilul",
       "languageHint": "Limba pe care doriți să o utilizați în tabloul de bord administrativ. ",
       "languagePlaceholder": "Selectați limba",
-      "usageInsightsHint": "Distribuiți informații despre utilizare și ajutați-ne să îmbunătățim Medusa.  <0>documentare</0>."
+      "usageInsightsHint": "Distribuiți informații despre utilizare și ajutați-ne să îmbunătățim Pagly.  <0>documentare</0>."
     },
     "toast": {
       "edit": "Modificările profilurilor au fost salvate"
@@ -2989,7 +2989,7 @@
       "manageEntities": "Gestionați entitățile",
       "manageLocales": "Gestionați limbile"
     },
-    "subtitle": "Gestionați traducerile datelor dvs. în Medusa",
+    "subtitle": "Gestionați traducerile datelor dvs. în Pagly",
     "list": {
       "metrics": "{{translated}} din {{total}} traduceri"
     },
@@ -3250,7 +3250,7 @@
       "createPublishableHeader": "Creați cheia API publicabilă",
       "createPublishableHint": "Creați o nouă cheie API publicabilă pentru a limita sfera solicitărilor la anumite canale de vânzare.",
       "createSecretHeader": "Creați cheia API secretă",
-      "createSecretHint": "Creați o nouă cheie API secretă pentru a accesa API-ul Medusa ca utilizator administrator autentificat.",
+      "createSecretHint": "Creați o nouă cheie API secretă pentru a accesa API-ul Pagly ca utilizator administrator autentificat.",
       "secretKeyCreatedHeader": "Cheie secretă creată",
       "secretKeyCreatedHint": "Noua ta cheie secretă a fost generată. ",
       "copySecretTokenSuccess": "Cheia secretă a fost copiată în clipboard.",
@@ -3385,7 +3385,7 @@
   },
   "login": {
     "forgotPassword": "Aţi uitat parola?  <0>Resetați</0>",
-    "title": "Bun venit la Medusa",
+    "title": "Bun venit la Pagly",
     "hint": "Conectați-vă pentru a accesa zona de cont",
     "mfa": {
       "title": "Autentificare în doi pași",
@@ -3403,7 +3403,7 @@
     }
   },
   "invite": {
-    "title": "Bun venit la Medusa",
+    "title": "Bun venit la Pagly",
     "hint": "Creează-ți contul mai jos",
     "backToLogin": "Înapoi la autentificare",
     "createAccount": "Creează cont",
@@ -3411,8 +3411,8 @@
     "emailTooltip": "E-mailul dvs. nu poate fi schimbat. ",
     "invalidInvite": "Invitația este nevalidă sau a expirat.",
     "successTitle": "Contul dvs. a fost înregistrat",
-    "successHint": "Începeți imediat cu Medusa Admin.",
-    "successAction": "Porniți Medusa Admin",
+    "successHint": "Începeți imediat cu Pagly.",
+    "successAction": "Porniți Pagly",
     "invalidTokenTitle": "Indicatorul dvs. de invitație este nevalid",
     "invalidTokenHint": "Încercați să solicitați un nou link de invitație.",
     "passwordMismatch": "Parolele nu se potrivesc",
@@ -3445,7 +3445,7 @@
   },
   "workflowExecutions": {
     "domain": "Fluxuri de lucru",
-    "subtitle": "Vizualizați și urmăriți execuțiile fluxului de lucru în aplicația dvs. Medusa.",
+    "subtitle": "Vizualizați și urmăriți execuțiile fluxului de lucru în aplicația dvs. Pagly.",
     "transactionIdLabel": "ID tranzacție",
     "workflowIdLabel": "ID flux de lucru",
     "stateLabel": "Stare",
@@ -3598,7 +3598,7 @@
       "description": "Nu aveți notificări momentan, dar odată ce o faceți vor locui aici."
     },
     "accessibility": {
-      "description": "notificările despre activitățile Medusa vor fi listate aici."
+      "description": "notificările despre activitățile Pagly vor fi listate aici."
     }
   },
   "errors": {
@@ -3842,7 +3842,7 @@
   },
   "auth": {
     "login": {
-      "noProviders": "Înregistrați un furnizor de autentificare în configurația Medusa pentru a vă putea autentifica",
+      "noProviders": "Înregistrați un furnizor de autentificare în configurația Pagly pentru a vă putea autentifica",
       "authenticationFailed": "Autentificare eșuată",
       "cloud": "Autentificați-vă cu Medusa Cloud",
       "continueWithProvider": "Continuați cu {{provider}}",

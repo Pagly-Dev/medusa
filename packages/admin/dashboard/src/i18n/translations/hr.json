@@ -1561,7 +1561,7 @@
       "title": "Kreiraj povrat sredstava",
       "sendNotificationHint": "Obavijestite kupca o izvršenom povratu sredstava.",
       "systemPayment": "Sustavska uplata",
-      "systemPaymentDesc": "Jedna ili više vaših uplata je sustavska uplata. Imajte na umu da Medusa ne upravlja naplatom ni povratom sredstava za takve uplate.",
+      "systemPaymentDesc": "Jedna ili više vaših uplata je sustavska uplata. Imajte na umu da Pagly ne upravlja naplatom ni povratom sredstava za takve uplate.",
       "error": {
         "amountToLarge": "Nije moguće vratiti više od originalnog iznosa narudžbe.",
         "amountNegative": "Iznos povrata mora biti pozitivan broj.",
@@ -3037,7 +3037,7 @@
       "createPublishableHeader": "Kreiraj javni API ključ",
       "createPublishableHint": "Kreirajte novi javni API ključ kako biste ograničili opseg zahtjeva na određene prodajne kanale.",
       "createSecretHeader": "Kreiraj tajni API ključ",
-      "createSecretHint": "Kreirajte novi tajni API ključ za pristup Medusa API-ju kao autentificirani administratorski korisnik.",
+      "createSecretHint": "Kreirajte novi tajni API ključ za pristup Pagly API-ju kao autentificirani administratorski korisnik.",
       "secretKeyCreatedHeader": "Tajni ključ kreiran",
       "secretKeyCreatedHint": "Vaš novi tajni ključ je generiran. Kopirajte ga i sigurno spremite sada. Ovo je jedini put kada će biti prikazan.",
       "copySecretTokenSuccess": "Tajni ključ je uspješno kopiran u međuspremnik.",
@@ -3172,7 +3172,7 @@
   },
   "login": {
     "forgotPassword": "Zaboravili ste lozinku? - <0>Poništi</0>",
-    "title": "Dobrodošli u Medusa",
+    "title": "Dobrodošli u Pagly",
     "hint": "Prijavite se da biste pristupili korisničkom području",
     "mfa": {
       "title": "Dvofaktorska autentifikacija",
@@ -3190,7 +3190,7 @@
     }
   },
   "invite": {
-    "title": "Dobrodošli u Medusa",
+    "title": "Dobrodošli u Pagly",
     "hint": "Kreirajte svoj račun ispod",
     "backToLogin": "Povratak na prijavu",
     "createAccount": "Kreiraj račun",
@@ -3198,8 +3198,8 @@
     "emailTooltip": "Vaš email se ne može mijenjati. Ako želite koristiti drugi email, mora se poslati nova pozivnica.",
     "invalidInvite": "Pozivnica je nevažeća ili je istekao rok.",
     "successTitle": "Vaš račun je registriran",
-    "successHint": "Počnite odmah s Medusa Admin.",
-    "successAction": "Započnite Medusa Admin",
+    "successHint": "Počnite odmah s Pagly.",
+    "successAction": "Započnite Pagly",
     "invalidTokenTitle": "Vaš pozivni token je nevažeći",
     "invalidTokenHint": "Pokušajte zatražiti novu pozivnu poveznicu.",
     "passwordMismatch": "Lozinke se ne podudaraju",
@@ -3232,7 +3232,7 @@
   },
   "workflowExecutions": {
     "domain": "Workflows",
-    "subtitle": "Pregledajte i pratite izvršenja workflowa u svojoj Medusa aplikaciji.",
+    "subtitle": "Pregledajte i pratite izvršenja workflowa u svojoj Pagly aplikaciji.",
     "transactionIdLabel": "ID transakcije",
     "workflowIdLabel": "ID workflowa",
     "progressLabel": "Napredak",
@@ -3347,7 +3347,7 @@
       "description": "Nemate obavijesti u ovom trenutku, ali kada ih budete imali, bit će ovdje."
     },
     "accessibility": {
-      "description": "Obavijesti o Medusa aktivnostima bit će ovdje prikazane."
+      "description": "Obavijesti o Pagly aktivnostima bit će ovdje prikazane."
     }
   },
   "errors": {
