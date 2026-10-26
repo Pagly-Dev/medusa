@@ -137,7 +137,7 @@
   },
   "auth": {
     "login": {
-      "noProviders": "Registrá un proveedor de autenticación en tu configuración de Medusa para poder iniciar sesión",
+      "noProviders": "Registrá un proveedor de autenticación en tu configuración de Pagly para poder iniciar sesión",
       "authenticationFailed": "Autenticación fallida",
       "cloud": "Iniciar sesión con Medusa Cloud",
       "continueWithProvider": "Continuar con {{provider}}",
@@ -1665,7 +1665,7 @@
       "title": "Crear reembolso",
       "sendNotificationHint": "Notificar a los clientes sobre el reembolso creado.",
       "systemPayment": "Pago del sistema",
-      "systemPaymentDesc": "Uno o más de tus pagos son pagos del sistema. Tené en cuenta que Medusa no maneja las capturas y reembolsos de esos pagos.",
+      "systemPaymentDesc": "Uno o más de tus pagos son pagos del sistema. Tené en cuenta que Pagly no maneja las capturas y reembolsos de esos pagos.",
       "error": {
         "amountToLarge": "No se puede reembolsar más que el monto original del pedido.",
         "amountNegative": "El monto del reembolso debe ser un número positivo.",
@@ -2883,7 +2883,7 @@
       "header": "Editar perfil",
       "languageHint": "El idioma que querés usar en el panel de administración. Esto no cambia el idioma de tu tienda.",
       "languagePlaceholder": "Seleccioná un idioma",
-      "usageInsightsHint": "Compartí información de uso y ayudanos a mejorar Medusa. Podés leer más sobre lo que recopilamos y cómo lo usamos en nuestra <0>documentación</0>."
+      "usageInsightsHint": "Compartí información de uso y ayudanos a mejorar Pagly. Podés leer más sobre lo que recopilamos y cómo lo usamos en nuestra <0>documentación</0>."
     },
     "toast": {
       "edit": "Cambios en el perfil guardados"
@@ -3066,7 +3066,7 @@
       "manageLocales": "Gestionar idiomas"
     },
     "title": "Traducción de dominios",
-    "subtitle": "Gestioná las traducciones de tus datos en Medusa",
+    "subtitle": "Gestioná las traducciones de tus datos en Pagly",
     "bulk": {
       "header": "Editor de traducciones en masa",
       "mainColumn": "Idioma",
@@ -3319,7 +3319,7 @@
       "createPublishableHeader": "Crear clave API publicable",
       "createPublishableHint": "Creá una clave API publicable para limitar el alcance de las solicitudes a canales de venta específicos.",
       "createSecretHeader": "Crear clave API secreta",
-      "createSecretHint": "Creá una clave API secreta para acceder a la API de Medusa como usuario administrador autenticado.",
+      "createSecretHint": "Creá una clave API secreta para acceder a la API de Pagly como usuario administrador autenticado.",
       "secretKeyCreatedHeader": "Clave secreta creada",
       "secretKeyCreatedHint": "Tu nueva clave secreta fue generada. Copiala y guardala de forma segura ahora. Esta es la única vez que se va a mostrar.",
       "copySecretTokenSuccess": "Clave secreta copiada al portapapeles.",
@@ -3451,7 +3451,7 @@
   },
   "login": {
     "forgotPassword": "¿Olvidaste la contraseña? - <0>Restablecer</0>",
-    "title": "Bienvenido a Medusa",
+    "title": "Bienvenido a Pagly",
     "hint": "Iniciá sesión para acceder al área de cuentas",
     "mfa": {
       "title": "Autenticación de dos factores",
@@ -3469,7 +3469,7 @@
     }
   },
   "invite": {
-    "title": "Bienvenido a Medusa",
+    "title": "Bienvenido a Pagly",
     "hint": "Creá tu cuenta a continuación",
     "backToLogin": "Volver al login",
     "createAccount": "Crear cuenta",
@@ -3477,8 +3477,8 @@
     "emailTooltip": "Tu correo electrónico no se puede cambiar. Si querés usar otro correo, hay que enviar una nueva invitación.",
     "invalidInvite": "La invitación es inválida o ha expirado.",
     "successTitle": "Tu cuenta ha sido registrada",
-    "successHint": "Empezá a usar Medusa Admin ya mismo.",
-    "successAction": "Iniciar Medusa Admin",
+    "successHint": "Empezá a usar Pagly ya mismo.",
+    "successAction": "Iniciar Pagly",
     "invalidTokenTitle": "Tu token de invitación es inválido",
     "invalidTokenHint": "Probá solicitar un nuevo enlace de invitación.",
     "passwordMismatch": "Las contraseñas no coinciden",
@@ -3511,7 +3511,7 @@
   },
   "workflowExecutions": {
     "domain": "Flujos de trabajo",
-    "subtitle": "Visualizá y seguí las ejecuciones de flujos de trabajo en tu aplicación Medusa.",
+    "subtitle": "Visualizá y seguí las ejecuciones de flujos de trabajo en tu aplicación Pagly.",
     "transactionIdLabel": "ID de transacción",
     "workflowIdLabel": "ID de flujo de trabajo",
     "stateLabel": "Estado",
@@ -3630,7 +3630,7 @@
       "description": "No tenés notificaciones por el momento, pero cuando las tengas van a aparecer acá."
     },
     "accessibility": {
-      "description": "Las notificaciones sobre las actividades de Medusa se mostrarán aquí."
+      "description": "Las notificaciones sobre las actividades de Pagly se mostrarán aquí."
     }
   },
   "errors": {

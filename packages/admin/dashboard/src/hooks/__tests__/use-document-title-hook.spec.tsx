@@ -23,7 +23,7 @@ describe("useDocumentTitle", () => {
 
     const { result } = renderHook(() => useDocumentTitle())
 
-    expect(result.current).toBe("Medusa")
+    expect(result.current).toBe("Pagly")
   })
 
   it("appends the page title from a string breadcrumb", () => {
@@ -39,7 +39,7 @@ describe("useDocumentTitle", () => {
 
     const { result } = renderHook(() => useDocumentTitle())
 
-    expect(result.current).toBe("Products - Medusa")
+    expect(result.current).toBe("Products - Pagly")
   })
 
   it("uses a route's seo resolver for detail pages", () => {
@@ -67,7 +67,7 @@ describe("useDocumentTitle", () => {
 
     const { result } = renderHook(() => useDocumentTitle())
 
-    expect(result.current).toBe("Medusa Sweatpants - Medusa")
+    expect(result.current).toBe("Medusa Sweatpants - Pagly")
   })
 
   it("uses the most specific (last) match that yields a title", () => {
@@ -90,7 +90,7 @@ describe("useDocumentTitle", () => {
 
     const { result } = renderHook(() => useDocumentTitle())
 
-    expect(result.current).toBe("Medusa Sweatpants - Medusa")
+    expect(result.current).toBe("Medusa Sweatpants - Pagly")
   })
 
   it("skips a detail match without a title and uses the parent breadcrumb", () => {
@@ -116,6 +116,6 @@ describe("useDocumentTitle", () => {
 
     const { result } = renderHook(() => useDocumentTitle())
 
-    expect(result.current).toBe("Products - Medusa")
+    expect(result.current).toBe("Products - Pagly")
   })
 })
