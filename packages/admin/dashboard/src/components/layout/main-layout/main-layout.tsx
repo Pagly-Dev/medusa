@@ -32,6 +32,7 @@ import { useSearch } from "../../../providers/search-provider"
 import { UserMenu } from "../user-menu"
 import { useDocumentDirection } from "../../../hooks/use-document-direction"
 import { CUSTOMIZE_IDS } from "../../layout-composer/constants"
+import { SALES_CHANNEL_PATHS } from "./sales-channel-paths"
 
 export const MainLayout = () => {
   return (
@@ -295,12 +296,25 @@ const Searchbar = () => {
   )
 }
 
+// Pagly: the label above the sales channels, styled like the settings sidebar's group labels.
+const SalesChannelsHeading = () => {
+  const { t } = useTranslation()
+
+  return (
+    <div className="text-ui-fg-muted mt-3 flex h-7 items-center px-2">
+      <Text size="small" leading="compact">
+        {t("app.nav.salesChannels")}
+      </Text>
+    </div>
+  )
+}
+
 /**
  * The customizable nav. Every top-level route(core and extensions) is
  * fed to the `LayoutComposer` as its own entry, so each can be reordered/hidden
  * (and its children reordered) independently in edit mode.
  */
-const SidebarRoutes = () => {
+export const SidebarRoutes = () => {
   const coreRoutes = useCoreRoutes()
 
   const { getMenu } = useExtension()
@@ -320,6 +334,27 @@ const SidebarRoutes = () => {
   // Pagly: a plugin page that is also a core route (Online Store) must not render again as an extension.
   const extensionItems = menuItems.filter(
     (item) => !item.nested && !corePaths.has(item.to)
+  )
+  // Pagly: sales channels leave the flat list and render last, under a heading.
+  const salesChannelItems = SALES_CHANNEL_PATHS.flatMap((path) =>
+    extensionItems.filter((item) => item.to === path)
+  )
+  const otherExtensionItems = extensionItems.filter(
+    (item) => !SALES_CHANNEL_PATHS.includes(item.to)
+  )
+
+  const renderExtension = (item: (typeof extensionItems)[number]) => (
+    <LayoutComposer.Entry id={`nav:${item.to}`} key={item.to}>
+      <NavItem
+        key={item.to}
+        to={item.to}
+        label={item.label}
+        icon={item.icon ? item.icon : <SquaresPlus />}
+        items={item.items}
+        translationNs={item.translationNs}
+        type="extension"
+      />
+    </LayoutComposer.Entry>
   )
 
   return (
@@ -346,19 +381,13 @@ const SidebarRoutes = () => {
                     <NavItem key={route.to} {...route} />
                   </LayoutComposer.Entry>
                 ))}
-                {extensionItems.map((item) => (
-                  <LayoutComposer.Entry id={`nav:${item.to}`} key={item.to}>
-                    <NavItem
-                      key={item.to}
-                      to={item.to}
-                      label={item.label}
-                      icon={item.icon ? item.icon : <SquaresPlus />}
-                      items={item.items}
-                      translationNs={item.translationNs}
-                      type="extension"
-                    />
+                {otherExtensionItems.map(renderExtension)}
+                {salesChannelItems.length > 0 && (
+                  <LayoutComposer.Entry id="SalesChannels">
+                    <SalesChannelsHeading />
                   </LayoutComposer.Entry>
-                ))}
+                )}
+                {salesChannelItems.map(renderExtension)}
               </>
             ),
           }}

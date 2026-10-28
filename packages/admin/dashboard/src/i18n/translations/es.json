@@ -325,6 +325,7 @@
         "store": "Tienda",
         "storeSettings": "Configuraciones de la tienda"
       },
+      "salesChannels": "Canales de venta",
       "settings": {
         "header": "Configuraciones",
         "general": "General",

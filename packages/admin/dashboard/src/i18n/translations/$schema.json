@@ -1133,6 +1133,9 @@
               "required": ["store", "storeSettings"],
               "additionalProperties": false
             },
+            "salesChannels": {
+              "type": "string"
+            },
             "settings": {
               "type": "object",
               "properties": {
@@ -1153,7 +1156,13 @@
               "additionalProperties": false
             }
           },
-          "required": ["accessibility", "common", "main", "settings"],
+          "required": [
+            "accessibility",
+            "common",
+            "main",
+            "salesChannels",
+            "settings"
+          ],
           "additionalProperties": false
         }
       },
