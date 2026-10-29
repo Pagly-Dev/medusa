@@ -294,8 +294,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Documentación",
-        "changelog": "Registro de cambios",
         "shortcuts": "Atajos",
         "profileSettings": "Configuraciones del perfil",
         "theme": {

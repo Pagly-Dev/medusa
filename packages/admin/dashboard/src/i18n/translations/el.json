@@ -258,8 +258,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Τεκμηρίωση",
-        "changelog": "Αρχείο αλλαγών",
         "shortcuts": "Συντομεύσεις",
         "profileSettings": "Ρυθμίσεις προφίλ",
         "theme": {

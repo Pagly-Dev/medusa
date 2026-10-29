@@ -258,8 +258,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Dokümantasyon",
-        "changelog": "Güncellemeler",
         "shortcuts": "Kısayollar",
         "profileSettings": "Profil Ayarları",
         "theme": {

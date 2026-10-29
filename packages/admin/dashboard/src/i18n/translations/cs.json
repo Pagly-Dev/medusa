@@ -268,8 +268,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Dokumentace",
-        "changelog": "Seznam změn",
         "shortcuts": "Zkratky",
         "profileSettings": "Nastavení profilu",
         "theme": {

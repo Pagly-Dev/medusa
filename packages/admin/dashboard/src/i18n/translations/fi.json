@@ -243,8 +243,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Dokumentaatio",
-        "changelog": "Muutosloki",
         "shortcuts": "Pikanäppäimet",
         "profileSettings": "Profiiliasetukset",
         "theme": {

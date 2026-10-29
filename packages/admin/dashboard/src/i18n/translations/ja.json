@@ -258,8 +258,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "ドキュメント",
-        "changelog": "変更履歴",
         "shortcuts": "ショートカット",
         "profileSettings": "プロファイル設定",
         "theme": {

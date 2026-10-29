@@ -247,8 +247,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Documentation",
-        "changelog": "Changelog",
         "shortcuts": "Shortcuts",
         "profileSettings": "Profile settings",
         "theme": {

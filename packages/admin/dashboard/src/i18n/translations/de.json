@@ -258,8 +258,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Dokumentation",
-        "changelog": "Änderungsprotokoll",
         "shortcuts": "Tastenkürzel",
         "profileSettings": "Profileinstellungen",
         "theme": {

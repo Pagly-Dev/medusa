@@ -257,8 +257,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "문서",
-        "changelog": "변경 로그",
         "shortcuts": "단축키",
         "profileSettings": "프로필 설정",
         "theme": {

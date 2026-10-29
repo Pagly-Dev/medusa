@@ -243,8 +243,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "مستندات",
-        "changelog": "تغییرات",
         "shortcuts": "کلیدهای میانبر",
         "profileSettings": "تنظیمات پروفایل",
         "theme": {

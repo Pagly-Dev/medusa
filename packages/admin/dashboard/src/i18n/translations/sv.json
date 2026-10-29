@@ -243,8 +243,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Dokumentation",
-        "changelog": "Ändringslogg",
         "shortcuts": "Genvägar",
         "profileSettings": "Profilinställningar",
         "theme": {

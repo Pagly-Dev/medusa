@@ -258,8 +258,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Documentatie",
-        "changelog": "Wijzigingslogboek",
         "shortcuts": "Sneltoetsen",
         "profileSettings": "Profielinstellingen",
         "theme": {

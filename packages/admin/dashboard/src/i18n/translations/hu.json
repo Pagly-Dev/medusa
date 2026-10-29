@@ -258,8 +258,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Dokumentáció",
-        "changelog": "Változásnapló",
         "shortcuts": "Billentyűparancsok",
         "profileSettings": "Profilbeállítások",
         "theme": {

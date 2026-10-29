@@ -263,8 +263,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Documentare",
-        "changelog": "Jurnalul modificărilor",
         "shortcuts": "Comenzi rapide",
         "profileSettings": "Setări de profil",
         "theme": {

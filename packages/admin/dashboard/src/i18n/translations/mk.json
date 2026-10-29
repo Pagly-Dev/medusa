@@ -258,8 +258,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Документација",
-        "changelog": "Промена",
         "shortcuts": "Кратенки",
         "profileSettings": "Поставки на профилот",
         "theme": {

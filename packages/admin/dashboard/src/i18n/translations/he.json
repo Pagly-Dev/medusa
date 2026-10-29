@@ -268,8 +268,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "תיעוד",
-        "changelog": "יומן שינויים",
         "shortcuts": "קיצורי דרך",
         "profileSettings": "הגדרות פרופיל",
         "theme": {

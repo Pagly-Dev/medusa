@@ -248,8 +248,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Dokumentacija",
-        "changelog": "Dnevnik promjena",
         "shortcuts": "Prečaci",
         "profileSettings": "Postavke profila",
         "theme": {

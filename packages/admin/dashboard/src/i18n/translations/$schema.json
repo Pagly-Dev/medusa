@@ -1026,12 +1026,6 @@
             "user": {
               "type": "object",
               "properties": {
-                "documentation": {
-                  "type": "string"
-                },
-                "changelog": {
-                  "type": "string"
-                },
                 "shortcuts": {
                   "type": "string"
                 },
@@ -1058,13 +1052,7 @@
                   "additionalProperties": false
                 }
               },
-              "required": [
-                "documentation",
-                "changelog",
-                "shortcuts",
-                "profileSettings",
-                "theme"
-              ],
+              "required": ["shortcuts", "profileSettings", "theme"],
               "additionalProperties": false
             },
             "store": {

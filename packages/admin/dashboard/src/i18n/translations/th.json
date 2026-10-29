@@ -258,8 +258,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "เอกสาร",
-        "changelog": "บันทึกการเปลี่ยนแปลง",
         "shortcuts": "ทางลัด",
         "profileSettings": "การตั้งค่าโปรไฟล์",
         "theme": {

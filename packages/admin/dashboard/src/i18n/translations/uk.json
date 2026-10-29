@@ -268,8 +268,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Документація",
-        "changelog": "Зміни",
         "shortcuts": "Скорочення",
         "profileSettings": "Налаштування профілю",
         "theme": {

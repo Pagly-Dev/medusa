@@ -257,8 +257,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "文档",
-        "changelog": "更新日志",
         "shortcuts": "快捷键",
         "profileSettings": "个人资料设置",
         "theme": {

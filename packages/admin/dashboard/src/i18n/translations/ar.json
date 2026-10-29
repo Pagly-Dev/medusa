@@ -278,8 +278,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "التوثيق",
-        "changelog": "سجل التغييرات",
         "shortcuts": "الاختصارات",
         "profileSettings": "إعدادات الملف الشخصي",
         "theme": {

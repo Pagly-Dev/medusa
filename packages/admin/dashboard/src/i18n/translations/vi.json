@@ -258,8 +258,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Tài liệu",
-        "changelog": "Nhật ký thay đổi",
         "shortcuts": "Phím tắt",
         "profileSettings": "Cài đặt hồ sơ",
         "theme": {

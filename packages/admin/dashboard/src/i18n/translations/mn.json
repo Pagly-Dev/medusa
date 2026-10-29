@@ -258,8 +258,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Баримтжуулалт",
-        "changelog": "Өөрчлөлтийн түүх",
         "shortcuts": "Товчлолууд",
         "profileSettings": "Профайлын тохиргоо",
         "theme": {

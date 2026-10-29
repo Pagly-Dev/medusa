@@ -257,8 +257,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Dokumentasi",
-        "changelog": "Catatan Perubahan",
         "shortcuts": "Pintasan",
         "profileSettings": "Pengaturan profil",
         "theme": {

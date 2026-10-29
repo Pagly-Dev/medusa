@@ -257,8 +257,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "說明文件",
-        "changelog": "變更記錄",
         "shortcuts": "快捷鍵",
         "profileSettings": "個人資料設定",
         "theme": {

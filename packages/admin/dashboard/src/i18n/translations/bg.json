@@ -258,8 +258,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Документация",
-        "changelog": "История на промените",
         "shortcuts": "Бързи команди",
         "profileSettings": "Настройки на профила",
         "theme": {

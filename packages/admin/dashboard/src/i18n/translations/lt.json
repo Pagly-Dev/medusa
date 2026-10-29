@@ -268,8 +268,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Dokumentacija",
-        "changelog": "Pakeitimų žurnalas",
         "shortcuts": "Spartieji klavišai",
         "profileSettings": "Paskyros nustatymai",
         "theme": {
