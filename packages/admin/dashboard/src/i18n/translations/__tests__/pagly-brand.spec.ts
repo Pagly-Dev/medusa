@@ -21,6 +21,13 @@ function flatten(value: unknown, prefix = ""): [string, string][] {
   )
 }
 
+/**
+ * Medusa in any script or declension: "Medusu", "Meduse", "Medusában",
+ * "Медуза", "مدوسا"…
+ */
+const MEDUSA =
+  /medus|медуз|медус|μέδουσ|μεδουσ|מדוז|מדוס|مدوس|ميدوس|メデュ|メドゥ|美杜莎|梅杜莎|메두사|เมดูซ|เมดูส|medúz|medüz/i
+
 const dir = join(__dirname, "..")
 const src = join(dir, "../..")
 const locales = readdirSync(dir).filter(
@@ -39,7 +46,7 @@ describe("Pagly brand in admin copy", () => {
   test.each(locales)("%s never says Medusa", (file) => {
     const json = JSON.parse(readFileSync(join(dir, file), "utf8"))
     const offenders = flatten(json)
-      .filter(([, value]) => /medusa/i.test(value))
+      .filter(([, value]) => MEDUSA.test(value))
       .map(([key]) => key)
 
     expect(offenders).toEqual([])
