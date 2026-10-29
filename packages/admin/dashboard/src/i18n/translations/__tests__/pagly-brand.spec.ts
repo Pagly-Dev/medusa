@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from "fs"
-import { join } from "path"
+import { join, relative } from "path"
+import ts from "typescript"
 import { describe, expect, test } from "vitest"
 
 import { getProductImportCsvTemplate } from "../../../routes/products/product-import/helpers/import-template"
@@ -34,12 +35,71 @@ const locales = readdirSync(dir).filter(
   (file) => file.endsWith(".json") && file !== "$schema.json"
 )
 
-/** Lines that mention Medusa, once `@medusajs/*` package imports are dropped. */
-function mentions(file: string) {
-  return readFileSync(join(src, file), "utf8")
-    .split(/\r?\n/)
-    .map((line) => line.replace(/["']@medusajs\/[\w-]+["']/g, ""))
-    .filter((line) => /medusa/i.test(line))
+/**
+ * Whether a piece of source text names Medusa where someone could read it.
+ * Package names (`@medusajs/loyalty-plugin`, `[@medusajs/dashboard]` in a
+ * console warning) and snake_case storage keys (`medusa_admin_theme`) are
+ * code, not copy.
+ */
+const namesMedusa = (text: string) =>
+  /medusa/i.test(
+    text
+      .replace(/@medusajs\/[\w./-]+/g, "")
+      .replace(/\bmedusa_[a-z0-9_]+\b/g, "")
+  )
+
+const sourceFiles = (folder: string): string[] =>
+  readdirSync(folder, { withFileTypes: true }).flatMap((entry) => {
+    const file = join(folder, entry.name)
+
+    if (entry.isDirectory()) {
+      return entry.name === "__tests__" ? [] : sourceFiles(file)
+    }
+    return /\.tsx?$/.test(entry.name) &&
+      !/\.(spec|test)\.tsx?$/.test(entry.name) &&
+      !entry.name.endsWith(".d.ts")
+      ? [file]
+      : []
+  })
+
+/** Every string, template and JSX text in a file that names Medusa, as file:line. */
+function literalsNamingMedusa(file: string) {
+  const source = ts.createSourceFile(
+    file,
+    readFileSync(file, "utf8"),
+    ts.ScriptTarget.Latest,
+    true,
+    file.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS
+  )
+  const found: string[] = []
+
+  const visit = (node: ts.Node) => {
+    // Module specifiers (`@medusajs/ui`, `virtual:medusa/routes`) are code.
+    if (
+      ts.isImportDeclaration(node) ||
+      ts.isExportDeclaration(node) ||
+      ts.isImportTypeNode(node) ||
+      (ts.isCallExpression(node) &&
+        node.expression.kind === ts.SyntaxKind.ImportKeyword)
+    ) {
+      return
+    }
+    if (
+      (ts.isStringLiteral(node) ||
+        ts.isNoSubstitutionTemplateLiteral(node) ||
+        ts.isTemplateLiteralToken(node) ||
+        ts.isJsxText(node)) &&
+      namesMedusa(node.text)
+    ) {
+      const { line } = source.getLineAndCharacterOfPosition(node.getStart())
+
+      found.push(`${relative(src, file).replace(/\\/g, "/")}:${line + 1}`)
+    }
+    ts.forEachChild(node, visit)
+  }
+
+  visit(source)
+  return found
 }
 
 describe("Pagly brand in admin copy", () => {
@@ -74,12 +134,34 @@ describe("Pagly brand in admin copy", () => {
     expect(html).toContain("<title>Pagly</title>")
   })
 
-  test.each([
-    "components/layout/user-menu/user-menu.tsx",
-    "routes/profile/profile-edit/components/edit-profile-form/edit-profile-form.tsx",
-    "routes/products/product-import/helpers/import-template.ts",
-  ])("%s links nowhere near Medusa", (file) => {
-    expect(mentions(file)).toEqual([])
+  test("tells copy from code", () => {
+    expect(namesMedusa("https://docs.medusajs.com")).toBe(true)
+    expect(namesMedusa("medusa-recovery-codes.txt")).toBe(true)
+    expect(namesMedusa("Medusa Coffee Mug")).toBe(true)
+    expect(namesMedusa("[@medusajs/dashboard] Menu item for path")).toBe(false)
+    expect(namesMedusa("@medusajs/framework/utils")).toBe(false)
+    expect(namesMedusa("medusa_admin_theme")).toBe(false)
+  })
+
+  // Links, file names and sample data are copy too, wherever they live.
+  test("no string in the dashboard's source names Medusa", () => {
+    const files = sourceFiles(src)
+
+    expect(files.length).toBeGreaterThan(100)
+    expect(files.flatMap(literalsNamingMedusa)).toEqual([])
+  })
+
+  test("the user menu's dropped items leave no keys behind", () => {
+    const schema = readFileSync(join(dir, "$schema.json"), "utf8")
+    const leftovers = locales.filter((file) => {
+      const user = JSON.parse(readFileSync(join(dir, file), "utf8")).app?.menus
+        ?.user
+
+      return user && ("documentation" in user || "changelog" in user)
+    })
+
+    expect(leftovers).toEqual([])
+    expect(schema).not.toMatch(/"documentation"|"changelog"/)
   })
 
   test("the user menu keeps profile, shortcuts, theme and logout", () => {
@@ -110,5 +192,12 @@ describe("Pagly brand in admin copy", () => {
     )
     expect(rows.length).toBeGreaterThanOrEqual(2)
     expect(rows.map((row) => row.split(",")[2])).toContain("Ceramic Coffee Mug")
+    // A store's own `coffee-mug` would make the unedited template fail to import.
+    expect(rows.map((row) => row.split(",")[1])).toEqual(
+      expect.arrayContaining(["sample-coffee-mug", "sample-sweatpants"])
+    )
+    expect(rows.every((row) => row.split(",")[1].startsWith("sample-"))).toBe(
+      true
+    )
   })
 })
