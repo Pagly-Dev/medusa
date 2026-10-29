@@ -180,12 +180,13 @@ describe("the order's discounts", () => {
     await screen.findByText("Air Jordan 1 Low + laces bundle")
     expect(fetch).toHaveBeenCalledWith("/admin/orders/order_1/discounts")
 
+    // The amounts follow the machine's number format.
     const rows = screen.getAllByTestId("order-discount-row")
     expect(rows.map((row) => row.textContent)).toEqual([
-      expect.stringMatching(/^Air Jordan 1 Low \+ laces bundle.*16\.50/),
-      expect.stringMatching(/^Shoelaces volume discount · 3\+.*6\.00/),
-      expect.stringMatching(/^Black Friday.*5\.00/),
-      expect.stringMatching(/^Santander 25%.*26\.88/),
+      expect.stringMatching(/^Air Jordan 1 Low \+ laces bundle.*16[.,]50/),
+      expect.stringMatching(/^Shoelaces volume discount · 3\+.*6[.,]00/),
+      expect.stringMatching(/^Black Friday.*5[.,]00/),
+      expect.stringMatching(/^Santander 25%.*26[.,]88/),
     ])
   })
 
