@@ -190,6 +190,19 @@ describe("the order's discounts", () => {
     ])
   })
 
+  // As upstream's "Shipping (CODE)" row did, a discount on shipping alone says so.
+  it("says which discounts applied to shipping", async () => {
+    fetch.mockResolvedValue({ discounts })
+
+    renderSummary()
+    openDiscounts()
+
+    await screen.findByText("Black Friday")
+    const rows = screen.getAllByTestId("order-discount-row").map((row) => row.textContent)
+    expect(rows[2]).toMatch(/^Black Friday\(fields\.shipping\)/)
+    expect(rows.filter((row) => row?.includes("fields.shipping"))).toHaveLength(1)
+  })
+
   it("never shows an offer's internal code once the names are in", async () => {
     fetch.mockResolvedValue({ discounts })
 
