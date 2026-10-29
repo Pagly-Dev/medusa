@@ -3794,7 +3794,7 @@
     "login": {
       "noProviders": "Registra un fornitore di autenticazione nella tua configurazione Pagly per poter accedere",
       "authenticationFailed": "Autenticazione fallita",
-      "cloud": "Accedi con Medusa Cloud",
+      "cloud": "Accedi con Pagly Cloud",
       "continueWithProvider": "Continua con {{provider}}",
       "or": "o",
       "provisioningFailed": "Impossibile completare l'accesso. Contatta un amministratore."

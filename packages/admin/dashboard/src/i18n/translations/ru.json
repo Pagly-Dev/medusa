@@ -3888,7 +3888,7 @@
   "auth": {
     "login": {
       "authenticationFailed": "Ошибка аутентификации",
-      "cloud": "Войти через Medusa Cloud",
+      "cloud": "Войти через Pagly Cloud",
       "noProviders": "Чтобы войти, зарегистрируйте провайдера аутентификации в конфигурации Pagly.",
       "continueWithProvider": "Продолжить через {{provider}}",
       "or": "или",

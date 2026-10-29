@@ -3772,7 +3772,7 @@
     "login": {
       "noProviders": "Registrera en autentiseringsleverantör i din Pagly-konfiguration för att kunna logga in.",
       "authenticationFailed": "Autentiseringen misslyckades",
-      "cloud": "Logga in med Medusa Cloud",
+      "cloud": "Logga in med Pagly Cloud",
       "continueWithProvider": "Fortsätt med {{provider}}",
       "or": "eller",
       "provisioningFailed": "Vi kunde inte slutföra inloggningen. Kontakta en administratör."

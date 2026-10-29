@@ -3794,7 +3794,7 @@
     "login": {
       "noProviders": "ログインできるようにPagly設定で認証プロバイダーを登録してください",
       "authenticationFailed": "認証に失敗しました",
-      "cloud": "Medusa Cloudでログイン",
+      "cloud": "Pagly Cloudでログイン",
       "continueWithProvider": "{{provider}}で続ける",
       "or": "または",
       "provisioningFailed": "サインインを完了できませんでした。管理者にお問い合わせください。"

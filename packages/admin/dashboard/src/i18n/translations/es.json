@@ -139,7 +139,7 @@
     "login": {
       "noProviders": "Registrá un proveedor de autenticación en tu configuración de Pagly para poder iniciar sesión",
       "authenticationFailed": "Autenticación fallida",
-      "cloud": "Iniciar sesión con Medusa Cloud",
+      "cloud": "Iniciar sesión con Pagly Cloud",
       "continueWithProvider": "Continuar con {{provider}}",
       "or": "o",
       "provisioningFailed": "No pudimos completar tu inicio de sesión. Por favor, contactá a un administrador."

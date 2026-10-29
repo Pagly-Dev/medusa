@@ -3895,7 +3895,7 @@
     "login": {
       "noProviders": "Зареєструйте постачальника автентифікації у конфігурації Pagly, щоб мати можливість увійти",
       "authenticationFailed": "Помилка автентифікації",
-      "cloud": "Увійти через Medusa Cloud",
+      "cloud": "Увійти через Pagly Cloud",
       "continueWithProvider": "Продовжити з {{provider}}",
       "or": "або",
       "provisioningFailed": "Не вдалося завершити вхід. Будь ласка, зверніться до адміністратора."

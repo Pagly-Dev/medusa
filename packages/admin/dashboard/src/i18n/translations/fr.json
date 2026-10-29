@@ -3794,7 +3794,7 @@
     "login": {
       "noProviders": "Enregistrez un fournisseur d'authentification dans votre configuration Pagly pour pouvoir vous connecter",
       "authenticationFailed": "Échec de l'authentification",
-      "cloud": "Se connecter avec Medusa Cloud",
+      "cloud": "Se connecter avec Pagly Cloud",
       "continueWithProvider": "Continuer avec {{provider}}",
       "or": "ou",
       "provisioningFailed": "Nous n'avons pas pu finaliser votre connexion. Veuillez contacter un administrateur."

@@ -3772,7 +3772,7 @@
     "login": {
       "noProviders": "Rekisteröi tunnistautumispalveluntarjoaja Pagly-asetuksissasi voidaksesi kirjautua sisään",
       "authenticationFailed": "Tunnistautuminen epäonnistui",
-      "cloud": "Kirjaudu Medusa Cloudilla",
+      "cloud": "Kirjaudu Pagly Cloudilla",
       "continueWithProvider": "Jatka palveluntarjoajalla {{provider}}",
       "or": "tai",
       "provisioningFailed": "Emme voineet viimeistellä kirjautumistasi. Ota yhteyttä ylläpitäjään."

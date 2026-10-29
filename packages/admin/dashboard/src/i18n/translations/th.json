@@ -3787,7 +3787,7 @@
     "login": {
       "noProviders": "ลงทะเบียนผู้ให้บริการยืนยันตัวตนใน Pagly config ของคุณเพื่อเข้าสู่ระบบ",
       "authenticationFailed": "การยืนยันตัวตนล้มเหลว",
-      "cloud": "เข้าสู่ระบบด้วย Medusa Cloud",
+      "cloud": "เข้าสู่ระบบด้วย Pagly Cloud",
       "continueWithProvider": "ดำเนินการต่อด้วย {{provider}}",
       "or": "หรือ",
       "provisioningFailed": "เราไม่สามารถดำเนินการเข้าสู่ระบบให้เสร็จสมบูรณ์ได้ กรุณาติดต่อผู้ดูแลระบบ"

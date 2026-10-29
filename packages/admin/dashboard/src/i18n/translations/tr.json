@@ -3564,7 +3564,7 @@
   "auth": {
     "login": {
       "authenticationFailed": "Kimlik doğrulama başarısız oldu",
-      "cloud": "Medusa Cloud ile giriş yapın",
+      "cloud": "Pagly Cloud ile giriş yapın",
       "noProviders": "Giriş yapabilmek için sunucu yapılandırmanızda bir kimlik doğrulama sağlayıcısı tanımlayın.",
       "continueWithProvider": "{{provider}} ile Devam Et",
       "or": "veya",

@@ -3782,7 +3782,7 @@
     "login": {
       "noProviders": "請在您的 Pagly 設定中登錄驗證提供者以便登入",
       "authenticationFailed": "驗證失敗",
-      "cloud": "使用 Medusa Cloud 登入",
+      "cloud": "使用 Pagly Cloud 登入",
       "continueWithProvider": "使用 {{provider}} 繼續",
       "or": "或",
       "provisioningFailed": "我們無法完成您的登入。請聯絡管理員。"

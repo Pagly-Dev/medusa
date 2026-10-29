@@ -3793,7 +3793,7 @@
     "login": {
       "noProviders": "Регистрирайте доставчик за удостоверяване в конфигурацията на Pagly, за да можете да влезете",
       "authenticationFailed": "Удостоверяването е неуспешно",
-      "cloud": "Влезте с Medusa Cloud",
+      "cloud": "Влезте с Pagly Cloud",
       "continueWithProvider": "Продължи с {{provider}}",
       "or": "или",
       "provisioningFailed": "Не успяхме да завършим влизането ви. Моля, свържете се с администратор."

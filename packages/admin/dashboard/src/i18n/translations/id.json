@@ -3783,7 +3783,7 @@
     "login": {
       "noProviders": "Daftarkan penyedia autentikasi di konfigurasi Pagly Anda untuk dapat masuk",
       "authenticationFailed": "Autentikasi gagal",
-      "cloud": "Masuk dengan Medusa Cloud",
+      "cloud": "Masuk dengan Pagly Cloud",
       "continueWithProvider": "Lanjutkan dengan {{provider}}",
       "or": "atau",
       "provisioningFailed": "Kami tidak dapat menyelesaikan masuk Anda. Harap hubungi administrator."

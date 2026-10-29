@@ -3445,7 +3445,7 @@
   "auth": {
     "login": {
       "authenticationFailed": "Xác thực thất bại",
-      "cloud": "Đăng nhập bằng Medusa Cloud",
+      "cloud": "Đăng nhập bằng Pagly Cloud",
       "continueWithProvider": "Tiếp tục với {{provider}}",
       "noProviders": "Đăng ký một nhà cung cấp xác thực trong cấu hình Pagly của bạn để có thể đăng nhập",
       "or": "hoặc",

@@ -3895,7 +3895,7 @@
     "login": {
       "noProviders": "Pagly konfigūracijoje užregistruokite autentifikavimo teikėją, kad galėtumėte prisijungti",
       "authenticationFailed": "Autentifikacija nepavyko",
-      "cloud": "Prisijungti su Medusa Cloud",
+      "cloud": "Prisijungti su Pagly Cloud",
       "continueWithProvider": "Tęsti su {{provider}}",
       "or": "arba",
       "provisioningFailed": "Nepavyko užbaigti jūsų prisijungimo. Susisiekite su administratoriumi."

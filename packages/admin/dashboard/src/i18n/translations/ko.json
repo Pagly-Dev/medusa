@@ -3783,7 +3783,7 @@
     "login": {
       "noProviders": "로그인하려면 Pagly 설정에서 인증 공급자를 등록하세요.",
       "authenticationFailed": "인증에 실패했습니다.",
-      "cloud": "Medusa Cloud로 로그인",
+      "cloud": "Pagly Cloud로 로그인",
       "continueWithProvider": "{{provider}}로 계속",
       "or": "또는",
       "provisioningFailed": "로그인을 완료할 수 없습니다. 관리자에게 문의하세요."
