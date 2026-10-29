@@ -827,6 +827,19 @@ const DiscountAndTotalBreakdown = ({
     return discounts
   }, [order])
 
+  // Pagly: a named discount on shipping alone says so, as upstream's "Shipping (CODE)" row did.
+  const shippingOnlyCodes = useMemo(() => {
+    const itemCodes = new Set(
+      order.items.flatMap((item) => item.adjustments || []).map((a) => a.code)
+    )
+    return new Set(
+      order.shipping_methods
+        .flatMap((shippingMethod) => shippingMethod.adjustments || [])
+        .map((a) => a.code)
+        .filter((code) => !itemCodes.has(code))
+    )
+  }, [order])
+
   const hasDiscount = discounts.length > 0
   const hasCreditLines = creditLines.length > 0
 
@@ -861,7 +874,12 @@ const DiscountAndTotalBreakdown = ({
               data-testid="order-discount-row"
               className="flex items-center justify-between gap-x-2"
             >
-              <span className="txt-small">{discount.label}</span>
+              <div className="flex gap-1">
+                <span className="txt-small">{discount.label}</span>
+                {discount.code && shippingOnlyCodes.has(discount.code) && (
+                  <span className="txt-small">({t("fields.shipping")})</span>
+                )}
+              </div>
               <div className="relative flex-1">
                 <div className="bottom-[calc(50% - 2px)] absolute h-[1px] w-full border-b border-dashed" />
               </div>
