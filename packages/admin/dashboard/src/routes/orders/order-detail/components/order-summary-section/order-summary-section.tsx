@@ -66,6 +66,11 @@ import { getReturnableQuantity } from "../../../../../lib/rma"
 import { CopyPaymentLink } from "../copy-payment-link/copy-payment-link"
 import ReturnInfoPopover from "./return-info-popover"
 import ShippingInfoPopover from "./shipping-info-popover"
+import {
+  discountLabelOf,
+  OrderDiscountLabel,
+  useOrderDiscountLabels,
+} from "./use-order-discount-labels"
 import { formatPercentage } from "../../../../../lib/percentage-helpers.ts"
 
 type OrderSummarySectionProps = {
@@ -389,6 +394,7 @@ const Item = ({
   returns,
   claims,
   exchanges,
+  discountLabels,
 }: {
   item: AdminOrderLineItem
   currencyCode: string
@@ -396,6 +402,7 @@ const Item = ({
   returns: AdminReturn[]
   claims: AdminClaim[]
   exchanges: AdminExchange[]
+  discountLabels?: OrderDiscountLabel[]
 }) => {
   const { t } = useTranslation()
 
@@ -408,7 +415,15 @@ const Item = ({
       ))
   const hasUnfulfilledItems = item.quantity - item.detail.fulfilled_quantity > 0
 
-  const appliedPromoCodes = (item.adjustments || []).map((a) => a.code)
+  // Pagly: each discount by its name (offer, bank, campaign), once, falling back to its code.
+  const appliedPromoCodes = Array.from(
+    new Set(
+      (item.adjustments || [])
+        .map((a) => a.code)
+        .filter((code): code is string => !!code)
+        .map((code) => discountLabelOf(discountLabels, code))
+    )
+  )
 
   return (
     <>
@@ -449,7 +464,11 @@ const Item = ({
                 </span>
               }
             >
-              <ReceiptPercent className="text-ui-fg-subtle flex-shrink self-center " />
+              <ReceiptPercent
+                data-testid="order-item-discounts"
+                aria-label={appliedPromoCodes.join(", ")}
+                className="text-ui-fg-subtle flex-shrink self-center "
+              />
             </Tooltip>
           )}
         </div>
@@ -544,6 +563,8 @@ const ItemBreakdown = ({
     [reservations]
   )
 
+  const discountLabels = useOrderDiscountLabels(order.id)
+
   return (
     <div>
       {order.items?.map((item) => {
@@ -558,6 +579,7 @@ const ItemBreakdown = ({
             returns={returns}
             exchanges={exchanges}
             claims={claims}
+            discountLabels={discountLabels}
           />
         )
       })}
@@ -768,6 +790,7 @@ const DiscountAndTotalBreakdown = ({
 
   const creditLines = order.credit_lines ?? []
   const loyaltyPlugin = getLoyaltyPlugin(plugins)
+  const discountLabels = useOrderDiscountLabels(order.id)
 
   const discounts = useMemo(() => {
     const discounts: {
@@ -804,6 +827,19 @@ const DiscountAndTotalBreakdown = ({
     return discounts
   }, [order])
 
+  // Pagly: a named discount on shipping alone says so, as upstream's "Shipping (CODE)" row did.
+  const shippingOnlyCodes = useMemo(() => {
+    const itemCodes = new Set(
+      order.items.flatMap((item) => item.adjustments || []).map((a) => a.code)
+    )
+    return new Set(
+      order.shipping_methods
+        .flatMap((shippingMethod) => shippingMethod.adjustments || [])
+        .map((a) => a.code)
+        .filter((code) => !itemCodes.has(code))
+    )
+  }, [order])
+
   const hasDiscount = discounts.length > 0
   const hasCreditLines = creditLines.length > 0
 
@@ -829,7 +865,31 @@ const DiscountAndTotalBreakdown = ({
         }
         value={getLocaleAmount(order.discount_total, order.currency_code)}
       />
-      {isDiscountOpen && (
+      {/* Pagly: one row per discount, by its name, once the plugin names them. */}
+      {isDiscountOpen && discountLabels?.length ? (
+        <div className="flex flex-col gap-1 pl-5">
+          {discountLabels.map((discount, index) => (
+            <div
+              key={`${discount.code ?? discount.label}-${index}`}
+              data-testid="order-discount-row"
+              className="flex items-center justify-between gap-x-2"
+            >
+              <div className="flex gap-1">
+                <span className="txt-small">{discount.label}</span>
+                {discount.code && shippingOnlyCodes.has(discount.code) && (
+                  <span className="txt-small">({t("fields.shipping")})</span>
+                )}
+              </div>
+              <div className="relative flex-1">
+                <div className="bottom-[calc(50% - 2px)] absolute h-[1px] w-full border-b border-dashed" />
+              </div>
+              <span className="txt-small text-ui-fg-muted">
+                {getLocaleAmount(discount.amount, order.currency_code)}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : isDiscountOpen && (
         <div className="flex flex-col gap-1 pl-5">
           {discounts.map(({ type, total, codes }) => {
             return (
