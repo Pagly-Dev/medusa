@@ -263,8 +263,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Dokumentacija",
-        "changelog": "Dnevnik promjena",
         "shortcuts": "Prečice",
         "profileSettings": "Postavke profila",
         "theme": {
@@ -2806,7 +2804,7 @@
       "header": "Uredi profil",
       "languageHint": "Jezik koji želite koristiti u administratorskoj nadzornoj ploči. Ovo neće promijeniti jezik vašeg trgovine.",
       "languagePlaceholder": "Odaberite jezik",
-      "usageInsightsHint": "Podijelite uvide u korištenje i pomozite nam poboljšati Medusu. Više o tome što prikupljamo i kako to koristimo možete pročitati u našoj <0>dokumentaciji</0>."
+      "usageInsightsHint": "Podijelite uvide u korištenje i pomozite nam poboljšati Pagly. Više o tome što prikupljamo i kako to koristimo možete pročitati u našoj <0>dokumentaciji</0>."
     },
     "toast": {
       "edit": "Promjene na profilu su spremljene"
@@ -2988,7 +2986,7 @@
       "manageEntities": "Upravljaj entitetima",
       "manageLocales": "Upravljaj jezicima"
     },
-    "subtitle": "Upravljajte prijevodima vaših podataka u Medusi",
+    "subtitle": "Upravljajte prijevodima vaših podataka u Pagly",
     "list": {
       "metrics": "{{translated}} od {{total}} prijevoda"
     },
@@ -3842,7 +3840,7 @@
     "login": {
       "noProviders": "Registrirajte pružatelja autentifikacije u vašoj Pagly konfiguraciji da biste se mogli prijaviti",
       "authenticationFailed": "Autentifikacija nije uspjela",
-      "cloud": "Prijavite se putem Medusa Cloud",
+      "cloud": "Prijavite se putem Pagly Cloud",
       "continueWithProvider": "Nastavite s {{provider}}",
       "or": "ili",
       "provisioningFailed": "Nismo mogli dovršiti vašu prijavu. Molimo kontaktirajte administratora."

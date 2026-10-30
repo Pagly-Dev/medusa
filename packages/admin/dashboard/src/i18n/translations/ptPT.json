@@ -258,8 +258,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Documentação",
-        "changelog": "Registo de alterações",
         "shortcuts": "Atalhos",
         "profileSettings": "Definições do perfil",
         "theme": {
@@ -3787,7 +3785,7 @@
     "login": {
       "noProviders": "Regista um fornecedor de autenticação na tua configuração do Pagly para poderes iniciar sessão",
       "authenticationFailed": "Falha na autenticação",
-      "cloud": "Iniciar sessão com Medusa Cloud",
+      "cloud": "Iniciar sessão com Pagly Cloud",
       "continueWithProvider": "Continuar com {{provider}}",
       "or": "ou",
       "provisioningFailed": "Não foi possível concluir o teu início de sessão. Contacta um administrador."

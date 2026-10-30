@@ -258,8 +258,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Τεκμηρίωση",
-        "changelog": "Αρχείο αλλαγών",
         "shortcuts": "Συντομεύσεις",
         "profileSettings": "Ρυθμίσεις προφίλ",
         "theme": {
@@ -3792,7 +3790,7 @@
     "login": {
       "noProviders": "Καταχωρίστε έναν πάροχο ταυτοποίησης στη διαμόρφωση Pagly για να μπορέσετε να συνδεθείτε",
       "authenticationFailed": "Η ταυτοποίηση απέτυχε",
-      "cloud": "Σύνδεση με Medusa Cloud",
+      "cloud": "Σύνδεση με Pagly Cloud",
       "continueWithProvider": "Συνέχεια με {{provider}}",
       "or": "ή",
       "provisioningFailed": "Δεν καταφέραμε να ολοκληρώσουμε τη σύνδεσή σας. Επικοινωνήστε με έναν διαχειριστή."

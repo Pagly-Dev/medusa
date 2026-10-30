@@ -278,8 +278,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "التوثيق",
-        "changelog": "سجل التغييرات",
         "shortcuts": "الاختصارات",
         "profileSettings": "إعدادات الملف الشخصي",
         "theme": {
@@ -3514,7 +3512,7 @@
   },
   "login": {
     "forgotPassword": "نسيت كلمة المرور؟ - <0>إعادة تعيين</0>",
-    "title": "مرحبًا بك في مدوسا",
+    "title": "مرحبًا بك في Pagly",
     "hint": "سجل الدخول للوصول إلى منطقة الحساب",
     "mfa": {
       "title": "المصادقة الثنائية",
@@ -3532,7 +3530,7 @@
     }
   },
   "invite": {
-    "title": "مرحبًا بك في مدوسا",
+    "title": "مرحبًا بك في Pagly",
     "hint": "أنشئ حسابك أدناه",
     "backToLogin": "العودة إلى تسجيل الدخول",
     "createAccount": "إنشاء حساب",
@@ -3540,8 +3538,8 @@
     "emailTooltip": "لا يمكن تغيير بريدك الإلكتروني. إذا كنت ترغب في استخدام بريد إلكتروني آخر، يجب إرسال دعوة جديدة.",
     "invalidInvite": "الدعوة غير صالحة أو انتهت صلاحيتها.",
     "successTitle": "تم تسجيل حسابك بنجاح",
-    "successHint": "ابدأ باستخدام مدوسا الآن.",
-    "successAction": "ابدأ مدوسا",
+    "successHint": "ابدأ باستخدام Pagly الآن.",
+    "successAction": "ابدأ Pagly",
     "invalidTokenTitle": "رمز الدعوة غير صالح",
     "invalidTokenHint": "حاول طلب رابط دعوة جديد.",
     "passwordMismatch": "كلمات المرور غير متطابقة",
@@ -3574,7 +3572,7 @@
   },
   "workflowExecutions": {
     "domain": "تنفيذات سير العمل",
-    "subtitle": "عرض وتتبع تنفيذات سير العمل في تطبيق مدوسا الخاص بك.",
+    "subtitle": "عرض وتتبع تنفيذات سير العمل في تطبيق Pagly الخاص بك.",
     "transactionIdLabel": "معرف المعاملة",
     "workflowIdLabel": "معرف سير العمل",
     "stateLabel": "الحالة",
@@ -3730,7 +3728,7 @@
       "description": "ليس لديك أي إشعارات في الوقت الحالي، ولكن بمجرد أن تحصل عليها ستظهر هنا."
     },
     "accessibility": {
-      "description": "سيتم سرد الإشعارات حول أنشطة مدوسا هنا."
+      "description": "سيتم سرد الإشعارات حول أنشطة Pagly هنا."
     }
   },
   "errors": {
@@ -3997,7 +3995,7 @@
     "login": {
       "noProviders": "سجّل مزود مصادقة في إعدادات Pagly لتتمكن من تسجيل الدخول",
       "authenticationFailed": "فشل المصادقة",
-      "cloud": "تسجيل الدخول بـ Medusa Cloud",
+      "cloud": "تسجيل الدخول بـ Pagly Cloud",
       "continueWithProvider": "المتابعة بـ {{provider}}",
       "or": "أو",
       "provisioningFailed": "تعذّر إكمال تسجيل دخولك. يرجى التواصل مع المسؤول."

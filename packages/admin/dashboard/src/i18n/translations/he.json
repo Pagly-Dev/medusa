@@ -268,8 +268,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "תיעוד",
-        "changelog": "יומן שינויים",
         "shortcuts": "קיצורי דרך",
         "profileSettings": "הגדרות פרופיל",
         "theme": {
@@ -3891,7 +3889,7 @@
     "login": {
       "noProviders": "רשום ספק אימות בתצורת Pagly שלך כדי להתחבר",
       "authenticationFailed": "האימות נכשל",
-      "cloud": "התחבר עם Medusa Cloud",
+      "cloud": "התחבר עם Pagly Cloud",
       "continueWithProvider": "המשך עם {{provider}}",
       "or": "או",
       "provisioningFailed": "לא הצלחנו להשלים את הכניסה שלך. צור קשר עם מנהל המערכת."

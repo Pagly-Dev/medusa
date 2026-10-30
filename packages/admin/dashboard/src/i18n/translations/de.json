@@ -258,8 +258,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Dokumentation",
-        "changelog": "Änderungsprotokoll",
         "shortcuts": "Tastenkürzel",
         "profileSettings": "Profileinstellungen",
         "theme": {
@@ -3794,7 +3792,7 @@
     "login": {
       "noProviders": "Registrieren Sie einen Authentifizierungsanbieter in Ihrer Pagly-Konfiguration, um sich anmelden zu können",
       "authenticationFailed": "Authentifizierung fehlgeschlagen",
-      "cloud": "Mit Medusa Cloud anmelden",
+      "cloud": "Mit Pagly Cloud anmelden",
       "continueWithProvider": "Weiter mit {{provider}}",
       "or": "oder",
       "provisioningFailed": "Wir konnten Ihre Anmeldung nicht abschließen. Bitte wenden Sie sich an einen Administrator."
