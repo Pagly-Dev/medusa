@@ -1,10 +1,8 @@
 import {
-  BookOpen,
   CircleHalfSolid,
   EllipsisHorizontal,
   Keyboard,
   OpenRectArrowOut,
-  TimelineVertical,
   User as UserIcon,
   XMark,
 } from "@medusajs/icons"
@@ -57,19 +55,7 @@ export const UserMenu = () => {
               {t("app.menus.user.profileSettings")}
             </Link>
           </DropdownMenu.Item>
-          <DropdownMenu.Separator />
-          <DropdownMenu.Item asChild>
-            <Link to="https://docs.medusajs.com" target="_blank">
-              <BookOpen className="text-ui-fg-subtle me-2" />
-              {t("app.menus.user.documentation")}
-            </Link>
-          </DropdownMenu.Item>
-          <DropdownMenu.Item asChild>
-            <Link to="https://medusajs.com/changelog/" target="_blank">
-              <TimelineVertical className="text-ui-fg-subtle me-2" />
-              {t("app.menus.user.changelog")}
-            </Link>
-          </DropdownMenu.Item>
+          {/* Pagly: no Documentation or Changelog items; they linked to upstream's site. */}
           <DropdownMenu.Separator />
           <DropdownMenu.Item onClick={toggleModal}>
             <Keyboard className="text-ui-fg-subtle me-2" />

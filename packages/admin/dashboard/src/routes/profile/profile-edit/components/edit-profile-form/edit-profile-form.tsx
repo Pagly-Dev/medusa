@@ -145,45 +145,7 @@ export const EditProfileForm = ({ user }: EditProfileProps) => {
                 </Form.Item>
               )}
             />
-            {/* TODO: Do we want to implement usage insights in V2? */}
-            {/* <Form.Field
-              control={form.control}
-              name="usage_insights"
-              render={({ field: { value, onChange, ...rest } }) => (
-                <Form.Item>
-                  <div className="flex items-center justify-between">
-                    <Form.Label>
-                      {t("profile.fields.usageInsightsLabel")}
-                    </Form.Label>
-                    <Form.Control>
-                      <Switch dir="ltr"
-                        className="rtl:rotate-180"
-                        {...rest}
-                        checked={value}
-                        onCheckedChange={onChange}
-                      />
-                    </Form.Control>
-                  </div>
-                  <Form.Hint>
-                    <span>
-                      <Trans
-                        i18nKey="profile.edit.usageInsightsHint"
-                        components={[
-                          <a
-                            key="hint-link"
-                            className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover transition-fg underline"
-                            href="https://docs.medusajs.com/resources/usage#admin-analytics"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          />,
-                        ]}
-                      />
-                    </span>
-                  </Form.Hint>
-                  <Form.ErrorMessage />
-                </Form.Item>
-              )}
-            /> */}
+            {/* Pagly: upstream's commented-out usage insights field (and its docs link) removed. */}
           </div>
         </RouteDrawer.Body>
         <RouteDrawer.Footer>

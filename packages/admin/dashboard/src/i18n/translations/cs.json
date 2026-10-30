@@ -268,8 +268,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Dokumentace",
-        "changelog": "Seznam změn",
         "shortcuts": "Zkratky",
         "profileSettings": "Nastavení profilu",
         "theme": {
@@ -1653,7 +1651,7 @@
       "title": "Vytvořit vrácení peněz",
       "sendNotificationHint": "Oznámit zákazníkům o vytvořeném vrácení peněz.",
       "systemPayment": "Systémová platba",
-      "systemPaymentDesc": "Jedna nebo více vašich plateb je systémová platba. Upozorňujeme, že příjem platby ani vratky nejsou zpracovávány Medusou pro takové platby.",
+      "systemPaymentDesc": "Jedna nebo více vašich plateb je systémová platba. Upozorňujeme, že příjem platby ani vratky nejsou zpracovávány Pagly pro takové platby.",
       "error": {
         "amountToLarge": "Nelze vrátit více než původní částku objednávky.",
         "amountNegative": "Částka k vrácení musí být kladné číslo.",
@@ -2834,7 +2832,7 @@
       "header": "Upravit profil",
       "languageHint": "Jazyk, který chcete používat v administrativním dashboardu. To nezmění jazyk vašeho obchodu.",
       "languagePlaceholder": "Vyberte jazyk",
-      "usageInsightsHint": "Sdílejte přehledy používání a pomozte nám zlepšit Medusu. Více o tom, co shromažďujeme a jak to používáme, si můžete přečíst v naší <0>dokumentaci</0>."
+      "usageInsightsHint": "Sdílejte přehledy používání a pomozte nám zlepšit Pagly. Více o tom, co shromažďujeme a jak to používáme, si můžete přečíst v naší <0>dokumentaci</0>."
     },
     "toast": {
       "edit": "Změny profilu byly uloženy"
@@ -3348,7 +3346,7 @@
   },
   "login": {
     "forgotPassword": "Zapomněli jste heslo? - <0>Obnovit</0>",
-    "title": "Vítejte v Meduse",
+    "title": "Vítejte v Pagly",
     "hint": "Přihlaste se pro přístup do administrace",
     "mfa": {
       "title": "Dvoufaktorové ověřování",
@@ -3366,7 +3364,7 @@
     }
   },
   "invite": {
-    "title": "Vítejte v Meduse",
+    "title": "Vítejte v Pagly",
     "hint": "Vytvořte si svůj účet níže",
     "backToLogin": "Zpět na přihlášení",
     "createAccount": "Vytvořit účet",
@@ -3540,7 +3538,7 @@
       "description": "Momentálně nemáte žádná oznámení, ale jakmile nějaká budete mít, budou zde."
     },
     "accessibility": {
-      "description": "oznámení o aktivitách Medusy budou zde uvedena."
+      "description": "oznámení o aktivitách Pagly budou zde uvedena."
     }
   },
   "errors": {
@@ -3780,7 +3778,7 @@
       "manageEntities": "Spravovat entity",
       "manageLocales": "Spravovat jazyky"
     },
-    "subtitle": "Spravujte překlady vašich dat v Meduse",
+    "subtitle": "Spravujte překlady vašich dat v Pagly",
     "list": {
       "metrics": "{{translated}} z {{total}} polí přeloženo"
     },
@@ -3889,7 +3887,7 @@
     "login": {
       "noProviders": "Registrujte poskytovatele ověřování v konfiguraci Pagly, abyste se mohli přihlásit",
       "authenticationFailed": "Ověření se nezdařilo",
-      "cloud": "Přihlásit se pomocí Medusa Cloud",
+      "cloud": "Přihlásit se pomocí Pagly Cloud",
       "continueWithProvider": "Pokračovat s {{provider}}",
       "or": "nebo",
       "provisioningFailed": "Přihlášení se nepodařilo dokončit. Kontaktujte prosím správce."

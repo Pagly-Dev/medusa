@@ -257,8 +257,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "文档",
-        "changelog": "更新日志",
         "shortcuts": "快捷键",
         "profileSettings": "个人资料设置",
         "theme": {
@@ -3783,7 +3781,7 @@
     "login": {
       "noProviders": "在您的 Pagly 配置中注册身份验证提供商以启用登录",
       "authenticationFailed": "身份验证失败",
-      "cloud": "使用 Medusa Cloud 登录",
+      "cloud": "使用 Pagly Cloud 登录",
       "continueWithProvider": "通过 {{provider}} 继续",
       "or": "或",
       "provisioningFailed": "无法完成您的登录。请联系管理员。"

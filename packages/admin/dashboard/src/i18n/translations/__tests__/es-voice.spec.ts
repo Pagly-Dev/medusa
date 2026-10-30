@@ -141,7 +141,7 @@ const TU_IMPERATIVE = new RegExp(
 )
 
 /** Names the admin capitalizes inside a sentence. */
-const PROPER_NOUNS = ["Medusa Cloud", "Pagly"]
+const PROPER_NOUNS = ["Pagly Cloud", "Pagly"]
 
 /**
  * Capitalized words a sentence keeps on purpose: example option values, and

@@ -263,8 +263,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Documentare",
-        "changelog": "Jurnalul modificărilor",
         "shortcuts": "Comenzi rapide",
         "profileSettings": "Setări de profil",
         "theme": {
@@ -3844,7 +3842,7 @@
     "login": {
       "noProviders": "Înregistrați un furnizor de autentificare în configurația Pagly pentru a vă putea autentifica",
       "authenticationFailed": "Autentificare eșuată",
-      "cloud": "Autentificați-vă cu Medusa Cloud",
+      "cloud": "Autentificați-vă cu Pagly Cloud",
       "continueWithProvider": "Continuați cu {{provider}}",
       "or": "sau",
       "provisioningFailed": "Nu am putut finaliza autentificarea dvs. Contactați un administrator."

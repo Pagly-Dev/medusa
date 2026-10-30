@@ -258,8 +258,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Documentatie",
-        "changelog": "Wijzigingslogboek",
         "shortcuts": "Sneltoetsen",
         "profileSettings": "Profielinstellingen",
         "theme": {
@@ -3792,7 +3790,7 @@
     "login": {
       "noProviders": "Registreer een auth-provider in uw Pagly-configuratie om te kunnen inloggen",
       "authenticationFailed": "Verificatie mislukt",
-      "cloud": "Inloggen met Medusa Cloud",
+      "cloud": "Inloggen met Pagly Cloud",
       "continueWithProvider": "Doorgaan met {{provider}}",
       "or": "of",
       "provisioningFailed": "We konden uw aanmelding niet voltooien. Neem contact op met een beheerder."

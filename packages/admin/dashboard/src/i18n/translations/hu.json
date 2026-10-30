@@ -258,8 +258,6 @@
     },
     "menus": {
       "user": {
-        "documentation": "Dokumentáció",
-        "changelog": "Változásnapló",
         "shortcuts": "Billentyűparancsok",
         "profileSettings": "Profilbeállítások",
         "theme": {
@@ -2774,7 +2772,7 @@
       "header": "Profil Szerkesztése",
       "languageHint": "Az admin vezérlőpulton használni kívánt nyelv. Ez nem változtatja meg az áruház nyelvét.",
       "languagePlaceholder": "Nyelv kiválasztása",
-      "usageInsightsHint": "Ossza meg a használati betekintéseket, és segítsen nekünk javítani a Medusát. További információt arról, hogy mit gyűjtünk és hogyan használjuk, megtalálhat a <0>dokumentációban</0>."
+      "usageInsightsHint": "Ossza meg a használati betekintéseket, és segítsen nekünk javítani a Pagly-t. További információt arról, hogy mit gyűjtünk és hogyan használjuk, megtalálhat a <0>dokumentációban</0>."
     },
     "toast": {
       "edit": "Profilváltozások mentve"
@@ -2953,7 +2951,7 @@
       "manageEntities": "Entitások kezelése",
       "manageLocales": "Területi beállítások kezelése"
     },
-    "subtitle": "Adatainak fordításait kezelheti a Medusában",
+    "subtitle": "Adatainak fordításait kezelheti a Pagly-ban",
     "list": {
       "metrics": "{{translated}} / {{total}} fordítás"
     },
@@ -3341,7 +3339,7 @@
   },
   "login": {
     "forgotPassword": "Elfelejtette a jelszavát? - <0>Visszaállítás</0>",
-    "title": "Üdvözöljük a Medusában",
+    "title": "Üdvözöljük a Pagly-ban",
     "hint": "Jelentkezzen be az adminisztrációs terület eléréséhez",
     "mfa": {
       "title": "Kétlépéses hitelesítés",
@@ -3359,7 +3357,7 @@
     }
   },
   "invite": {
-    "title": "Üdvözöljük a Medusában",
+    "title": "Üdvözöljük a Pagly-ban",
     "hint": "Hozza létre fiókját alább",
     "backToLogin": "Vissza a bejelentkezéshez",
     "createAccount": "Fiók létrehozása",
@@ -3792,7 +3790,7 @@
     "login": {
       "noProviders": "Regisztráljon egy hitelesítési szolgáltatót a Pagly konfigurációjában a bejelentkezéshez",
       "authenticationFailed": "A hitelesítés nem sikerült",
-      "cloud": "Bejelentkezés Medusa Clouddal",
+      "cloud": "Bejelentkezés Pagly Clouddal",
       "continueWithProvider": "Folytatás a következővel: {{provider}}",
       "or": "vagy",
       "provisioningFailed": "Nem sikerült befejezni a bejelentkezést. Kérjük, vegye fel a kapcsolatot egy adminisztrátorral."

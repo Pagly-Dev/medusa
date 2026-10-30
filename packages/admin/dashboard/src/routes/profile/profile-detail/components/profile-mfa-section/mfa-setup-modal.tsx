@@ -86,7 +86,8 @@ export const MfaSetupModal = ({ setup, onClose }: MfaSetupModalProps) => {
     const link = document.createElement("a")
 
     link.href = url
-    link.download = "medusa-recovery-codes.txt"
+    // Pagly: the downloaded file carries the product's name.
+    link.download = "pagly-recovery-codes.txt"
     link.click()
 
     URL.revokeObjectURL(url)
