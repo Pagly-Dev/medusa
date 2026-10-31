@@ -68,7 +68,10 @@ function createTailwindConfig(
 
   for (const plugin of plugins) {
     try {
-      const pluginDir = path.dirname(require.resolve(plugin))
+      // Pagly: resolved from `entry`, where entry.jsx imports the plugin. From this package it fails when npm nests the plugin under a workspace, and every class only the plugin uses goes missing
+      const pluginDir = path.dirname(
+        require.resolve(plugin, { paths: [entry] })
+      )
 
       pluginExtensions.push(
         path.join(pluginDir, "**/*.{js,ts,jsx,tsx}"),
@@ -76,7 +79,10 @@ function createTailwindConfig(
         path.join(pluginDir, "_chunks/*")
       )
     } catch (_e) {
-      // ignore
+      // Pagly: a skipped plugin ships an admin without its styles, so say so
+      console.warn(
+        `Could not resolve "${plugin}" from ${entry}: its Tailwind classes will be missing from the admin CSS.`
+      )
     }
   }
 
