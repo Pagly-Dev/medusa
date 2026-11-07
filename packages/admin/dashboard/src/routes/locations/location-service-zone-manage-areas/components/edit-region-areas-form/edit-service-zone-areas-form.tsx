@@ -15,10 +15,23 @@ import { useUpdateFulfillmentSetServiceZone } from "../../../../../hooks/api/ful
 import { countries } from "../../../../../lib/data/countries"
 import { GeoZoneForm } from "../../../common/components/geo-zone-form"
 import { GEO_ZONE_STACKED_MODAL_ID } from "../../../common/constants"
+import {
+  areaConflicts,
+  fromGeoZones,
+  toGeoZones,
+  type OtherZone,
+} from "../../../common/utils/geo-zone-areas"
 
 const EditeServiceZoneSchema = z.object({
   countries: z
-    .array(z.object({ iso_2: z.string().min(2), display_name: z.string() }))
+    .array(
+      z.object({
+        iso_2: z.string().min(2),
+        display_name: z.string(),
+        // Pagly: the provinces it covers; none is the whole country.
+        provinces: z.array(z.string()).optional(),
+      })
+    )
     .min(1),
 })
 
@@ -26,26 +39,28 @@ type EditServiceZoneAreasFormProps = {
   fulfillmentSetId: string
   locationId: string
   zone: HttpTypes.AdminServiceZone
+  /** Pagly: the set's other zones, whose areas this one can't take. */
+  otherZones?: OtherZone[]
 }
 
 export function EditServiceZoneAreasForm({
   fulfillmentSetId,
   locationId,
   zone,
+  otherZones = [],
 }: EditServiceZoneAreasFormProps) {
   const { t } = useTranslation()
   const { handleSuccess } = useRouteModal()
 
   const form = useForm<z.infer<typeof EditeServiceZoneSchema>>({
     defaultValues: {
-      countries: zone.geo_zones.map((z) => {
-        const country = countries.find((c) => c.iso_2 === z.country_code)
-
-        return {
-          iso_2: z.country_code,
-          display_name: country?.display_name || z.country_code.toUpperCase(),
-        }
-      }),
+      // Pagly: a zone's provinces come back under their country.
+      countries: fromGeoZones(
+        zone.geo_zones,
+        (iso2) =>
+          countries.find((c) => c.iso_2 === iso2)?.display_name ||
+          iso2.toUpperCase()
+      ),
     },
     resolver: zodResolver(EditeServiceZoneSchema),
   })
@@ -53,13 +68,18 @@ export function EditServiceZoneAreasForm({
   const { mutateAsync: editServiceZone, isPending: isLoading } =
     useUpdateFulfillmentSetServiceZone(fulfillmentSetId, zone.id)
 
+  // Pagly: an area sits in one zone of a set; the field says which.
+  const overlaps = areaConflicts(form.watch("countries") ?? [], otherZones).length > 0
+
   const handleSubmit = form.handleSubmit(async (data) => {
+    if (areaConflicts(data.countries, otherZones).length) {
+      return
+    }
+
     await editServiceZone(
       {
-        geo_zones: data.countries.map(({ iso_2 }) => ({
-          country_code: iso_2,
-          type: "country",
-        })),
+        // Pagly: a country covered by some of its provinces saves them.
+        geo_zones: toGeoZones(data.countries),
       },
       {
         onSuccess: () => {
@@ -95,11 +115,11 @@ export function EditServiceZoneAreasForm({
                     name: zone.name,
                   })}
                 </Heading>
-                <GeoZoneForm form={form} />
+                <GeoZoneForm form={form} otherZones={otherZones} />
               </div>
             </div>
 
-            <GeoZoneForm.AreaDrawer form={form} />
+            <GeoZoneForm.AreaDrawer form={form} otherZones={otherZones} />
           </StackedFocusModal>
         </RouteFocusModal.Body>
         <RouteFocusModal.Footer>
@@ -109,7 +129,7 @@ export function EditServiceZoneAreasForm({
                 {t("actions.cancel")}
               </Button>
             </RouteFocusModal.Close>
-            <Button type="submit" size="small" isLoading={isLoading}>
+            <Button type="submit" size="small" isLoading={isLoading} disabled={overlaps}>
               {t("actions.save")}
             </Button>
           </div>

@@ -7332,9 +7332,15 @@
                 },
                 "action": {
                   "type": "string"
+                },
+                "addRate": {
+                  "type": "string"
+                },
+                "addReturn": {
+                  "type": "string"
                 }
               },
-              "required": ["shipping", "pickup", "returns", "tabs", "action"],
+              "required": ["shipping", "pickup", "returns", "tabs", "action", "addRate", "addReturn"],
               "additionalProperties": false
             },
             "delete": {
@@ -7634,6 +7640,15 @@
                 },
                 "fulfillmentOption": {
                   "type": "string"
+                },
+                "free": {
+                  "type": "string"
+                },
+                "carrierRate": {
+                  "type": "string"
+                },
+                "hiddenInStore": {
+                  "type": "string"
                 }
               },
               "required": [
@@ -7643,7 +7658,10 @@
                 "provider",
                 "profile",
                 "type",
-                "fulfillmentOption"
+                "fulfillmentOption",
+                "free",
+                "carrierRate",
+                "hiddenInStore"
               ],
               "additionalProperties": false
             }
@@ -7726,11 +7744,29 @@
                 "hint": {
                   "type": "string"
                 },
+                "someOfAll": {
+                  "type": "string"
+                },
+                "inOtherZone_one": {
+                  "type": "string"
+                },
+                "inOtherZone_other": {
+                  "type": "string"
+                },
                 "successToast": {
                   "type": "string"
                 }
               },
-              "required": ["header", "action", "label", "hint", "successToast"],
+              "required": [
+                "header",
+                "action",
+                "label",
+                "hint",
+                "someOfAll",
+                "inOtherZone_one",
+                "inOtherZone_other",
+                "successToast"
+              ],
               "additionalProperties": false
             },
             "fields": {

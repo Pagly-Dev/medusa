@@ -1,33 +1,28 @@
 import {
   ArchiveBox,
+  Buildings,
+  Channels,
   CurrencyDollar,
   Map,
   PencilSquare,
   Plus,
   Trash,
-  TriangleDownMini,
 } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import {
-  Badge,
   Container,
-  Divider,
   Heading,
-  IconButton,
-  StatusBadge,
+  Switch,
   Text,
   toast,
   usePrompt,
 } from "@medusajs/ui"
-import { useMemo, useState } from "react"
+import { TFunction } from "i18next"
+import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import { ActionMenu } from "../../../../../components/common/action-menu"
-import { NoRecords } from "../../../../../components/common/empty-table-content"
-import { IconAvatar } from "../../../../../components/common/icon-avatar"
-import { LinkButton } from "../../../../../components/common/link-button"
-import { ListSummary } from "../../../../../components/common/list-summary"
 import {
   useDeleteFulfillmentServiceZone,
   useDeleteFulfillmentSet,
@@ -37,12 +32,11 @@ import {
   useCreateStockLocationFulfillmentSet,
   useDeleteStockLocation,
 } from "../../../../../hooks/api/stock-locations"
+import { useStore } from "../../../../../hooks/api/store"
 import { getFormattedAddress } from "../../../../../lib/addresses"
-import {
-  StaticCountry,
-  countries as staticCountries,
-} from "../../../../../lib/data/countries"
+import { countries as staticCountries } from "../../../../../lib/data/countries"
 import { formatProvider } from "../../../../../lib/format-provider"
+import { getLocaleAmount } from "../../../../../lib/money-amount-helpers"
 import {
   isOptionEnabledInStore,
   isReturnOption,
@@ -51,6 +45,13 @@ import {
   FulfillmentSetType,
   ShippingOptionPriceType,
 } from "../../../common/constants"
+import { areaLabels } from "../../../common/utils/geo-zone-areas"
+
+// Pagly: a location's shipping reads as a short list. A card per method
+// (shipping, then pickup) with a switch; each zone is a line with what it
+// covers, its rates as rows, and one "add" link; nothing empty is shown.
+// Sales channels and fulfillment providers moved into the location's menu.
+// See PAGLY-CORE-DIVERGENCE.md.
 
 type LocationGeneralSectionProps = {
   location: HttpTypes.AdminStockLocation
@@ -77,44 +78,65 @@ export const LocationGeneralSection = ({
         </div>
       </Container>
 
-      <FulfillmentSet
-        locationId={location.id}
-        locationName={location.name}
-        type={FulfillmentSetType.Pickup}
-        fulfillmentSet={location.fulfillment_sets?.find(
-          (f) => f.type === FulfillmentSetType.Pickup
-        )}
-      />
-
-      <FulfillmentSet
-        locationId={location.id}
-        locationName={location.name}
-        type={FulfillmentSetType.Shipping}
-        fulfillmentSet={location.fulfillment_sets?.find(
-          (f) => f.type === FulfillmentSetType.Shipping
-        )}
-      />
+      {[FulfillmentSetType.Shipping, FulfillmentSetType.Pickup].map((type) => (
+        <FulfillmentSet
+          key={type}
+          locationId={location.id}
+          locationName={location.name}
+          type={type}
+          fulfillmentSet={location.fulfillment_sets?.find(
+            (f) => f.type === type
+          )}
+        />
+      ))}
     </>
   )
 }
 
-type ShippingOptionProps = {
+/**
+ * What a rate charges: the carrier's rate, free, or its own price in the
+ * store's default currency. A price with rules (free over an amount, a
+ * region's) is a variation, never the rate's own.
+ */
+const rateLabel = (
+  option: HttpTypes.AdminShippingOption,
+  defaultCurrency: string | undefined,
+  t: TFunction
+) => {
+  if (option.price_type === ShippingOptionPriceType.Calculated) {
+    return t("stockLocations.shippingOptions.fields.carrierRate", {
+      name: formatProvider(option.provider_id),
+    })
+  }
+
+  const own = (option.prices ?? []).filter(
+    (price) => !(price as { price_rules?: unknown[] }).price_rules?.length
+  )
+  const base = own.find((price) => price.currency_code === defaultCurrency) ?? own[0]
+
+  if (!base) {
+    return ""
+  }
+
+  const amount = Number(base.amount)
+  return amount === 0
+    ? t("stockLocations.shippingOptions.fields.free")
+    : getLocaleAmount(amount, base.currency_code, { wholeWithoutCents: true })
+}
+
+type RateRowProps = {
   option: HttpTypes.AdminShippingOption
   fulfillmentSetId: string
   locationId: string
 }
 
-function ShippingOption({
-  option,
-  fulfillmentSetId,
-  locationId,
-}: ShippingOptionProps) {
+function RateRow({ option, fulfillmentSetId, locationId }: RateRowProps) {
   const prompt = usePrompt()
   const { t } = useTranslation()
 
-  const isStoreOption = isOptionEnabledInStore(option)
-
   const { mutateAsync } = useDeleteShippingOption(option.id)
+  const { store } = useStore()
+  const defaultCurrency = store?.supported_currencies?.find((c) => c.is_default)?.currency_code
 
   const handleDelete = async () => {
     const res = await prompt({
@@ -146,22 +168,26 @@ function ShippingOption({
     })
   }
 
+  const base = `/settings/locations/${locationId}/fulfillment-set/${fulfillmentSetId}/service-zone/${option.service_zone_id}/shipping-option/${option.id}`
+  const calculated = option.price_type === ShippingOptionPriceType.Calculated
+
   return (
-    <div className="flex items-center justify-between px-3 py-2">
-      <div className="flex-1">
-        <Text size="small" weight="plus">
-          {option.name} - {option.shipping_profile.name} (
-          {formatProvider(option.provider_id)})
+    <div data-rate className="flex items-center gap-x-3 py-2">
+      <Text size="small" leading="compact" className="flex-1 truncate">
+        {option.name}
+      </Text>
+      {!isOptionEnabledInStore(option) && (
+        <Text size="small" leading="compact" className="text-ui-fg-muted">
+          {t("stockLocations.shippingOptions.fields.hiddenInStore")}
         </Text>
-      </div>
-      <Badge
-        className="mr-4"
-        color={isStoreOption ? "grey" : "purple"}
-        size="2xsmall"
-        rounded="full"
+      )}
+      <Text
+        size="small"
+        leading="compact"
+        className={calculated ? "text-ui-fg-subtle" : undefined}
       >
-        {isStoreOption ? t("general.store") : t("general.admin")}
-      </Badge>
+        {rateLabel(option, defaultCurrency, t)}
+      </Text>
       <ActionMenu
         groups={[
           {
@@ -169,14 +195,13 @@ function ShippingOption({
               {
                 icon: <PencilSquare />,
                 label: t("stockLocations.shippingOptions.edit.action"),
-                to: `/settings/locations/${locationId}/fulfillment-set/${fulfillmentSetId}/service-zone/${option.service_zone_id}/shipping-option/${option.id}/edit`,
+                to: `${base}/edit`,
               },
               {
                 label: t("stockLocations.shippingOptions.pricing.action"),
                 icon: <CurrencyDollar />,
-                disabled:
-                  option.price_type === ShippingOptionPriceType.Calculated,
-                to: `/settings/locations/${locationId}/fulfillment-set/${fulfillmentSetId}/service-zone/${option.service_zone_id}/shipping-option/${option.id}/pricing`,
+                disabled: calculated,
+                to: `${base}/pricing`,
               },
             ],
           },
@@ -195,103 +220,15 @@ function ShippingOption({
   )
 }
 
-type ServiceZoneOptionsProps = {
-  zone: HttpTypes.AdminServiceZone
-  locationId: string
-  fulfillmentSetId: string
-  type: FulfillmentSetType
-}
-
-function ServiceZoneOptions({
-  zone,
-  locationId,
-  fulfillmentSetId,
-  type,
-}: ServiceZoneOptionsProps) {
-  const { t } = useTranslation()
-
-  const shippingOptions = zone.shipping_options.filter(
-    (o) => !isReturnOption(o)
-  )
-
-  const returnOptions = zone.shipping_options.filter((o) => isReturnOption(o))
-
-  return (
-    <div>
-      <Divider variant="dashed" />
-      <div className="flex flex-col gap-y-4 px-6 py-4">
-        <div className="item-center flex justify-between">
-          <span className="text-ui-fg-subtle txt-small self-center font-medium">
-            {t(`stockLocations.shippingOptions.create.${type}.label`)}
-          </span>
-          <LinkButton
-            to={`/settings/locations/${locationId}/fulfillment-set/${fulfillmentSetId}/service-zone/${zone.id}/shipping-option/create`}
-          >
-            {t("stockLocations.shippingOptions.create.action")}
-          </LinkButton>
-        </div>
-
-        {!!shippingOptions.length && (
-          <div className="shadow-elevation-card-rest bg-ui-bg-subtle grid divide-y rounded-md">
-            {shippingOptions.map((o) => (
-              <ShippingOption
-                key={o.id}
-                option={o}
-                locationId={locationId}
-                fulfillmentSetId={fulfillmentSetId}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-
-      <Divider variant="dashed" />
-
-      <div className="flex flex-col gap-y-4 px-6 py-4">
-        <div className="item-center flex justify-between">
-          <span className="text-ui-fg-subtle txt-small self-center font-medium">
-            {t("stockLocations.shippingOptions.create.returns.label")}
-          </span>
-          <LinkButton
-            to={`/settings/locations/${locationId}/fulfillment-set/${fulfillmentSetId}/service-zone/${zone.id}/shipping-option/create?is_return`}
-          >
-            {t("stockLocations.shippingOptions.create.action")}
-          </LinkButton>
-        </div>
-
-        {!!returnOptions.length && (
-          <div className="shadow-elevation-card-rest bg-ui-bg-subtle grid divide-y rounded-md">
-            {returnOptions.map((o) => (
-              <ShippingOption
-                key={o.id}
-                option={o}
-                locationId={locationId}
-                fulfillmentSetId={fulfillmentSetId}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
 type ServiceZoneProps = {
   zone: HttpTypes.AdminServiceZone
   locationId: string
   fulfillmentSetId: string
-  type: FulfillmentSetType
 }
 
-function ServiceZone({
-  zone,
-  locationId,
-  fulfillmentSetId,
-  type,
-}: ServiceZoneProps) {
+function ServiceZone({ zone, locationId, fulfillmentSetId }: ServiceZoneProps) {
   const { t } = useTranslation()
   const prompt = usePrompt()
-  const [open, setOpen] = useState(true)
 
   const { mutateAsync: deleteZone } = useDeleteFulfillmentServiceZone(
     fulfillmentSetId,
@@ -326,126 +263,125 @@ function ServiceZone({
     })
   }
 
-  const countries = useMemo(() => {
-    const countryGeoZones = zone.geo_zones.filter((g) => g.type === "country")
-
-    const countries = countryGeoZones
-      .map(({ country_code }) =>
-        staticCountries.find((c) => c.iso_2 === country_code)
+  // What the zone covers: "Uruguay · Maldonado, Rocha", or "Uruguay · 16 de 19".
+  const areas = useMemo(
+    () =>
+      areaLabels(
+        zone.geo_zones.filter((g) => g.type === "country" || g.type === "province"),
+        (iso2) =>
+          staticCountries.find((c) => c.iso_2 === iso2)?.display_name ??
+          iso2.toUpperCase(),
+        (count, total) => t("stockLocations.serviceZones.manageAreas.someOfAll", { count, total })
       )
-      .filter((c) => !!c) as StaticCountry[]
+        .sort((a, b) => a.localeCompare(b))
+        .join(", "),
+    [zone.geo_zones, t]
+  )
 
-    if (
-      process.env.NODE_ENV === "development" &&
-      countryGeoZones.length !== countries.length
-    ) {
-      console.warn(
-        "Some countries are missing in the static countries list",
-        countryGeoZones
-          .filter((g) => !countries.find((c) => c.iso_2 === g.country_code))
-          .map((g) => g.country_code)
-      )
-    }
-
-    return countries.sort((c1, c2) => c1.name.localeCompare(c2.name))
-  }, [zone.geo_zones])
-
-  const [shippingOptionsCount, returnOptionsCount] = useMemo(() => {
-    const options = zone.shipping_options
-
-    const optionsCount = options.filter((o) => !isReturnOption(o)).length
-
-    const returnOptionsCount = options.filter(isReturnOption).length
-
-    return [optionsCount, returnOptionsCount]
-  }, [zone.shipping_options])
+  const rates = zone.shipping_options.filter((o) => !isReturnOption(o))
+  const returns = zone.shipping_options.filter(isReturnOption)
+  const zonePath = `/settings/locations/${locationId}/fulfillment-set/${fulfillmentSetId}/service-zone/${zone.id}`
 
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-row items-center justify-between gap-x-4 px-6 py-4">
-        <IconAvatar>
-          <Map />
-        </IconAvatar>
-
-        <div className="grow-1 flex flex-1 flex-col">
-          <Text size="small" leading="compact" weight="plus">
+    <div className="flex flex-col px-6 py-4">
+      <div className="flex items-center gap-x-2">
+        <div className="flex min-w-0 flex-1 items-baseline gap-x-2">
+          <Text size="small" leading="compact" weight="plus" className="shrink-0">
             {zone.name}
           </Text>
-          <div className="flex items-center gap-2">
-            <ListSummary
-              variant="base"
-              list={countries.map((c) => c.display_name)}
-              inline
-              n={1}
+          {areas && (
+            <>
+              <span aria-hidden className="text-ui-fg-muted txt-compact-small">
+                ·
+              </span>
+              <Text size="small" leading="compact" className="text-ui-fg-subtle truncate">
+                {areas}
+              </Text>
+            </>
+          )}
+        </div>
+        <ActionMenu
+          groups={[
+            {
+              actions: [
+                {
+                  label: t("actions.edit"),
+                  icon: <PencilSquare />,
+                  to: `${zonePath}/edit`,
+                },
+                {
+                  label: t("stockLocations.serviceZones.manageAreas.action"),
+                  icon: <Map />,
+                  to: `${zonePath}/areas`,
+                },
+                {
+                  label: t("stockLocations.shippingOptions.create.addReturn"),
+                  icon: <Plus />,
+                  to: `${zonePath}/shipping-option/create?is_return`,
+                },
+              ],
+            },
+            {
+              actions: [
+                {
+                  label: t("actions.delete"),
+                  icon: <Trash />,
+                  onClick: handleDelete,
+                },
+              ],
+            },
+          ]}
+        />
+      </div>
+
+      {rates.length > 0 && (
+        <div className="mt-1 flex flex-col divide-y divide-dashed">
+          {rates.map((o) => (
+            <RateRow
+              key={o.id}
+              option={o}
+              locationId={locationId}
+              fulfillmentSetId={fulfillmentSetId}
             />
-            <span>·</span>
-            <Text className="text-ui-fg-subtle txt-small">
-              {t(`stockLocations.shippingOptions.fields.count.${type}`, {
-                count: shippingOptionsCount,
-              })}
-            </Text>
-            <span>·</span>
-            <Text className="text-ui-fg-subtle txt-small">
-              {t("stockLocations.shippingOptions.fields.count.returns", {
-                count: returnOptionsCount,
-              })}
-            </Text>
+          ))}
+        </div>
+      )}
+
+      {returns.length > 0 && (
+        <div className="mt-2 flex flex-col">
+          <Text size="xsmall" leading="compact" className="text-ui-fg-muted pt-1">
+            {t("stockLocations.shippingOptions.create.returns.label")}
+          </Text>
+          <div className="flex flex-col divide-y divide-dashed">
+            {returns.map((o) => (
+              <RateRow
+                key={o.id}
+                option={o}
+                locationId={locationId}
+                fulfillmentSetId={fulfillmentSetId}
+              />
+            ))}
           </div>
         </div>
-
-        <div className="flex grow-0 items-center gap-4">
-          <IconButton
-            size="small"
-            onClick={() => setOpen((s) => !s)}
-            variant="transparent"
-          >
-            <TriangleDownMini
-              style={{
-                transform: `rotate(${!open ? 0 : 180}deg)`,
-                transition: ".2s transform ease-in-out",
-              }}
-            />
-          </IconButton>
-          <ActionMenu
-            groups={[
-              {
-                actions: [
-                  {
-                    label: t("actions.edit"),
-                    icon: <PencilSquare />,
-                    to: `/settings/locations/${locationId}/fulfillment-set/${fulfillmentSetId}/service-zone/${zone.id}/edit`,
-                  },
-                  {
-                    label: t("stockLocations.serviceZones.manageAreas.action"),
-                    icon: <Map />,
-                    to: `/settings/locations/${locationId}/fulfillment-set/${fulfillmentSetId}/service-zone/${zone.id}/areas`,
-                  },
-                ],
-              },
-              {
-                actions: [
-                  {
-                    label: t("actions.delete"),
-                    icon: <Trash />,
-                    onClick: handleDelete,
-                  },
-                ],
-              },
-            ]}
-          />
-        </div>
-      </div>
-      {open && (
-        <ServiceZoneOptions
-          fulfillmentSetId={fulfillmentSetId}
-          locationId={locationId}
-          type={type}
-          zone={zone}
-        />
       )}
+
+      <AddLink to={`${zonePath}/shipping-option/create`}>
+        {t("stockLocations.shippingOptions.create.addRate")}
+      </AddLink>
     </div>
   )
 }
+
+/** A quiet "+ Add …" link. */
+const AddLink = ({ to, children }: { to: string; children: string }) => (
+  <Link
+    to={to}
+    className="txt-compact-small text-ui-fg-subtle hover:text-ui-fg-base focus-visible:shadow-borders-focus mt-2 inline-flex w-fit items-center gap-x-1.5 rounded-md outline-none transition-fg"
+  >
+    <Plus className="text-ui-fg-muted" />
+    {children}
+  </Link>
+)
 
 type FulfillmentSetProps = {
   fulfillmentSet?: HttpTypes.AdminFulfillmentSet
@@ -460,16 +396,11 @@ function FulfillmentSet(props: FulfillmentSetProps) {
 
   const { fulfillmentSet, locationName, locationId, type } = props
 
-  const fulfillmentSetExists = !!fulfillmentSet
-
-  const hasServiceZones = !!fulfillmentSet?.service_zones.length
-
-  const { mutateAsync: createFulfillmentSet } =
+  const { mutateAsync: createFulfillmentSet, isPending: isCreating } =
     useCreateStockLocationFulfillmentSet(locationId)
 
-  const { mutateAsync: deleteFulfillmentSet } = useDeleteFulfillmentSet(
-    fulfillmentSet?.id!
-  )
+  const { mutateAsync: deleteFulfillmentSet, isPending: isDeleting } =
+    useDeleteFulfillmentSet(fulfillmentSet?.id!)
 
   const handleCreate = async () => {
     await createFulfillmentSet(
@@ -514,84 +445,39 @@ function FulfillmentSet(props: FulfillmentSetProps) {
     })
   }
 
-  const groups = fulfillmentSet
-    ? [
-        {
-          actions: [
-            {
-              icon: <Plus />,
-              label: t("stockLocations.serviceZones.create.action"),
-              to: `/settings/locations/${locationId}/fulfillment-set/${fulfillmentSet.id}/service-zones/create`,
-            },
-          ],
-        },
-        {
-          actions: [
-            {
-              icon: <Trash />,
-              label: t("actions.disable"),
-              onClick: handleDelete,
-            },
-          ],
-        },
-      ]
-    : [
-        {
-          actions: [
-            {
-              icon: <Plus />,
-              label: t("actions.enable"),
-              onClick: handleCreate,
-            },
-          ],
-        },
-      ]
+  const header = t(`stockLocations.fulfillmentSets.${type}.header`)
 
   return (
-    <Container className="p-0">
-      <div className="flex flex-col divide-y">
-        <div className="flex items-center justify-between px-6 py-4">
-          <Heading level="h2">
-            {t(`stockLocations.fulfillmentSets.${type}.header`)}
-          </Heading>
-          <div className="flex items-center gap-4">
-            <StatusBadge color={fulfillmentSetExists ? "green" : "grey"}>
-              {t(
-                fulfillmentSetExists ? "statuses.enabled" : "statuses.disabled"
-              )}
-            </StatusBadge>
-
-            <ActionMenu groups={groups} />
-          </div>
-        </div>
-
-        {fulfillmentSetExists && !hasServiceZones && (
-          <div className="flex items-center justify-center py-8 pt-6">
-            <NoRecords
-              message={t("stockLocations.serviceZones.fields.noRecords")}
-              className="h-fit"
-              action={{
-                to: `/settings/locations/${locationId}/fulfillment-set/${fulfillmentSet.id}/service-zones/create`,
-                label: t("stockLocations.serviceZones.create.action"),
-              }}
-            />
-          </div>
-        )}
-
-        {hasServiceZones && (
-          <div className="flex flex-col divide-y">
-            {fulfillmentSet?.service_zones.map((zone) => (
-              <ServiceZone
-                zone={zone}
-                type={type}
-                key={zone.id}
-                locationId={locationId}
-                fulfillmentSetId={fulfillmentSet.id}
-              />
-            ))}
-          </div>
-        )}
+    <Container className="divide-y p-0" data-fulfillment-set={type}>
+      <div className="flex items-center justify-between px-6 py-4">
+        <Heading level="h2">{header}</Heading>
+        <Switch
+          aria-label={header}
+          checked={!!fulfillmentSet}
+          disabled={isCreating || isDeleting}
+          onCheckedChange={(on) => (on ? handleCreate() : handleDelete())}
+        />
       </div>
+
+      {fulfillmentSet && (
+        <>
+          {fulfillmentSet.service_zones.map((zone) => (
+            <ServiceZone
+              zone={zone}
+              key={zone.id}
+              locationId={locationId}
+              fulfillmentSetId={fulfillmentSet.id}
+            />
+          ))}
+          <div className="px-6 pb-4 pt-2">
+            <AddLink
+              to={`/settings/locations/${locationId}/fulfillment-set/${fulfillmentSet.id}/service-zones/create`}
+            >
+              {t("stockLocations.serviceZones.create.action")}
+            </AddLink>
+          </div>
+        </>
+      )}
     </Container>
   )
 }
@@ -647,6 +533,21 @@ const Actions = ({ location }: { location: HttpTypes.AdminStockLocation }) => {
               icon: <ArchiveBox />,
               label: t("stockLocations.edit.viewInventory"),
               to: `/inventory?location_id=${location.id}`,
+            },
+          ],
+        },
+        {
+          // Pagly: the side cards these were on are gone from the page.
+          actions: [
+            {
+              icon: <Channels />,
+              label: t("stockLocations.salesChannels.header"),
+              to: "sales-channels",
+            },
+            {
+              icon: <Buildings />,
+              label: t("stockLocations.fulfillmentProviders.header"),
+              to: "fulfillment-providers",
             },
           ],
         },
